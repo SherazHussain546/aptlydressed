@@ -7,6 +7,18 @@
       "imageHint": "fashion model"
     },
     {
+      "id": "about-hero",
+      "description": "A well-lit, organized closet with minimalist clothing.",
+      "imageUrl": "https://images.unsplash.com/photo-1445205170230-053b83016050?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwY2xvc2V0fGVufDB8fHx8MTc1OTg4NDEyMHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "fashion closet"
+    },
+    {
+      "id": "about-story",
+      "description": "A fashion designer sketching ideas in a notebook.",
+      "imageUrl": "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxmYXNoaW9uJTIwZGVzaWduZXJ8ZW58MHx8fHwxNzU5ODg0MjM3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "fashion designer"
+    },
+    {
       "id": "collection-women",
       "description": "A collection of women's apparel hanging on a rack.",
       "imageUrl": "https://images.unsplash.com/photo-1554412933-514a83d2f3c8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx3b21lbnMlMjBmYXNoaW9ufGVufDB8fHx8MTc1OTA4MTcyNHww&ixlib=rb-4.1.0&q=80&w=1080",

@@ -1,3 +1,4 @@
+
 import { Twitter, Instagram, Facebook } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "@/components/icons/Logo";
@@ -39,7 +40,7 @@ export function Footer() {
             <div>
               <h3 className="font-semibold text-foreground">Company</h3>
               <ul className="mt-4 space-y-2">
-                <li><Link href="#" className="text-muted-foreground hover:text-primary">About Us</Link></li>
+                <li><Link href="/about" className="text-muted-foreground hover:text-primary">About Us</Link></li>
                 <li><Link href="/blog" className="text-muted-foreground hover:text-primary">Blog</Link></li>
                 <li><Link href="#" className="text-muted-foreground hover:text-primary">Sustainability</Link></li>
                 <li><Link href="#" className="text-muted-foreground hover:text-primary">Contact</Link></li>
