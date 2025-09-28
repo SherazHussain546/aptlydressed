@@ -1,13 +1,17 @@
+
 import 'server-only';
 import type { Product, Collection, BlogPost } from './types';
-import fs from 'fs';
-import path from 'path';
 import { parse } from 'csv-parse/sync';
 
-async function loadProductsFromCSV(): Promise<Product[]> {
-  const csvFilePath = path.join(process.cwd(), 'src', 'lib', 'products.csv');
+async function loadProductsFromGoogleSheet(): Promise<Product[]> {
+  const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vScAauPk8eWS8LSllwq9Bo3aWi9UPlouqb2p0fi3cLKKWv7MeFCS2eO7Tlqbzf1C4BO4bqTS1MnpgbH/pub?output=csv';
+  
   try {
-    const csvData = fs.readFileSync(csvFilePath, 'utf-8');
+    const response = await fetch(sheetUrl, { next: { revalidate: 3600 } }); // Re-fetch every hour
+    if (!response.ok) {
+      throw new Error(`Failed to fetch Google Sheet: ${response.statusText}`);
+    }
+    const csvData = await response.text();
 
     const records = parse(csvData, {
       columns: true,
@@ -36,12 +40,12 @@ async function loadProductsFromCSV(): Promise<Product[]> {
     return records as Product[];
 
   } catch (error) {
-    console.error("Error loading products from CSV:", error);
+    console.error("Error loading products from Google Sheet:", error);
     return [];
   }
 }
 
-export const productsPromise: Promise<Product[]> = loadProductsFromCSV();
+export const productsPromise: Promise<Product[]> = loadProductsFromGoogleSheet();
 
 // This function will dynamically generate collections from product categories
 export async function getCollections(): Promise<Collection[]> {
