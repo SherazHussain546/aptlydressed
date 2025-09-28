@@ -1,30 +1,4 @@
 import type { Collection, BlogPost } from './types';
-import { productsPromise as serverProductsPromise } from './server-data';
-import { PlaceHolderImages } from './placeholder-images';
-
-export const productsPromise = serverProductsPromise;
-
-// This function will dynamically generate collections from product categories
-export async function getCollections(): Promise<Collection[]> {
-    const products = await productsPromise;
-    const categories = Array.from(new Set(products.map(p => p.category)));
-
-    const collectionImageMapping: Record<string, string> = {
-        "Womens": "collection-women",
-        "Mens": "collection-men",
-        "Essentials": "collection-essentials",
-        // Add more mappings as needed
-    };
-    const defaultImage = "collection-essentials";
-
-    return categories.map((category, index) => ({
-        id: (index + 1).toString(),
-        title: `${category}`,
-        href: `/shop?category=${category}`,
-        imageId: collectionImageMapping[category] || defaultImage,
-    }));
-}
-
 
 export const blogPosts: BlogPost[] = [
   {

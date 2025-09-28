@@ -62,7 +62,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
         {/* Product Details */}
         <div>
-          <p className="text-sm text-muted-foreground">{product.brand}</p>
+          <p className="text-sm text-muted-foreground">{product.category}</p>
           <h1 className="text-3xl lg:text-4xl font-headline mt-1">{product.name}</h1>
           <p className="text-2xl text-muted-foreground mt-2">${product.price.toFixed(2)}</p>
           <div className="flex items-center mt-4">

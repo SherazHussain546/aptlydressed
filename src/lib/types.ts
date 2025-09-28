@@ -1,10 +1,10 @@
+
 import type { ImagePlaceholder } from "./placeholder-images";
 
 export interface Product {
   id: string;
   slug: string;
   name: string;
-  brand: string;
   price: number;
   imageUrls: string[];
   description: string;
