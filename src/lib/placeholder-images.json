@@ -19,6 +19,18 @@
       "imageHint": "fashion designer"
     },
     {
+      "id": "sustainability-hero",
+      "description": "A model in a natural setting wearing sustainable clothing.",
+      "imageUrl": "https://images.unsplash.com/photo-1593941707882-6e2a85038e6e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxzdXN0YWluYWJsZSUyMGZhc2hpb258ZW58MHx8fHwxNzU5ODg1ODgxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "sustainable fashion"
+    },
+    {
+      "id": "sustainability-materials",
+      "description": "Close up of natural fabric textures like cotton and linen.",
+      "imageUrl": "https://images.unsplash.com/photo-1620721248234-a8286214a13d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxuYXR1cmFsJTIwZmFicmljc3xlbnwwfHx8fDE3NTk4ODU5NDR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "natural fabrics"
+    },
+    {
       "id": "collection-women",
       "description": "A collection of women's apparel hanging on a rack.",
       "imageUrl": "https://images.unsplash.com/photo-1554412933-514a83d2f3c8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx3b21lbnMlMjBmYXNoaW9ufGVufDB8fHx8MTc1OTA4MTcyNHww&ixlib=rb-4.1.0&q=80&w=1080",
