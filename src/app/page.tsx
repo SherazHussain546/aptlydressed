@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/products/ProductCard';
 import { products, collections } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { StyleAdvisor } from '@/components/ai/StyleAdvisor';
 
 const heroImage = PlaceHolderImages.find(p => p.id === 'hero-1');
 
@@ -79,13 +78,6 @@ export default function Home() {
         </div>
       </section>
       
-      {/* AI Style Tool */}
-      <section className="bg-muted py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <StyleAdvisor />
-        </div>
-      </section>
-
       {/* Featured Products */}
       <section className="container mx-auto px-4">
         <h2 className="text-3xl font-headline text-center mb-8">Featured Products</h2>

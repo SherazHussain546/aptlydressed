@@ -45,7 +45,7 @@ const prompt = ai.definePrompt({
   name: 'similarProductRecommendationPrompt',
   input: {schema: SimilarProductRecommendationInputSchema},
   output: {schema: SimilarProductRecommendationOutputSchema},
-  prompt: `You are a personal stylist for "Aptly Dressed", an e-commerce website for a fashion brand.
+  prompt: `You are a personal stylist for "Aptly Dressed", a fashion affiliate marketing website. You recommend products that are sold on partner websites.
 
   Aptly Dressed targets style-conscious millennials (ages 25-40) who value quality, modern design, and sustainable fashion.
   The brand aesthetic is clean, minimalist, and elegant, with a high-end but accessible feel.

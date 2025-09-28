@@ -25,6 +25,7 @@ export const products: Product[] = [
       'Sustainably sourced',
     ],
     stock: 100,
+    affiliateUrl: 'https://example.com/product/minimalist-tee',
   },
   {
     id: '2',
@@ -48,6 +49,7 @@ export const products: Product[] = [
       'Dry clean only',
     ],
     stock: 30,
+    affiliateUrl: 'https://example.com/product/city-chic-trench-coat',
   },
   {
     id: '3',
@@ -72,6 +74,7 @@ export const products: Product[] = [
       'Hand wash or machine wash delicate',
     ],
     stock: 60,
+    affiliateUrl: 'https://example.com/product/tailored-linen-trousers',
   },
   {
     id: '4',
@@ -96,6 +99,7 @@ export const products: Product[] = [
       'Dry clean recommended',
     ],
     stock: 45,
+    affiliateUrl: 'https://example.com/product/effortless-silk-blouse',
   },
   {
     id: '5',
@@ -120,6 +124,7 @@ export const products: Product[] = [
       'Hand wash cold, lay flat to dry',
     ],
     stock: 50,
+    affiliateUrl: 'https://example.com/product/modernist-wool-sweater',
   },
   {
     id: '6',
@@ -143,6 +148,7 @@ export const products: Product[] = [
       'Machine wash cold',
     ],
     stock: 80,
+    affiliateUrl: 'https://example.com/product/versatile-denim-jacket',
   },
    {
     id: '7',
@@ -166,6 +172,7 @@ export const products: Product[] = [
       'Machine wash cold on delicate cycle',
     ],
     stock: 25,
+    affiliateUrl: 'https://example.com/product/flowy-maxi-dress',
   },
   {
     id: '8',
@@ -190,6 +197,7 @@ export const products: Product[] = [
       'Machine wash warm',
     ],
     stock: 150,
+    affiliateUrl: 'https://example.com/product/classic-oxford-shirt',
   },
 ];
 

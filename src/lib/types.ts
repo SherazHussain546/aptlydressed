@@ -15,6 +15,7 @@ export interface Product {
   reviewCount: number;
   details: string[];
   stock: number;
+  affiliateUrl: string;
 }
 
 export interface Collection {
@@ -32,11 +33,4 @@ export interface BlogPost {
   imageId: string;
   excerpt: string;
   content: string;
-}
-
-export interface CartItem {
-  product: Product;
-  size: string;
-  color: string;
-  quantity: number;
 }

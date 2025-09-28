@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { Star, ChevronRight, CheckCircle } from 'lucide-react';
+import { Star, ChevronRight, CheckCircle, ExternalLink } from 'lucide-react';
+import Link from 'next/link';
 
 import { products } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -11,7 +12,6 @@ import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { useCart } from '@/contexts/CartProvider';
 import { ProductCard } from '@/components/products/ProductCard';
 import {
   Carousel,
@@ -23,30 +23,11 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 
 export default function ProductPage({ params }: { params: { slug: string } }) {
-  const [selectedSize, setSelectedSize] = useState<string | null>(null);
-  const [selectedColor, setSelectedColor] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  const { addToCart } = useCart();
-
   const product = products.find(p => p.slug === params.slug);
 
   if (!product) {
     notFound();
   }
-
-  const handleAddToCart = () => {
-    if (!selectedSize) {
-      setError("Please select a size.");
-      return;
-    }
-    if (!selectedColor) {
-      setError("Please select a color.");
-      return;
-    }
-    setError(null);
-    addToCart(product, selectedSize, selectedColor);
-  };
 
   const productImages = product.imageIds.map(id => PlaceHolderImages.find(p => p.id === id)).filter(Boolean);
   const relatedProducts = products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
@@ -95,59 +76,17 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
           </div>
 
           <p className="mt-6 text-lg text-foreground/80">{product.description}</p>
-
-          {/* Size Selector */}
-          <div className="mt-8">
-            <h3 className="text-sm font-semibold mb-2">Size</h3>
-            <RadioGroup onValueChange={setSelectedSize} value={selectedSize || ""}>
-              <div className="flex flex-wrap gap-2">
-                {product.sizes.map(size => (
-                  <div key={size}>
-                    <RadioGroupItem value={size} id={`size-${size}`} className="sr-only" />
-                    <Label
-                      htmlFor={`size-${size}`}
-                      className={`flex items-center justify-center rounded-md border-2 px-4 py-2 text-sm cursor-pointer transition-colors
-                        ${selectedSize === size ? 'border-primary bg-primary/10' : 'border-border'}`}
-                    >
-                      {size}
-                    </Label>
-                  </div>
-                ))}
-              </div>
-            </RadioGroup>
-          </div>
-
-          {/* Color Selector */}
-          <div className="mt-8">
-            <h3 className="text-sm font-semibold mb-2">Color</h3>
-            <RadioGroup onValueChange={setSelectedColor} value={selectedColor || ""}>
-              <div className="flex flex-wrap gap-3">
-                {product.colors.map(color => (
-                  <div key={color.name}>
-                    <RadioGroupItem value={color.name} id={`color-${color.name}`} className="sr-only" />
-                    <Label
-                      htmlFor={`color-${color.name}`}
-                      className={`flex items-center justify-center rounded-full w-8 h-8 cursor-pointer border-2 transition-all
-                        ${selectedColor === color.name ? 'border-primary scale-110' : 'border-transparent'}`}
-                      style={{ backgroundColor: color.hex }}
-                      aria-label={color.name}
-                    />
-                  </div>
-                ))}
-              </div>
-            </RadioGroup>
-          </div>
-
-          {error && <p className="mt-4 text-sm text-destructive">{error}</p>}
-
-          <Button size="lg" className="w-full mt-8" onClick={handleAddToCart}>
-            Add to Cart
+          
+          <Button size="lg" className="w-full mt-8" asChild>
+            <Link href={product.affiliateUrl} target="_blank">
+              Buy Now <ExternalLink className="ml-2 h-4 w-4" />
+            </Link>
           </Button>
 
-          <div className="mt-6 text-sm text-muted-foreground flex items-center">
-            <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
-            <span>{product.stock > 0 ? `${product.stock} in stock - ships now` : 'Out of stock'}</span>
+           <div className="mt-4 text-xs text-center text-muted-foreground">
+            You will be redirected to our partner site to complete your purchase.
           </div>
+
 
           <Accordion type="single" collapsible className="w-full mt-8">
             <AccordionItem value="details">
@@ -159,9 +98,9 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="shipping">
-              <AccordionTrigger>Shipping & Returns</AccordionTrigger>
+              <AccordionTrigger>Affiliate Disclosure</AccordionTrigger>
               <AccordionContent>
-                Free shipping on orders over $50. Free returns within 30 days. Read our full policy for more details.
+               As an affiliate, we may earn a commission from qualifying purchases. This does not affect the price you pay.
               </AccordionContent>
             </AccordionItem>
           </Accordion>

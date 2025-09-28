@@ -48,7 +48,7 @@ export function Footer() {
           </div>
           <div className="col-span-1 md:col-span-4 lg:col-span-1">
             <h3 className="font-semibold text-foreground">Join our newsletter</h3>
-            <p className="mt-2 text-muted-foreground">Get 10% off your first order.</p>
+            <p className="mt-2 text-muted-foreground">Get style inspiration and exclusive updates.</p>
             <form className="mt-4 flex gap-2">
               <Input type="email" placeholder="Enter your email" className="bg-background" />
               <Button type="submit" className="bg-primary hover:bg-primary/90">Subscribe</Button>
@@ -56,7 +56,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-12 border-t pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} Aptly Dressed. All Rights Reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Aptly Dressed. An affiliate marketing partner.</p>
         </div>
       </div>
     </footer>
