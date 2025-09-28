@@ -1,3 +1,4 @@
+
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -65,10 +66,10 @@ export default async function Home() {
                 {collectionImage && (
                   <Image
                     src={collectionImage.imageUrl}
-                    alt={collectionImage.title}
+                    alt={collectionImage.description}
                     fill
                     className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
-                    data-ai-hint={collectionImage.imageId}
+                    data-ai-hint={collectionImage.imageHint}
                   />
                 )}
                 <div className="absolute inset-0 bg-black/40 rounded-lg" />
