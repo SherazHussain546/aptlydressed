@@ -6,8 +6,12 @@ import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/context/AuthContext';
 
 export const metadata: Metadata = {
-  title: 'Aptly Dressed Affiliate Site',
-  description: 'A stylish, modern, and user-friendly affiliate website for the fashion brand "Aptly Dressed."',
+  title: {
+    default: 'Aptly Dressed | Modern & Sustainable Fashion',
+    template: '%s | Aptly Dressed',
+  },
+  description: 'Discover timeless elegance with a modern edge. Aptly Dressed offers curated collections of high-quality, sustainable fashion for the style-conscious individual.',
+  keywords: ['sustainable fashion', 'modern style', 'capsule wardrobe', 'minimalist fashion', 'Aptly Dressed'],
 };
 
 export default function RootLayout({

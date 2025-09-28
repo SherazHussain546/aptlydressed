@@ -1,7 +1,41 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
+import type { Metadata } from 'next';
 import { blogPosts } from '@/lib/server-data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+
+type Props = {
+  params: { slug: string }
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const post = blogPosts.find(p => p.slug === params.slug);
+
+  if (!post) {
+    return {
+      title: 'Post not found',
+    }
+  }
+  
+  const image = PlaceHolderImages.find(p => p.id === post.imageId);
+
+  return {
+    title: post.title,
+    description: post.excerpt,
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+      images: image ? [
+        {
+          url: image.imageUrl,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ] : [],
+    },
+  }
+}
 
 export default function BlogPostPage({ params }: { params: { slug: string } }) {
   const post = blogPosts.find(p => p.slug === params.slug);

@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { Star, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 
 import { productsPromise } from '@/lib/server-data';
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,38 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 import { Card, CardContent } from '@/components/ui/card';
+
+type Props = {
+  params: { slug: string }
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const products = await productsPromise;
+  const product = products.find(p => p.slug === params.slug);
+
+  if (!product) {
+    return {
+      title: 'Product not found',
+    }
+  }
+
+  return {
+    title: product.name,
+    description: product.description,
+    openGraph: {
+      title: product.name,
+      description: product.description,
+      images: [
+        {
+          url: product.imageUrls[0],
+          width: 800,
+          height: 1000,
+          alt: product.name,
+        },
+      ],
+    },
+  }
+}
 
 export default async function ProductPage({ params }: { params: { slug: string } }) {
   const products = await productsPromise;
