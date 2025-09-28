@@ -1,6 +1,6 @@
 
 import 'server-only';
-import type { Product, Collection, BlogPost } from './types';
+import type { Product, Collection } from './types';
 import { parse } from 'csv-parse/sync';
 
 async function loadProductsFromGoogleSheet(): Promise<Product[]> {
