@@ -1,205 +1,39 @@
 import type { Product, Collection, BlogPost } from './types';
+import fs from 'fs';
+import path from 'path';
+import { parse } from 'csv-parse/sync';
 
-export const products: Product[] = [
-  {
-    id: '1',
-    slug: 'the-minimalist-tee',
-    name: 'The Minimalist Tee',
-    price: 45.00,
-    imageIds: ['product-1-1', 'product-1-2', 'product-1-3'],
-    description: 'A flawless essential, our Minimalist Tee is crafted from premium Pima cotton for a soft, breathable feel. Its classic crewneck and relaxed fit make it a versatile foundation for any outfit.',
-    category: 'Essentials',
-    tags: ['New Arrival', 'Best Seller'],
-    sizes: ['XS', 'S', 'M', 'L', 'XL'],
-    colors: [
-      { name: 'Off-White', hex: '#FAFAF9' },
-      { name: 'Soft Grey', hex: '#D1D5DB' },
-      { name: 'Black', hex: '#111827' },
-    ],
-    rating: 4.9,
-    reviewCount: 124,
-    details: [
-      '100% Peruvian Pima cotton',
-      'Slightly relaxed fit',
-      'Machine wash cold, tumble dry low',
-      'Sustainably sourced',
-    ],
-    stock: 100,
-    affiliateUrl: 'https://example.com/product/minimalist-tee',
-  },
-  {
-    id: '2',
-    slug: 'city-chic-trench-coat',
-    name: 'City-Chic Trench Coat',
-    price: 220.00,
-    imageIds: ['product-2-1', 'product-2-2', 'product-2-3'],
-    description: 'The quintessential outerwear piece, updated for the modern wardrobe. Our City-Chic Trench features a water-resistant cotton blend, classic double-breasted closure, and a removable belt for a customized silhouette.',
-    category: 'Womens',
-    tags: ['Featured'],
-    sizes: ['S', 'M', 'L'],
-    colors: [
-      { name: 'Beige', hex: '#D5C5B6' },
-    ],
-    rating: 4.8,
-    reviewCount: 88,
-    details: [
-      '65% Cotton, 35% Polyester',
-      'Water-resistant finish',
-      'Deep side pockets',
-      'Dry clean only',
-    ],
-    stock: 30,
-    affiliateUrl: 'https://example.com/product/city-chic-trench-coat',
-  },
-  {
-    id: '3',
-    slug: 'tailored-linen-trousers',
-    name: 'Tailored Linen Trousers',
-    price: 130.00,
-    imageIds: ['product-3-1', 'product-3-2', 'product-3-3'],
-    description: 'Breatheable and effortlessly elegant, these trousers are your new warm-weather staple. Made from a high-quality linen blend, they feature a flattering high-waist and wide-leg cut.',
-    category: 'Womens',
-    tags: ['New Arrival'],
-    sizes: ['XS', 'S', 'M', 'L', 'XL'],
-    colors: [
-      { name: 'Off-White', hex: '#FAFAF9' },
-      { name: 'Beige', hex: '#D5C5B6' },
-    ],
-    rating: 4.7,
-    reviewCount: 56,
-    details: [
-      '70% Linen, 30% Viscose',
-      'High-waisted, wide-leg fit',
-      'Zip fly with hook-and-bar closure',
-      'Hand wash or machine wash delicate',
-    ],
-    stock: 60,
-    affiliateUrl: 'https://example.com/product/tailored-linen-trousers',
-  },
-  {
-    id: '4',
-    slug: 'effortless-silk-blouse',
-    name: 'Effortless Silk Blouse',
-    price: 160.00,
-    imageIds: ['product-4-1', 'product-4-2', 'product-4-3'],
-    description: 'The epitome of quiet luxury. Our Effortless Silk Blouse is made from 100% Mulberry silk, offering a fluid drape and a subtle sheen. A timeless piece for work or evening.',
-    category: 'Womens',
-    tags: ['Featured', 'Best Seller'],
-    sizes: ['XS', 'S', 'M', 'L'],
-    colors: [
-      { name: 'Off-White', hex: '#FAFAF9' },
-      { name: 'Burgundy', hex: '#800020' },
-    ],
-    rating: 4.9,
-    reviewCount: 92,
-    details: [
-      '100% 19mm Mulberry silk',
-      'Concealed button placket',
-      'Buttoned cuffs',
-      'Dry clean recommended',
-    ],
-    stock: 45,
-    affiliateUrl: 'https://example.com/product/effortless-silk-blouse',
-  },
-  {
-    id: '5',
-    slug: 'modernist-wool-sweater',
-    name: 'Modernist Wool Sweater',
-    price: 180.00,
-    imageIds: ['product-5-1', 'product-5-2', 'product-5-3'],
-    description: 'A cozy yet sophisticated sweater crafted from responsibly sourced merino wool. The Modernist Sweater has a relaxed fit, a classic crew neck, and ribbed detailing for added texture.',
-    category: 'Mens',
-    tags: ['Featured'],
-    sizes: ['S', 'M', 'L', 'XL'],
-    colors: [
-      { name: 'Soft Grey', hex: '#D1D5DB' },
-      { name: 'Deep Burgundy', hex: '#800020' },
-    ],
-    rating: 4.8,
-    reviewCount: 75,
-    details: [
-      '100% RWS certified Merino wool',
-      'Relaxed fit',
-      'Ribbed collar, cuffs, and hem',
-      'Hand wash cold, lay flat to dry',
-    ],
-    stock: 50,
-    affiliateUrl: 'https://example.com/product/modernist-wool-sweater',
-  },
-  {
-    id: '6',
-    slug: 'versatile-denim-jacket',
-    name: 'Versatile Denim Jacket',
-    price: 150.00,
-    imageIds: ['product-6-1', 'product-6-2', 'product-6-3'],
-    description: 'An iconic style, perfected. Our denim jacket is made from organic cotton with a hint of stretch for comfort. The timeless wash and clean hardware make it an all-season layer.',
-    category: 'Essentials',
-    tags: [],
-    sizes: ['S', 'M', 'L', 'XL'],
-    colors: [
-      { name: 'Classic Wash', hex: '#6085A6' },
-    ],
-    rating: 4.7,
-    reviewCount: 110,
-    details: [
-      '98% Organic Cotton, 2% Elastane',
-      'Classic fit',
-      'Branded hardware',
-      'Machine wash cold',
-    ],
-    stock: 80,
-    affiliateUrl: 'https://example.com/product/versatile-denim-jacket',
-  },
-   {
-    id: '7',
-    slug: 'flowy-maxi-dress',
-    name: 'Flowy Maxi Dress',
-    price: 190.00,
-    imageIds: ['product-7-1', 'product-7-2', 'product-7-3'],
-    description: 'A statement piece for any special occasion. This maxi dress features a flattering V-neck, an adjustable waist tie, and a tiered skirt that moves beautifully with every step.',
-    category: 'Womens',
-    tags: ['New Arrival'],
-    sizes: ['XS', 'S', 'M', 'L'],
-    colors: [
-      { name: 'Deep Burgundy', hex: '#800020' },
-    ],
-    rating: 4.9,
-    reviewCount: 45,
-    details: [
-      '100% Tencel™ Lyocell',
-      'V-neckline and flutter sleeves',
-      'Adjustable waist tie',
-      'Machine wash cold on delicate cycle',
-    ],
-    stock: 25,
-    affiliateUrl: 'https://example.com/product/flowy-maxi-dress',
-  },
-  {
-    id: '8',
-    slug: 'classic-oxford-shirt',
-    name: 'Classic Oxford Shirt',
-    price: 95.00,
-    imageIds: ['product-8-1', 'product-8-2', 'product-8-3'],
-    description: 'The cornerstone of a well-dressed man\'s wardrobe. Our Oxford shirt is cut from durable, soft cotton and tailored for a perfect fit that is neither too slim nor too loose.',
-    category: 'Mens',
-    tags: ['Best Seller'],
-    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    colors: [
-      { name: 'Off-White', hex: '#FAFAF9' },
-      { name: 'Soft Grey', hex: '#D1D5DB' },
-    ],
-    rating: 4.8,
-    reviewCount: 210,
-    details: [
-      '100% Organic Cotton Oxford',
-      'Button-down collar',
-      'Chest pocket',
-      'Machine wash warm',
-    ],
-    stock: 150,
-    affiliateUrl: 'https://example.com/product/classic-oxford-shirt',
-  },
-];
+function loadProductsFromCSV(): Product[] {
+  const csvFilePath = path.join(process.cwd(), 'src', 'lib', 'products.csv');
+  const csvData = fs.readFileSync(csvFilePath, 'utf-8');
+
+  const records = parse(csvData, {
+    columns: true,
+    skip_empty_lines: true,
+    trim: true,
+    cast: (value, context) => {
+      if (context.column === 'price' || context.column === 'rating' || context.column === 'reviewCount' || context.column === 'stock') {
+        return parseFloat(value);
+      }
+      if (['imageIds', 'tags', 'sizes', 'details'].includes(context.column as string)) {
+        return value.split(',').map(item => item.trim());
+      }
+       if (context.column === 'colors') {
+        // Assuming format "ColorName:Hex,ColorName2:Hex2"
+        return value.split(',').map(item => {
+          const [name, hex] = item.split(':');
+          return { name: name.trim(), hex: hex.trim() };
+        });
+      }
+      return value;
+    }
+  });
+
+  return records as Product[];
+}
+
+
+export const products: Product[] = loadProductsFromCSV();
 
 export const collections: Collection[] = [
   {
