@@ -1,7 +1,8 @@
+
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import type { Metadata } from 'next';
-import { blogPosts } from '@/lib/server-data';
+import { blogPosts } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 type Props = {
