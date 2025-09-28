@@ -1,51 +1,8 @@
-import type { Product, Collection, BlogPost } from './types';
-import fs from 'fs';
-import path from 'path';
-import { parse } from 'csv-parse/sync';
+import type { Collection, BlogPost } from './types';
+import { productsPromise as serverProductsPromise } from './server-data';
 import { PlaceHolderImages } from './placeholder-images';
 
-const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vScAauPk8eWS8LSllwq9Bo3aWi9UPlouqb2p0fi3cLKKWv7MeFCS2eO7Tlqbzf1C4BO4bqTS1MnpgbH/pub?output=csv";
-
-async function loadProductsFromGoogleSheet(): Promise<Product[]> {
-  try {
-    const response = await fetch(GOOGLE_SHEET_CSV_URL, { next: { revalidate: 3600 } }); // Revalidate every hour
-    if (!response.ok) {
-      throw new Error(`Failed to fetch Google Sheet: ${response.statusText}`);
-    }
-    const csvData = await response.text();
-
-    const records = parse(csvData, {
-      columns: true,
-      skip_empty_lines: true,
-      trim: true,
-      cast: (value, context) => {
-        if (context.column === 'price' || context.column === 'rating' || context.column === 'reviewCount' || context.column === 'stock') {
-          return parseFloat(value) || 0;
-        }
-        if (['imageUrls', 'tags', 'sizes', 'details'].includes(context.column as string)) {
-          return value.split(',').map(item => item.trim()).filter(Boolean);
-        }
-        if (context.column === 'colors') {
-          if (!value) return [];
-          return value.split(',').map(item => {
-            const [name, hex] = item.split(':');
-            return { name: name?.trim(), hex: hex?.trim() };
-          }).filter(c => c.name && c.hex);
-        }
-        return value;
-      }
-    });
-
-    return records as Product[];
-  } catch (error) {
-    console.error("Error loading products from Google Sheet:", error);
-    // Fallback to empty array or local file if needed
-    return [];
-  }
-}
-
-
-export const productsPromise: Promise<Product[]> = loadProductsFromGoogleSheet();
+export const productsPromise = serverProductsPromise;
 
 // This function will dynamically generate collections from product categories
 export async function getCollections(): Promise<Collection[]> {
