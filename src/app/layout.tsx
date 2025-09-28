@@ -3,6 +3,7 @@ import './globals.css';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Toaster } from '@/components/ui/toaster';
+import { AuthProvider } from '@/context/AuthContext';
 
 export const metadata: Metadata = {
   title: 'Aptly Dressed Affiliate Site',
@@ -22,12 +23,14 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased h-full">
+        <AuthProvider>
           <div className="flex min-h-screen flex-col">
             <Header />
             <main className="flex-grow">{children}</main>
             <Footer />
           </div>
           <Toaster />
+        </AuthProvider>
       </body>
     </html>
   );

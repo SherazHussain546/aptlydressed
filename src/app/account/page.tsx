@@ -1,48 +1,67 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+"use client";
 
+import { useAuth } from "@/context/AuthContext";
+import { AuthForm } from "@/components/auth/AuthForm";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AccountPage() {
+  const { user, loading, signOutUser } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8 md:py-16">
+        <h1 className="text-4xl font-headline mb-8">My Account</h1>
+        <Card className="max-w-md mx-auto">
+          <CardHeader>
+            <Skeleton className="h-8 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto px-4 py-8 md:py-16">
-      <h1 className="text-4xl font-headline mb-8">My Account</h1>
-      <Tabs defaultValue="profile" className="w-full">
-        <TabsList className="grid w-full grid-cols-1 md:w-max">
-          <TabsTrigger value="profile">Profile</TabsTrigger>
-        </TabsList>
-        <TabsContent value="profile">
+      {user ? (
+        <div>
+          <h1 className="text-4xl font-headline mb-8">Welcome, {user.email}</h1>
           <Card>
             <CardHeader>
-              <CardTitle>Profile</CardTitle>
-              <CardDescription>Manage your personal information.</CardDescription>
+              <CardTitle>Your Account</CardTitle>
+              <CardDescription>
+                View your details and manage your settings.
+              </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4 max-w-md">
-               <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <Label htmlFor="firstName">First Name</Label>
-                        <Input id="firstName" defaultValue="Jane" />
-                    </div>
-                    <div>
-                        <Label htmlFor="lastName">Last Name</Label>
-                        <Input id="lastName" defaultValue="Doe" />
-                    </div>
-               </div>
-                <div>
-                    <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" defaultValue="jane.doe@example.com" />
-                </div>
-                 <div>
-                    <Label htmlFor="password">Password</Label>
-                    <Button variant="secondary" className="w-full">Change Password</Button>
-                </div>
-                <Button>Save Changes</Button>
+            <CardContent className="space-y-4">
+              <p>
+                <strong>Email:</strong> {user.email}
+              </p>
+              <p>
+                <strong>User ID:</strong> {user.uid}
+              </p>
+              <Button onClick={signOutUser} variant="destructive">
+                Sign Out
+              </Button>
             </CardContent>
           </Card>
-        </TabsContent>
-      </Tabs>
+        </div>
+      ) : (
+        <AuthForm />
+      )}
     </div>
   );
 }
