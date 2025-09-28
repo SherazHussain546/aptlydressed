@@ -14,7 +14,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 import { Button } from '@/components/ui/button';
-import { productsPromise } from '@/lib/data';
+import { productsPromise } from '@/lib/server-data';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const PRODUCTS_PER_PAGE = 12;

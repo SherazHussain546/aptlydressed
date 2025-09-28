@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
-import { blogPosts } from '@/lib/data';
+import { blogPosts } from '@/lib/server-data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function BlogPostPage({ params }: { params: { slug: string } }) {

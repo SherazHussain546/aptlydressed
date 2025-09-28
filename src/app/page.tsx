@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/products/ProductCard';
-import { productsPromise, getCollections } from '@/lib/data';
+import { productsPromise, getCollections } from '@/lib/server-data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const heroImage = PlaceHolderImages.find(p => p.id === 'hero-1');

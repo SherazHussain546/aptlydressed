@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { Star, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 
-import { productsPromise } from '@/lib/data';
+import { productsPromise } from '@/lib/server-data';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { ProductCard } from '@/components/products/ProductCard';
