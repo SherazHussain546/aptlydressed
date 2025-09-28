@@ -1,12 +1,12 @@
 "use client";
 
+import { useMemo } from 'react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
-import { products } from "@/lib/data";
 import {
   Select,
   SelectContent,
@@ -14,18 +14,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import type { Product } from '@/lib/types';
 
-
-const allCategories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
-const allSizes = Array.from(new Set(products.flatMap(p => p.sizes))).sort();
-const allColors = Array.from(new Set(products.flatMap(p => p.colors.map(c => c.name)))).sort();
 
 interface ProductFiltersProps {
     filters: any;
     setFilters: (filters: any) => void;
+    allProducts: Product[];
 }
 
-export function ProductFilters({ filters, setFilters }: ProductFiltersProps) {
+export function ProductFilters({ filters, setFilters, allProducts }: ProductFiltersProps) {
+
+    const {allCategories, allSizes, allColors, maxPrice} = useMemo(() => {
+        const categories = ['All', ...Array.from(new Set(allProducts.map(p => p.category)))];
+        const sizes = Array.from(new Set(allProducts.flatMap(p => p.sizes))).sort();
+        const colors = Array.from(new Set(allProducts.flatMap(p => p.colors.map(c => c.name)))).sort();
+        const price = Math.max(...allProducts.map(p => p.price), 300);
+        return { allCategories: categories, allSizes: sizes, allColors: colors, maxPrice: price };
+    }, [allProducts]);
 
     const handleCategoryChange = (value: string) => {
         setFilters({ ...filters, category: value });
@@ -140,8 +146,8 @@ export function ProductFilters({ filters, setFilters }: ProductFiltersProps) {
                             <AccordionContent>
                                 <div className="p-2">
                                     <Slider
-                                        defaultValue={[0, 300]}
-                                        max={300}
+                                        defaultValue={[0, maxPrice]}
+                                        max={maxPrice}
                                         step={10}
                                         onValueCommit={handlePriceChange}
                                     />

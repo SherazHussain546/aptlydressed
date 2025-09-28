@@ -3,12 +3,15 @@ import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/products/ProductCard';
-import { products, collections } from '@/lib/data';
+import { productsPromise, getCollections } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const heroImage = PlaceHolderImages.find(p => p.id === 'hero-1');
 
-export default function Home() {
+export default async function Home() {
+  const products = await productsPromise;
+  const collections = await getCollections();
+  
   const newArrivals = products.filter(p => p.tags.includes('New Arrival')).slice(0, 4);
   const featuredProducts = products.filter(p => p.tags.includes('Featured')).slice(0, 4);
 
@@ -55,17 +58,17 @@ export default function Home() {
       <section className="container mx-auto px-4">
         <h2 className="text-3xl font-headline text-center mb-8">Curated Collections</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {collections.map(collection => {
+          {collections.slice(0,3).map(collection => {
             const collectionImage = PlaceHolderImages.find(p => p.id === collection.imageId);
             return (
               <Link key={collection.id} href={collection.href} className="group relative h-96 block">
                 {collectionImage && (
                   <Image
                     src={collectionImage.imageUrl}
-                    alt={collectionImage.description}
+                    alt={collectionImage.title}
                     fill
                     className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
-                    data-ai-hint={collectionImage.imageHint}
+                    data-ai-hint={collectionImage.imageId}
                   />
                 )}
                 <div className="absolute inset-0 bg-black/40 rounded-lg" />

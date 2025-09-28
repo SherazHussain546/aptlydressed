@@ -2,59 +2,72 @@ import type { Product, Collection, BlogPost } from './types';
 import fs from 'fs';
 import path from 'path';
 import { parse } from 'csv-parse/sync';
+import { PlaceHolderImages } from './placeholder-images';
 
-function loadProductsFromCSV(): Product[] {
-  const csvFilePath = path.join(process.cwd(), 'src', 'lib', 'products.csv');
-  const csvData = fs.readFileSync(csvFilePath, 'utf-8');
+const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vScAauPk8eWS8LSllwq9Bo3aWi9UPlouqb2p0fi3cLKKWv7MeFCS2eO7Tlqbzf1C4BO4bqTS1MnpgbH/pub?output=csv";
 
-  const records = parse(csvData, {
-    columns: true,
-    skip_empty_lines: true,
-    trim: true,
-    cast: (value, context) => {
-      if (context.column === 'price' || context.column === 'rating' || context.column === 'reviewCount' || context.column === 'stock') {
-        return parseFloat(value);
-      }
-      if (['imageIds', 'tags', 'sizes', 'details'].includes(context.column as string)) {
-        return value.split(',').map(item => item.trim());
-      }
-       if (context.column === 'colors') {
-        // Assuming format "ColorName:Hex,ColorName2:Hex2"
-        return value.split(',').map(item => {
-          const [name, hex] = item.split(':');
-          return { name: name.trim(), hex: hex.trim() };
-        });
-      }
-      return value;
+async function loadProductsFromGoogleSheet(): Promise<Product[]> {
+  try {
+    const response = await fetch(GOOGLE_SHEET_CSV_URL, { next: { revalidate: 3600 } }); // Revalidate every hour
+    if (!response.ok) {
+      throw new Error(`Failed to fetch Google Sheet: ${response.statusText}`);
     }
-  });
+    const csvData = await response.text();
 
-  return records as Product[];
+    const records = parse(csvData, {
+      columns: true,
+      skip_empty_lines: true,
+      trim: true,
+      cast: (value, context) => {
+        if (context.column === 'price' || context.column === 'rating' || context.column === 'reviewCount' || context.column === 'stock') {
+          return parseFloat(value) || 0;
+        }
+        if (['imageUrls', 'tags', 'sizes', 'details'].includes(context.column as string)) {
+          return value.split(',').map(item => item.trim()).filter(Boolean);
+        }
+        if (context.column === 'colors') {
+          if (!value) return [];
+          return value.split(',').map(item => {
+            const [name, hex] = item.split(':');
+            return { name: name?.trim(), hex: hex?.trim() };
+          }).filter(c => c.name && c.hex);
+        }
+        return value;
+      }
+    });
+
+    return records as Product[];
+  } catch (error) {
+    console.error("Error loading products from Google Sheet:", error);
+    // Fallback to empty array or local file if needed
+    return [];
+  }
 }
 
 
-export const products: Product[] = loadProductsFromCSV();
+export const productsPromise: Promise<Product[]> = loadProductsFromGoogleSheet();
 
-export const collections: Collection[] = [
-  {
-    id: '1',
-    title: "Women's Collection",
-    href: '/shop?category=Womens',
-    imageId: 'collection-women',
-  },
-  {
-    id: '2',
-    title: "Men's Collection",
-    href: '/shop?category=Mens',
-    imageId: 'collection-men',
-  },
-  {
-    id: '3',
-    title: 'The Essentials',
-    href: '/shop?category=Essentials',
-    imageId: 'collection-essentials',
-  },
-];
+// This function will dynamically generate collections from product categories
+export async function getCollections(): Promise<Collection[]> {
+    const products = await productsPromise;
+    const categories = Array.from(new Set(products.map(p => p.category)));
+
+    const collectionImageMapping: Record<string, string> = {
+        "Womens": "collection-women",
+        "Mens": "collection-men",
+        "Essentials": "collection-essentials",
+        // Add more mappings as needed
+    };
+    const defaultImage = "collection-essentials";
+
+    return categories.map((category, index) => ({
+        id: (index + 1).toString(),
+        title: `${category}`,
+        href: `/shop?category=${category}`,
+        imageId: collectionImageMapping[category] || defaultImage,
+    }));
+}
+
 
 export const blogPosts: BlogPost[] = [
   {

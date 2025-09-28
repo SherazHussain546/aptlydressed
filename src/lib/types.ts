@@ -4,11 +4,12 @@ export interface Product {
   id: string;
   slug: string;
   name: string;
+  brand: string;
   price: number;
-  imageIds: string[];
+  imageUrls: string[];
   description: string;
-  category: 'Womens' | 'Mens' | 'Essentials';
-  tags: ('New Arrival' | 'Featured' | 'Best Seller')[];
+  category: 'Womens' | 'Mens' | 'Essentials' | string;
+  tags: ('New Arrival' | 'Featured' | 'Best Seller' | string)[];
   sizes: string[];
   colors: { name: string, hex: string }[];
   rating: number;
