@@ -1,6 +1,4 @@
-"use client";
 
-import { useState } from 'react';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { Star, ChevronRight, CheckCircle, ExternalLink } from 'lucide-react';
