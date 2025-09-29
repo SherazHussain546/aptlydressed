@@ -5,9 +5,9 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/products/ProductCard';
 import { productsPromise, getCollections } from '@/lib/server-data';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { placeholderImages } from '@/lib/data';
 
-const heroImage = PlaceHolderImages.find(p => p.id === 'hero-1');
+const heroImage = placeholderImages.find(p => p.id === 'hero-1');
 
 export default async function Home() {
   const products = await productsPromise;
@@ -60,7 +60,7 @@ export default async function Home() {
         <h2 className="text-3xl font-headline text-center mb-8">Curated Collections</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {collections.slice(0,3).map(collection => {
-            const collectionImage = PlaceHolderImages.find(p => p.id === collection.imageId);
+            const collectionImage = placeholderImages.find(p => p.id === collection.imageId);
             return (
               <Link key={collection.id} href={collection.href} className="group relative h-96 block">
                 {collectionImage && (

@@ -2,8 +2,7 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import type { Metadata } from 'next';
-import { blogPosts } from '@/lib/data';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { blogPosts, placeholderImages } from '@/lib/data';
 
 type Props = {
   params: { slug: string }
@@ -18,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
   }
   
-  const image = PlaceHolderImages.find(p => p.id === post.imageId);
+  const image = placeholderImages.find(p => p.id === post.imageId);
 
   return {
     title: post.title,
@@ -45,7 +44,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
     notFound();
   }
 
-  const image = PlaceHolderImages.find(p => p.id === post.imageId);
+  const image = placeholderImages.find(p => p.id === post.imageId);
 
   return (
     <article>

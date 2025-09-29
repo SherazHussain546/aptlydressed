@@ -5,7 +5,7 @@ import Link from 'next/link';
 import type { Product } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { placeholderImages } from '@/lib/data';
 
 interface ProductCardProps {
   product: Product;
@@ -13,7 +13,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const primaryImage = product.imageIds && product.imageIds.length > 0
-    ? PlaceHolderImages.find(p => p.id === product.imageIds[0])
+    ? placeholderImages.find(p => p.id === product.imageIds[0])
     : null;
   const onSale = product.salePrice && product.salePrice < product.price;
 

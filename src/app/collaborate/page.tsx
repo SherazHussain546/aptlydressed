@@ -3,11 +3,11 @@ import Image from 'next/image';
 import type { Metadata } from 'next';
 import { Handshake, Target, Gem, BarChart3, Mail } from 'lucide-react';
 
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { placeholderImages } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-const collaborateHeroImage = PlaceHolderImages.find(p => p.id === 'collaborate-hero');
+const collaborateHeroImage = placeholderImages.find(p => p.id === 'collaborate-hero');
 
 export const metadata: Metadata = {
     title: 'Collaborate With Us | Aptly Dressed',

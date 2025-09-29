@@ -2,9 +2,9 @@
 import Image from 'next/image';
 import type { Metadata } from 'next';
 import { Mail, Phone, MapPin } from 'lucide-react';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { placeholderImages } from '@/lib/data';
 
-const contactHeroImage = PlaceHolderImages.find(p => p.id === 'contact-hero');
+const contactHeroImage = placeholderImages.find(p => p.id === 'contact-hero');
 
 export const metadata: Metadata = {
     title: 'Contact Us | Aptly Dressed',

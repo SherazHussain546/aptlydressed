@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Twitter, Facebook, Linkedin, Copy } from 'lucide-react';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { placeholderImages } from '@/lib/data';
 import { Logo } from '@/components/icons/Logo';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -20,7 +20,7 @@ export function NewsPostPageClient({ post }: { post: NewsPost }) {
     setShareUrl(`${window.location.origin}${pathname}`);
   }, [pathname]);
 
-  const image = PlaceHolderImages.find(p => p.id === post.imageId);
+  const image = placeholderImages.find(p => p.id === post.imageId);
 
   const copyLink = () => {
     if (!shareUrl) return;

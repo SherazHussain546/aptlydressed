@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import type { Product } from "@/lib/types";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { placeholderImages } from "@/lib/data";
 import { useDebounce } from "@/hooks/use-debounce";
 
 export function Search() {
@@ -97,7 +97,7 @@ export function Search() {
               <div className="space-y-4">
                 {filteredProducts.map(product => {
                   const onSale = product.salePrice && product.salePrice < product.price;
-                  const primaryImage = PlaceHolderImages.find(p => p.id === product.imageIds[0]);
+                  const primaryImage = product.imageIds && product.imageIds.length > 0 ? placeholderImages.find(p => p.id === product.imageIds[0]) : null;
                   return (
                   <Link
                     key={product.id}

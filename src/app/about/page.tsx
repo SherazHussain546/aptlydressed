@@ -1,11 +1,11 @@
 
 import Image from 'next/image';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { placeholderImages } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
-const aboutHeroImage = PlaceHolderImages.find(p => p.id === 'about-hero');
-const aboutStoryImage = PlaceHolderImages.find(p => p.id === 'about-story');
+const aboutHeroImage = placeholderImages.find(p => p.id === 'about-hero');
+const aboutStoryImage = placeholderImages.find(p => p.id === 'about-story');
 
 export default function AboutPage() {
   return (

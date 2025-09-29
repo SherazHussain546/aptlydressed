@@ -1,8 +1,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { blogPosts } from '@/lib/data';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { blogPosts, placeholderImages } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -18,7 +17,7 @@ export default function BlogPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {blogPosts.map(post => {
-          const image = PlaceHolderImages.find(p => p.id === post.imageId);
+          const image = placeholderImages.find(p => p.id === post.imageId);
           return (
             <Card key={post.slug} className="flex flex-col overflow-hidden">
                 <Link href={`/blog/${post.slug}`} className="block group">

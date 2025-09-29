@@ -1,6 +1,7 @@
+
 import Image from 'next/image';
 import type { Metadata } from 'next';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { placeholderImages } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
@@ -10,8 +11,8 @@ export const metadata: Metadata = {
     keywords: ['sustainable fashion', 'ethical clothing', 'eco-friendly style', 'conscious consumerism'],
 };
 
-const sustainabilityHeroImage = PlaceHolderImages.find(p => p.id === 'sustainability-hero');
-const sustainabilityMaterialsImage = PlaceHolderImages.find(p => p.id === 'sustainability-materials');
+const sustainabilityHeroImage = placeholderImages.find(p => p.id === 'sustainability-hero');
+const sustainabilityMaterialsImage = placeholderImages.find(p => p.id === 'sustainability-materials');
 
 
 export default function SustainabilityPage() {

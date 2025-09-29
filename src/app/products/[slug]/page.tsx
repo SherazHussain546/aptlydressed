@@ -17,7 +17,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 import { Card, CardContent } from '@/components/ui/card';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { placeholderImages } from '@/lib/data';
 
 type Props = {
   params: { slug: string }
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
   }
 
-  const primaryImage = PlaceHolderImages.find(p => p.id === product.imageIds[0]);
+  const primaryImage = product.imageIds && product.imageIds.length > 0 ? placeholderImages.find(p => p.id === product.imageIds[0]) : null;
 
   return {
     title: product.name,
@@ -63,7 +63,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
   
   const onSale = product.salePrice && product.salePrice < product.price;
   const relatedProducts = products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
-  const productImages = product.imageIds.map(id => PlaceHolderImages.find(p => p.id === id)).filter(Boolean);
+  const productImages = product.imageIds ? product.imageIds.map(id => placeholderImages.find(p => p.id === id)).filter(Boolean) : [];
 
   return (
     <>
@@ -73,7 +73,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
         <div className="md:sticky md:top-24 h-max">
             <Carousel>
               <CarouselContent>
-                {productImages.map((image, index) => (
+                {productImages.length > 0 ? productImages.map((image, index) => (
                   <CarouselItem key={index}>
                     <Card className="overflow-hidden">
                       <CardContent className="p-0 aspect-[4/5] relative">
@@ -90,7 +90,15 @@ export default async function ProductPage({ params }: { params: { slug: string }
                       </CardContent>
                     </Card>
                   </CarouselItem>
-                ))}
+                )) : (
+                  <CarouselItem>
+                    <Card className="overflow-hidden">
+                      <CardContent className="p-0 aspect-[4/5] relative bg-muted flex items-center justify-center">
+                        <p className="text-muted-foreground">No Image</p>
+                      </CardContent>
+                    </Card>
+                  </CarouselItem>
+                )}
               </CarouselContent>
               {productImages.length > 1 && (
                 <>

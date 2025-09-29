@@ -1,6 +1,4 @@
 
-import type { ImagePlaceholder } from "./placeholder-images";
-
 export interface Product {
   id: string;
   slug: string;
@@ -46,3 +44,10 @@ export interface NewsPost {
   content: string;
   hashtags: string[];
 }
+
+export type ImagePlaceholder = {
+  id: string;
+  description: string;
+  imageUrl: string;
+  imageHint: string;
+};
