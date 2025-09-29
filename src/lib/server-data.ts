@@ -50,35 +50,34 @@ async function loadProductsFromGoogleSheet(): Promise<Product[]> {
 
 async function loadCollectionsFromGoogleSheet(): Promise<Collection[]> {
     const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vScAauPk8eWS8LSllwq9Bo3aWi9UPlouqb2p0fi3cLKKWv7MeFCS2eO7Tlqbzf1C4BO4bqTS1MnpgbH/pub?gid=158529845&output=csv';
-    try {
-        const response = await fetch(sheetUrl, { next: { revalidate: 3600 } });
-        if (!response.ok) {
-            throw new Error(`Failed to fetch Collections Google Sheet: ${response.statusText}`);
-        }
-        const csvData = await response.text();
-        const records = parse(csvData, {
-            columns: true,
-            skip_empty_lines: true,
-            trim: true,
-        });
-        return records as Collection[];
-    } catch (error) {
-        console.error("Error loading collections from Google Sheet:", error);
-        // Return empty array on error, so the fallback can be triggered.
-        return [];
+    const response = await fetch(sheetUrl, { next: { revalidate: 3600 } });
+    if (!response.ok) {
+        throw new Error(`Failed to fetch Collections Google Sheet: ${response.statusText}`);
     }
+    const csvData = await response.text();
+    const records = parse(csvData, {
+        columns: true,
+        skip_empty_lines: true,
+        trim: true,
+    });
+    return records as Collection[];
 }
 
 export const productsPromise: Promise<Product[]> = loadProductsFromGoogleSheet();
 
 // This function will dynamically generate collections from product categories
 export async function getCollections(): Promise<Collection[]> {
-    const collections = await loadCollectionsFromGoogleSheet();
-    if (collections && collections.length > 0) {
-        return collections;
+    try {
+        const collections = await loadCollectionsFromGoogleSheet();
+        if (collections && collections.length > 0) {
+            return collections;
+        }
+    } catch (error) {
+        console.error("Error loading collections from Google Sheet:", error);
+        // Fallback to dynamic generation if the sheet fails to load.
     }
 
-    // Fallback to dynamic generation if the sheet is empty or fails to load
+    // Fallback to dynamic generation
     const products = await productsPromise;
     const categories = Array.from(new Set(products.map(p => p.category)));
     const collectionImageMapping: Record<string, string> = {
