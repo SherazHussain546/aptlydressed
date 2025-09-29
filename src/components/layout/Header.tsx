@@ -7,6 +7,7 @@ import { HeaderClient } from "./HeaderClient";
 
 export const mainNavLinks = [
   { href: "/blog", label: "Blog" },
+  { href: "/news-and-events", label: "News & Events" },
   { href: "/sustainability", label: "Sustainability" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },

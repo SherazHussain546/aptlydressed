@@ -35,3 +35,12 @@ export interface BlogPost {
   excerpt: string;
   content: string;
 }
+
+export interface NewsPost {
+  slug: string;
+  title: string;
+  date: string;
+  imageId: string;
+  content: string;
+  hashtags: string[];
+}
