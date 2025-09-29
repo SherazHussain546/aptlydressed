@@ -73,8 +73,7 @@ export async function getCollections(): Promise<Collection[]> {
             return collections;
         }
     } catch (error) {
-        console.error("Error loading collections from Google Sheet:", error);
-        // Fallback to dynamic generation if the sheet fails to load.
+        console.error("Error loading collections from Google Sheet, falling back to dynamic generation:", error);
     }
 
     // Fallback to dynamic generation
