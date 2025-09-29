@@ -56,12 +56,8 @@ export default function NewsAndEventsPage() {
                     dangerouslySetInnerHTML={{ __html: post.content }}
                 />
               </CardContent>
-              <CardFooter className="flex flex-col items-start gap-4">
-                 <Button asChild variant="link" className="p-0 h-auto -mt-4">
-                  <Link href={`/news-and-events/${post.slug}`}>
-                    View Post & Comments
-                  </Link>
-                </Button>
+              <CardFooter>
+                <NewsPostShareButtons post={post} isFullPage={true} />
               </CardFooter>
             </Card>
           );
