@@ -56,8 +56,9 @@ export function Footer() {
             </form>
           </div>
         </div>
-        <div className="mt-12 border-t pt-8 text-center text-sm text-muted-foreground">
+        <div className="mt-12 border-t pt-8 text-center text-sm text-muted-foreground space-y-2">
           <p>&copy; {new Date().getFullYear()} Aptly Dressed. An affiliate marketing partner.</p>
+          <p>Powered by <a href="https://synctech.ie" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">SYNC TECH</a></p>
         </div>
       </div>
     </footer>
