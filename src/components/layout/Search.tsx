@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -14,7 +13,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { productsPromise } from "@/lib/server-data";
 import type { Product } from "@/lib/types";
 import { useDebounce } from "@/hooks/use-debounce";
 
@@ -28,10 +26,20 @@ export function Search() {
   const debouncedQuery = useDebounce(query, 300);
 
   useEffect(() => {
-    productsPromise.then(products => {
-      setAllProducts(products);
-      setLoading(false);
-    });
+    // Asynchronously load the products on the client
+    const fetchProducts = async () => {
+      try {
+        // This is a dynamic import, which is client-safe
+        const { productsPromise } = await import('@/lib/server-data');
+        const products = await productsPromise;
+        setAllProducts(products);
+      } catch (error) {
+        console.error("Failed to load products for search", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
   }, []);
 
   useEffect(() => {
@@ -90,12 +98,18 @@ export function Search() {
                     onClick={handleLinkClick}
                   >
                     <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md bg-muted">
-                      <Image
-                        src={product.imageUrls[0]}
-                        alt={product.name}
-                        fill
-                        className="object-cover"
-                      />
+                      {product.imageUrls[0] ? (
+                        <Image
+                          src={product.imageUrls[0]}
+                          alt={product.name}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground text-xs">
+                          No Image
+                        </div>
+                      )}
                     </div>
                     <div>
                       <p className="font-medium">{product.name}</p>
