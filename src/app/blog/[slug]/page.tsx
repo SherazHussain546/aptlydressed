@@ -5,6 +5,7 @@ import type { Metadata } from 'next';
 import { blogPosts, placeholderImages } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { NewsPostShareButtons } from '@/components/news/NewsPostShareButtons';
 
 type Props = {
   params: { slug: string }
@@ -48,6 +49,17 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
 
   const image = placeholderImages.find(p => p.id === post.imageId);
 
+  // The share button component expects a NewsPost type, but it only uses slug and title which are also in BlogPost.
+  // We can safely cast it for this use case.
+  const postForSharing = {
+    slug: post.slug,
+    title: post.title,
+    date: post.date,
+    imageId: post.imageId,
+    content: post.content,
+    hashtags: [],
+  };
+
   return (
     <article>
       <header className="relative h-[40vh] md:h-[50vh] w-full">
@@ -73,12 +85,15 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
           className="prose lg:prose-lg max-w-3xl mx-auto prose-h2:font-headline prose-p:text-foreground/80 prose-a:text-primary hover:prose-a:text-primary/80"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
-        <div className="max-w-3xl mx-auto mt-8 text-center">
-            <Button asChild>
-                <Link href="https://www.blogger.com" target="_blank" rel="noopener noreferrer">
-                    Read The Blog on Blogger.com
-                </Link>
-            </Button>
+        <div className="max-w-3xl mx-auto mt-8 pt-8 border-t space-y-6">
+            <div className="text-center">
+                <Button asChild>
+                    <Link href="https://www.blogger.com" target="_blank" rel="noopener noreferrer">
+                        Read The Blog on Blogger.com
+                    </Link>
+                </Button>
+            </div>
+            <NewsPostShareButtons post={postForSharing} isFullPage={true} />
         </div>
       </div>
     </article>
