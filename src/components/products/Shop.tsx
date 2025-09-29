@@ -113,62 +113,68 @@ export function Shop({ allProducts }: ShopProps) {
 
   if (!mounted) {
     return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+            <h1 className="text-4xl font-headline">Shop {pageTitle}</h1>
+            <p className="mt-2 text-muted-foreground">Discover our collection of timeless pieces.</p>
+        </div>
         <div className="flex flex-col lg:flex-row gap-8">
             <aside className="w-full lg:w-1/4 lg:max-w-xs"><Skeleton className="h-[500px] w-full" /></aside>
             <main className="w-full"><ProductGridSkeleton /></main>
         </div>
+    </div>
     )
   }
 
   return (
-    <>
-    <div className="text-center mb-8">
+    <div className="container mx-auto px-4 py-8">
+      <div className="text-center mb-8">
         <h1 className="text-4xl font-headline">Shop {pageTitle}</h1>
         <p className="mt-2 text-muted-foreground">Discover our collection of timeless pieces.</p>
-    </div>
-    <div className="flex flex-col lg:flex-row gap-8">
-      <ProductFilters filters={filters} setFilters={setFilters} allProducts={allProducts} />
-      <main className="w-full">
-          {isLoading ? <ProductGridSkeleton /> : 
-              paginatedProducts.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
-                      {paginatedProducts.map(product => (
-                      <ProductCard key={product.id} product={product} />
-                      ))}
-                  </div>
-              ) : (
-                  <div className="text-center py-20">
-                      <p className="text-lg text-muted-foreground">No products found matching your criteria.</p>
-                  </div>
-              )
-          }
-        {totalPages > 1 && !isLoading && (
-           <Pagination className="mt-12">
-            <PaginationContent>
-              <PaginationItem>
-                <Button variant="ghost" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
-                  <PaginationPrevious href="#" onClick={(e) => e.preventDefault()} />
-                </Button>
-              </PaginationItem>
-              
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                <PaginationItem key={page}>
-                   <Button variant={currentPage === page ? 'default' : 'ghost'} onClick={() => handlePageChange(page)}>
-                    {page}
+      </div>
+      <div className="flex flex-col lg:flex-row gap-8">
+        <ProductFilters filters={filters} setFilters={setFilters} allProducts={allProducts} />
+        <main className="w-full">
+            {isLoading ? <ProductGridSkeleton /> : 
+                paginatedProducts.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
+                        {paginatedProducts.map(product => (
+                        <ProductCard key={product.id} product={product} />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-center py-20">
+                        <p className="text-lg text-muted-foreground">No products found matching your criteria.</p>
+                    </div>
+                )
+            }
+          {totalPages > 1 && !isLoading && (
+            <Pagination className="mt-12">
+              <PaginationContent>
+                <PaginationItem>
+                  <Button variant="ghost" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+                    <PaginationPrevious href="#" onClick={(e) => e.preventDefault()} />
                   </Button>
                 </PaginationItem>
-              ))}
+                
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                  <PaginationItem key={page}>
+                    <Button variant={currentPage === page ? 'default' : 'ghost'} onClick={() => handlePageChange(page)}>
+                      {page}
+                    </Button>
+                  </PaginationItem>
+                ))}
 
-              <PaginationItem>
-                <Button variant="ghost" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
-                  <PaginationNext href="#" onClick={(e) => e.preventDefault()}/>
-                </Button>
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        )}
-      </main>
+                <PaginationItem>
+                  <Button variant="ghost" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+                    <PaginationNext href="#" onClick={(e) => e.preventDefault()}/>
+                  </Button>
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          )}
+        </main>
+      </div>
     </div>
-    </>
   );
 }
