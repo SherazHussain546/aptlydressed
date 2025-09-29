@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useRef, useActionState } from "react";
@@ -76,6 +77,7 @@ export function Footer() {
                 <li><Link href="/sustainability" className="text-muted-foreground hover:text-primary">Sustainability</Link></li>
                 <li><Link href="/collaborate" className="text-muted-foreground hover:text-primary">Collaborate</Link></li>
                 <li><Link href="/contact" className="text-muted-foreground hover:text-primary">Contact</Link></li>
+                <li><Link href="/affiliate-disclosure" className="text-muted-foreground hover:text-primary">Affiliate Disclosure</Link></li>
               </ul>
             </div>
           </div>
