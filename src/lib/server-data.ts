@@ -22,7 +22,7 @@ async function loadProductsFromGoogleSheet(): Promise<Product[]> {
           const num = parseFloat(value);
           return isNaN(num) ? 0 : num;
         }
-        if (['imageUrls', 'tags', 'sizes', 'details'].includes(context.column as string)) {
+        if (['tags', 'sizes', 'details'].includes(context.column as string)) {
             if (!value) return [];
             return value.split(',').map(item => item.trim()).filter(Boolean);
         }
@@ -33,13 +33,16 @@ async function loadProductsFromGoogleSheet(): Promise<Product[]> {
             return { name: name?.trim(), hex: hex?.trim() };
           }).filter(c => c.name && c.hex);
         }
+        if (context.column === 'imageUrls') {
+            if (!value) return [];
+            return value.split(',').map(item => item.trim()).filter(Boolean);
+        }
         return value;
       }
     });
 
     return records.map((record: any) => ({
       ...record,
-      imageUrls: Array.isArray(record.imageUrls) ? record.imageUrls : (record.imageUrls || '').split(',').map((item: string) => item.trim()).filter(Boolean),
     })) as Product[];
 
   } catch (error) {
@@ -48,24 +51,44 @@ async function loadProductsFromGoogleSheet(): Promise<Product[]> {
   }
 }
 
+async function loadCollectionsFromGoogleSheet(): Promise<Collection[]> {
+    const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vScAauPk8eWS8LSllwq9Bo3aWi9UPlouqb2p0fi3cLKKWv7MeFCS2eO7Tlqbzf1C4BO4bqTS1MnpgbH/pub?gid=158529845&output=csv';
+    try {
+        const response = await fetch(sheetUrl, { next: { revalidate: 3600 } });
+        if (!response.ok) {
+            throw new Error(`Failed to fetch Collections Google Sheet: ${response.statusText}`);
+        }
+        const csvData = await response.text();
+        const records = parse(csvData, {
+            columns: true,
+            skip_empty_lines: true,
+            trim: true,
+        });
+        return records as Collection[];
+    } catch (error) {
+        console.error("Error loading collections from Google Sheet:", error);
+        // Fallback to dynamic generation if the sheet is not available
+        const products = await productsPromise;
+        const categories = Array.from(new Set(products.map(p => p.category)));
+        const collectionImageMapping: Record<string, string> = {
+            "Womens": "collection-women",
+            "Mens": "collection-men",
+            "Essentials": "collection-essentials",
+        };
+        const defaultImage = "collection-essentials";
+
+        return categories.map((category, index) => ({
+            id: (index + 1).toString(),
+            title: `${category}`,
+            href: `/shop?category=${category}`,
+            imageId: collectionImageMapping[category] || defaultImage,
+        }));
+    }
+}
+
 export const productsPromise: Promise<Product[]> = loadProductsFromGoogleSheet();
 
 // This function will dynamically generate collections from product categories
 export async function getCollections(): Promise<Collection[]> {
-    const products = await productsPromise;
-    const categories = Array.from(new Set(products.map(p => p.category)));
-
-    const collectionImageMapping: Record<string, string> = {
-        "Womens": "collection-women",
-        "Mens": "collection-men",
-        "Essentials": "collection-essentials",
-    };
-    const defaultImage = "collection-essentials";
-
-    return categories.map((category, index) => ({
-        id: (index + 1).toString(),
-        title: `${category}`,
-        href: `/shop?category=${category}`,
-        imageId: collectionImageMapping[category] || defaultImage,
-    }));
+    return loadCollectionsFromGoogleSheet();
 }
