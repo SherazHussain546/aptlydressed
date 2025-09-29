@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import { useEffect, useRef, useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { Twitter, Instagram, Facebook, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "@/components/icons/Logo";
@@ -20,7 +20,7 @@ function SubmitButton() {
 }
 
 export function Footer() {
-  const [state, formAction] = useFormState(subscribeToNewsletter, { message: '' });
+  const [state, formAction] = useActionState(subscribeToNewsletter, { message: '' });
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
 
