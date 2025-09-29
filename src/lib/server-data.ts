@@ -23,7 +23,7 @@ async function loadProductsFromGoogleSheet(): Promise<Product[]> {
           const num = parseFloat(value);
           return isNaN(num) ? (context.column === 'salePrice' ? undefined : 0) : num;
         }
-        if (['tags', 'sizes', 'details', 'imageUrls'].includes(context.column as string)) {
+        if (['tags', 'sizes', 'details', 'imageIds'].includes(context.column as string)) {
             if (!value) return [];
             return value.split(',').map(item => item.trim()).filter(Boolean);
         }

@@ -8,7 +8,7 @@ export interface Product {
   brand: string;
   price: number;
   salePrice?: number;
-  imageUrls: string[];
+  imageIds: string[];
   description: string;
   category: 'Womens' | 'Mens' | 'Essentials' | string;
   tags: ('New Arrival' | 'Featured' | 'Best Seller' | string)[];

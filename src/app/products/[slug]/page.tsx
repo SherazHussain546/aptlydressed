@@ -17,6 +17,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 import { Card, CardContent } from '@/components/ui/card';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 type Props = {
   params: { slug: string }
@@ -32,20 +33,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
   }
 
+  const primaryImage = PlaceHolderImages.find(p => p.id === product.imageIds[0]);
+
   return {
     title: product.name,
     description: product.description,
     openGraph: {
       title: product.name,
       description: product.description,
-      images: [
+      images: primaryImage ? [
         {
-          url: product.imageUrls[0],
+          url: primaryImage.imageUrl,
           width: 800,
           height: 1000,
           alt: product.name,
         },
-      ],
+      ] : [],
     },
   }
 }
@@ -60,6 +63,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
   
   const onSale = product.salePrice && product.salePrice < product.price;
   const relatedProducts = products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
+  const productImages = product.imageIds.map(id => PlaceHolderImages.find(p => p.id === id)).filter(Boolean);
 
   return (
     <>
@@ -69,23 +73,26 @@ export default async function ProductPage({ params }: { params: { slug: string }
         <div className="md:sticky md:top-24 h-max">
             <Carousel>
               <CarouselContent>
-                {product.imageUrls.map((imageUrl, index) => (
+                {productImages.map((image, index) => (
                   <CarouselItem key={index}>
                     <Card className="overflow-hidden">
                       <CardContent className="p-0 aspect-[4/5] relative">
-                        <Image
-                          src={imageUrl}
-                          alt={`${product.name} - view ${index + 1}`}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 768px) 100vw, 50vw"
-                        />
+                        {image && (
+                            <Image
+                                src={image.imageUrl}
+                                alt={`${product.name} - view ${index + 1}`}
+                                fill
+                                className="object-cover"
+                                sizes="(max-width: 768px) 100vw, 50vw"
+                                data-ai-hint={image.imageHint}
+                            />
+                        )}
                       </CardContent>
                     </Card>
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              {product.imageUrls.length > 1 && (
+              {productImages.length > 1 && (
                 <>
                   <CarouselPrevious className="left-4"/>
                   <CarouselNext className="right-4"/>

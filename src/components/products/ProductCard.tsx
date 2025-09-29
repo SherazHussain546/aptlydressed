@@ -5,26 +5,30 @@ import Link from 'next/link';
 import type { Product } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 interface ProductCardProps {
   product: Product;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const primaryImageUrl = product.imageUrls && product.imageUrls.length > 0 ? product.imageUrls[0] : null;
+  const primaryImage = product.imageIds && product.imageIds.length > 0
+    ? PlaceHolderImages.find(p => p.id === product.imageIds[0])
+    : null;
   const onSale = product.salePrice && product.salePrice < product.price;
 
   return (
     <Link href={`/products/${product.slug}`} className="group">
       <div className="overflow-hidden rounded-lg">
         <div className="relative aspect-[4/5] bg-muted">
-          {primaryImageUrl ? (
+          {primaryImage ? (
             <Image
-              src={primaryImageUrl}
+              src={primaryImage.imageUrl}
               alt={product.name}
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-105"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              data-ai-hint={primaryImage.imageHint}
             />
           ) : (
              <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground">
