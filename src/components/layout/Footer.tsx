@@ -1,11 +1,42 @@
+"use client";
 
-import { Twitter, Instagram, Facebook } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { useFormState, useFormStatus } from "react-dom";
+import { Twitter, Instagram, Facebook, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "@/components/icons/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { subscribeToNewsletter } from "@/app/actions/newsletter";
+import { useToast } from "@/hooks/use-toast";
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return (
+    <Button type="submit" className="bg-primary hover:bg-primary/90" disabled={pending}>
+      {pending ? <Loader2 className="animate-spin" /> : 'Subscribe'}
+    </Button>
+  );
+}
 
 export function Footer() {
+  const [state, formAction] = useFormState(subscribeToNewsletter, { message: '' });
+  const { toast } = useToast();
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (state?.message) {
+      toast({
+        title: state.message.includes('Thank you') ? 'Success' : 'Heads up!',
+        description: state.message,
+        variant: state.message.includes('Thank you') ? 'default' : 'destructive',
+      });
+      if (state.message.includes('Thank you')) {
+        formRef.current?.reset();
+      }
+    }
+  }, [state, toast]);
+  
   return (
     <footer className="bg-muted">
       <div className="container mx-auto px-4 py-12">
@@ -50,9 +81,9 @@ export function Footer() {
           <div className="col-span-1 md:col-span-4 lg:col-span-1">
             <h3 className="font-semibold text-foreground">Join our newsletter</h3>
             <p className="mt-2 text-muted-foreground">Get style inspiration and exclusive updates.</p>
-            <form className="mt-4 flex gap-2">
-              <Input type="email" placeholder="Enter your email" className="bg-background" />
-              <Button type="submit" className="bg-primary hover:bg-primary/90">Subscribe</Button>
+            <form ref={formRef} action={formAction} className="mt-4 flex gap-2">
+              <Input type="email" name="email" placeholder="Enter your email" className="bg-background" required />
+              <SubmitButton />
             </form>
           </div>
         </div>
