@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useMemo, useEffect } from 'react';
@@ -40,12 +41,13 @@ interface ShopProps {
 export function Shop({ allProducts }: ShopProps) {
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get('category') || 'All';
+  const maxPrice = Math.max(...allProducts.map(p => p.price), 300);
   
   const [filters, setFilters] = useState({
     category: initialCategory,
     sizes: [] as string[],
     colors: [] as string[],
-    priceRange: [0, 1000] as [number, number], // Increased price range
+    priceRange: [0, maxPrice] as [number, number],
     sortBy: 'newest',
   });
   const [currentPage, setCurrentPage] = useState(1);

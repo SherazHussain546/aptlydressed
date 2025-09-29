@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useMemo } from 'react';
@@ -5,7 +6,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import {
   Select,
@@ -15,6 +15,9 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import type { Product } from '@/lib/types';
+import { cn } from '@/lib/utils';
+import { Button } from '../ui/button';
+import { Check } from 'lucide-react';
 
 
 interface ProductFiltersProps {
@@ -28,9 +31,15 @@ export function ProductFilters({ filters, setFilters, allProducts }: ProductFilt
     const {allCategories, allSizes, allColors, maxPrice} = useMemo(() => {
         const categories = ['All', ...Array.from(new Set(allProducts.map(p => p.category)))];
         const sizes = Array.from(new Set(allProducts.flatMap(p => p.sizes))).sort();
-        const colors = Array.from(new Set(allProducts.flatMap(p => p.colors.map(c => c.name)))).sort();
+        const colors = Array.from(new Set(allProducts.flatMap(p => p.colors.map(c => c.name)))).map(name => {
+            const colorInfo = allProducts.find(p => p.colors.some(c => c.name === name))?.colors.find(c => c.name === name);
+            return { name, hex: colorInfo?.hex || '#000000' };
+        }).sort((a,b) => a.name.localeCompare(b.name));
+        
+        const uniqueColors = Array.from(new Map(colors.map(item => [item.name, item])).values());
+        
         const price = Math.max(...allProducts.map(p => p.price), 300);
-        return { allCategories: categories, allSizes: sizes, allColors: colors, maxPrice: price };
+        return { allCategories: categories, allSizes: sizes, allColors: uniqueColors, maxPrice: price };
     }, [allProducts]);
 
     const handleCategoryChange = (value: string) => {
@@ -99,7 +108,7 @@ export function ProductFilters({ filters, setFilters, allProducts }: ProductFilt
                             <AccordionContent>
                                 <RadioGroup value={filters.category} onValueChange={handleCategoryChange} className="space-y-1">
                                     {allCategories.map(category => (
-                                        <div key={category} className="flex items-center space-x-2 p-1 -m-1 rounded-md transition-colors hover:bg-accent">
+                                        <div key={category} className="flex items-center space-x-2 p-1 -m-1 rounded-md transition-colors hover:bg-accent/50">
                                             <RadioGroupItem value={category} id={`cat-${category}`} />
                                             <Label htmlFor={`cat-${category}`} className="font-normal cursor-pointer flex-1">{category}</Label>
                                         </div>
@@ -110,16 +119,17 @@ export function ProductFilters({ filters, setFilters, allProducts }: ProductFilt
                         <AccordionItem value="size">
                             <AccordionTrigger>Size</AccordionTrigger>
                             <AccordionContent>
-                                <div className="grid grid-cols-3 gap-2">
+                                <div className="grid grid-cols-4 gap-2 pt-2">
                                     {allSizes.map(size => (
-                                        <div key={size} className="flex items-center space-x-2 p-1 -m-1 rounded-md transition-colors hover:bg-accent">
-                                            <Checkbox
-                                                id={`size-${size}`}
-                                                checked={filters.sizes.includes(size)}
-                                                onCheckedChange={() => handleSizeChange(size)}
-                                            />
-                                            <Label htmlFor={`size-${size}`} className="font-normal cursor-pointer flex-1">{size}</Label>
-                                        </div>
+                                        <Button
+                                            key={size}
+                                            variant={filters.sizes.includes(size) ? 'default' : 'outline'}
+                                            size="sm"
+                                            onClick={() => handleSizeChange(size)}
+                                            className="font-normal"
+                                        >
+                                            {size}
+                                        </Button>
                                     ))}
                                 </div>
                             </AccordionContent>
@@ -127,16 +137,24 @@ export function ProductFilters({ filters, setFilters, allProducts }: ProductFilt
                         <AccordionItem value="color">
                             <AccordionTrigger>Color</AccordionTrigger>
                             <AccordionContent>
-                                <div className="space-y-1">
+                                <div className="flex flex-wrap gap-3 pt-2">
                                     {allColors.map(color => (
-                                        <div key={color} className="flex items-center space-x-2 p-1 -m-1 rounded-md transition-colors hover:bg-accent">
-                                            <Checkbox
-                                                id={`color-${color}`}
-                                                checked={filters.colors.includes(color)}
-                                                onCheckedChange={() => handleColorChange(color)}
-                                            />
-                                            <Label htmlFor={`color-${color}`} className="font-normal cursor-pointer flex-1">{color}</Label>
-                                        </div>
+                                        <button
+                                            key={color.name}
+                                            title={color.name}
+                                            onClick={() => handleColorChange(color.name)}
+                                            className={cn(
+                                                "h-8 w-8 rounded-full border-2 transition-all",
+                                                filters.colors.includes(color.name) ? 'border-primary scale-110' : 'border-transparent'
+                                            )}
+                                        >
+                                            <div
+                                                className="h-full w-full rounded-full border border-border/20 flex items-center justify-center"
+                                                style={{ backgroundColor: color.hex }}
+                                            >
+                                            {filters.colors.includes(color.name) && <Check className="h-4 w-4 text-white mix-blend-difference" />}
+                                            </div>
+                                        </button>
                                     ))}
                                 </div>
                             </AccordionContent>
@@ -150,6 +168,7 @@ export function ProductFilters({ filters, setFilters, allProducts }: ProductFilt
                                         max={maxPrice}
                                         step={10}
                                         onValueCommit={handlePriceChange}
+                                        value={filters.priceRange}
                                     />
                                     <div className="flex justify-between text-sm text-muted-foreground mt-2">
                                         <span>${filters.priceRange[0]}</span>
