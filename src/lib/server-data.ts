@@ -4,6 +4,7 @@ import type { Product, Collection } from './types';
 import { parse } from 'csv-parse/sync';
 
 async function loadProductsFromGoogleSheet(): Promise<Product[]> {
+  // Corresponds to the first sheet of the document
   const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vScAauPk8eWS8LSllwq9Bo3aWi9UPlouqb2p0fi3cLKKWv7MeFCS2eO7Tlqbzf1C4BO4bqTS1MnpgbH/pub?output=csv';
   
   try {
@@ -49,6 +50,7 @@ async function loadProductsFromGoogleSheet(): Promise<Product[]> {
 }
 
 async function loadCollectionsFromGoogleSheet(): Promise<Collection[]> {
+    // This URL must point to the 'Collections' sheet specifically, using its unique gid.
     const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vScAauPk8eWS8LSllwq9Bo3aWi9UPlouqb2p0fi3cLKKWv7MeFCS2eO7Tlqbzf1C4BO4bqTS1MnpgbH/pub?gid=158529845&output=csv';
     const response = await fetch(sheetUrl, { next: { revalidate: 3600 } });
     if (!response.ok) {
@@ -72,10 +74,11 @@ export async function getCollections(): Promise<Collection[]> {
             return collections;
         }
     } catch (error) {
-        console.error("Error loading collections from Google Sheet, falling back to dynamic generation:", error);
+        console.error("Could not load collections from Google Sheet, falling back to dynamic generation:", error);
     }
 
     // Fallback if sheet fails or is empty
+    console.log("Generating collections dynamically from product categories.");
     const products = await productsPromise;
     const categories = Array.from(new Set(products.map(p => p.category)));
     const collectionImageMapping: Record<string, string> = {
