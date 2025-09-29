@@ -1,3 +1,5 @@
+
+'use client';
 import Link from "next/link";
 import { Search, User } from "lucide-react";
 
@@ -5,12 +7,13 @@ import { Logo } from "@/components/icons/Logo";
 import { Button } from "@/components/ui/button";
 import { HeaderClient } from "./HeaderClient";
 
-export const mainNavLinks = [
-  { href: "/news-and-events", label: "News & Events" },
-  { href: "/contact", label: "Contact" },
-];
-
 export function Header() {
+  const mainNavLinks = [
+    { href: "/about", label: "About" },
+    { href: "/sustainability", label: "Sustainability" },
+    { href: "/contact", label: "Contact" },
+  ];
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">

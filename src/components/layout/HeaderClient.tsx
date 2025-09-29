@@ -19,13 +19,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-export const shopCategories = [
-    { href: "/shop", label: "All Products" },
-    { href: "/shop?category=Womens", label: "Women" },
-    { href: "/shop?category=Mens", label: "Men" },
-    { href: "/shop?category=Essentials", label: "Essentials" },
-];
-
 type NavLink = {
   href: string;
   label: string;
@@ -37,6 +30,12 @@ interface HeaderClientProps {
 }
 
 export function HeaderClient({ mainNavLinks, showShopDropdown = false }: HeaderClientProps) {
+  const shopCategories = [
+      { href: "/shop", label: "All Products" },
+      { href: "/shop?category=Womens", label: "Women" },
+      { href: "/shop?category=Mens", label: "Men" },
+      { href: "/shop?category=Essentials", label: "Essentials" },
+  ];
 
   if (showShopDropdown) {
     return (
