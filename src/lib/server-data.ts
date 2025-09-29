@@ -69,14 +69,16 @@ export const productsPromise: Promise<Product[]> = loadProductsFromGoogleSheet()
 export async function getCollections(): Promise<Collection[]> {
     try {
         const collections = await loadCollectionsFromGoogleSheet();
+        // If collections are loaded successfully and the array is not empty, return them.
         if (collections && collections.length > 0) {
             return collections;
         }
     } catch (error) {
+        // Log the error but don't re-throw it, allowing fallback to proceed.
         console.error("Error loading collections from Google Sheet, falling back to dynamic generation:", error);
     }
 
-    // Fallback to dynamic generation
+    // Fallback to dynamic generation if the try block fails or returns an empty array.
     const products = await productsPromise;
     const categories = Array.from(new Set(products.map(p => p.category)));
     const collectionImageMapping: Record<string, string> = {
