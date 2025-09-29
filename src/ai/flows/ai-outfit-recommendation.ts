@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -11,7 +12,7 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-export const OutfitRecommendationInputSchema = z.object({
+const OutfitRecommendationInputSchema = z.object({
   productName: z.string().describe('The name of the main product.'),
   productDescription: z.string().describe('The description of the main product.'),
   allProductNames: z
@@ -20,7 +21,7 @@ export const OutfitRecommendationInputSchema = z.object({
 });
 export type OutfitRecommendationInput = z.infer<typeof OutfitRecommendationInputSchema>;
 
-export const OutfitRecommendationOutputSchema = z.object({
+const OutfitRecommendationOutputSchema = z.object({
   recommendations: z
     .array(z.string())
     .describe(
