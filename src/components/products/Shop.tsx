@@ -21,7 +21,7 @@ const PRODUCTS_PER_PAGE = 12;
 
 function ProductGridSkeleton() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
       {Array.from({ length: PRODUCTS_PER_PAGE }).map((_, i) => (
         <div key={i} className="space-y-2">
           <Skeleton className="aspect-[4/5] w-full" />
@@ -41,6 +41,7 @@ interface ShopProps {
 export function Shop({ allProducts }: ShopProps) {
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get('category') || 'All';
+  const initialTags = searchParams.get('tags')?.split(',') || [];
   const maxPrice = Math.max(...allProducts.map(p => p.price), 300);
   
   const [filters, setFilters] = useState({
@@ -49,9 +50,9 @@ export function Shop({ allProducts }: ShopProps) {
     colors: [] as string[],
     priceRange: [0, maxPrice] as [number, number],
     sortBy: 'newest',
+    tags: initialTags as string[],
   });
   const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -61,32 +62,29 @@ export function Shop({ allProducts }: ShopProps) {
   const filteredProducts = useMemo(() => {
     let filtered: Product[] = [...allProducts];
 
-    // Category filter
     if (filters.category !== 'All') {
       filtered = filtered.filter(p => p.category === filters.category);
     }
     
-    // Size filter
+    if (filters.tags.length > 0) {
+      filtered = filtered.filter(p => filters.tags.every(tag => p.tags.includes(tag)));
+    }
+    
     if (filters.sizes.length > 0) {
       filtered = filtered.filter(p => p.sizes.some(s => filters.sizes.includes(s)));
     }
     
-    // Color filter
     if (filters.colors.length > 0) {
       filtered = filtered.filter(p => p.colors.some(c => filters.colors.includes(c.name)));
     }
 
-    // Price range filter
     filtered = filtered.filter(p => p.price >= filters.priceRange[0] && p.price <= filters.priceRange[1]);
 
-    // Sorting
     if (filters.sortBy === 'price-asc') {
       filtered.sort((a, b) => a.price - b.price);
     } else if (filters.sortBy === 'price-desc') {
       filtered.sort((a, b) => b.price - a.price);
     } else if (filters.sortBy === 'newest') {
-      // Assuming 'id' can represent recency. Or you can add a date field.
-      // For now, let's sort by ID descending as a proxy for newest.
       filtered.sort((a, b) => (b.id > a.id ? 1 : -1));
     }
 
@@ -110,19 +108,19 @@ export function Shop({ allProducts }: ShopProps) {
     }
   }
 
-  // To avoid hydration mismatch on category heading
-  const pageTitle = filters.category !== 'All' ? filters.category : '';
+  const pageTitle = filters.category !== 'All' ? filters.category : 'All Products';
+  const pageDescription = filters.tags.includes('New Arrival') ? 'The latest additions to our curated collection.' : 'Discover our collection of timeless pieces.';
 
   if (!mounted) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-8">
             <h1 className="text-4xl font-headline">Shop {pageTitle}</h1>
-            <p className="mt-2 text-muted-foreground">Discover our collection of timeless pieces.</p>
+            <p className="mt-2 text-muted-foreground">{pageDescription}</p>
         </div>
-        <div className="flex flex-col lg:flex-row gap-8">
-            <aside className="w-full lg:w-1/4 lg:max-w-xs"><Skeleton className="h-[500px] w-full" /></aside>
-            <main className="w-full"><ProductGridSkeleton /></main>
+        <div className="flex flex-col gap-8">
+            <aside><Skeleton className="h-10 w-full" /></aside>
+            <main><ProductGridSkeleton /></main>
         </div>
     </div>
     )
@@ -132,25 +130,23 @@ export function Shop({ allProducts }: ShopProps) {
     <div className="container mx-auto px-4 py-8">
       <div className="text-center mb-8">
         <h1 className="text-4xl font-headline">Shop {pageTitle}</h1>
-        <p className="mt-2 text-muted-foreground">Discover our collection of timeless pieces.</p>
+        <p className="mt-2 text-muted-foreground">{pageDescription}</p>
       </div>
-      <div className="flex flex-col lg:flex-row gap-8">
         <ProductFilters filters={filters} setFilters={setFilters} allProducts={allProducts} />
-        <main className="w-full">
-            {isLoading ? <ProductGridSkeleton /> : 
-                paginatedProducts.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
-                        {paginatedProducts.map(product => (
-                        <ProductCard key={product.id} product={product} />
-                        ))}
-                    </div>
-                ) : (
-                    <div className="text-center py-20">
-                        <p className="text-lg text-muted-foreground">No products found matching your criteria.</p>
-                    </div>
-                )
+        <main className="w-full mt-8">
+            {paginatedProducts.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                    {paginatedProducts.map(product => (
+                    <ProductCard key={product.id} product={product} />
+                    ))}
+                </div>
+            ) : (
+                <div className="text-center py-20">
+                    <p className="text-lg text-muted-foreground">No products found matching your criteria.</p>
+                </div>
+            )
             }
-          {totalPages > 1 && !isLoading && (
+          {totalPages > 1 && (
             <Pagination className="mt-12">
               <PaginationContent>
                 <PaginationItem>
@@ -176,7 +172,6 @@ export function Shop({ allProducts }: ShopProps) {
             </Pagination>
           )}
         </main>
-      </div>
     </div>
   );
 }
