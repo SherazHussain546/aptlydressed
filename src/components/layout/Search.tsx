@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -26,12 +27,14 @@ export function Search() {
   const debouncedQuery = useDebounce(query, 300);
 
   useEffect(() => {
-    // Asynchronously load the products on the client
+    // Asynchronously load the products on the client via API route
     const fetchProducts = async () => {
       try {
-        // This is a dynamic import, which is client-safe
-        const { productsPromise } = await import('@/lib/server-data');
-        const products = await productsPromise;
+        const response = await fetch('/api/products');
+        if (!response.ok) {
+          throw new Error('Failed to fetch products');
+        }
+        const products = await response.json();
         setAllProducts(products);
       } catch (error) {
         console.error("Failed to load products for search", error);
