@@ -5,7 +5,7 @@ import { parse } from 'csv-parse/sync';
 
 async function loadProductsFromGoogleSheet(): Promise<Product[]> {
   // Corresponds to the first sheet of the document
-  const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vScAauPk8eWS8LSllwq9Bo3aWi9UPlouqb2p0fi3cLKKWv7MeFCS2eO7Tlqbzf1C4BO4bqTS1MnpgbH/pub?output=csv';
+  const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vScAauPk8eWS8LSllwq9Bo3aWi9UPlouqb2p0fi3cLKKWv7MeFCS2eO7Tlqbzf1C4BO4bqTS1MnpgbH/pub?gid=0&output=csv';
   
   try {
     const response = await fetch(sheetUrl, { next: { revalidate: 3600 } }); // Re-fetch every hour
@@ -51,7 +51,7 @@ async function loadProductsFromGoogleSheet(): Promise<Product[]> {
 
 async function loadCollectionsFromGoogleSheet(): Promise<Collection[]> {
     // This URL must point to the 'Collections' sheet specifically, using its unique gid.
-    const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vScAauPk8eWS8LSllwq9Bo3aWi9UPlouqb2p0fi3cLKKWv7MeFCS2eO7Tlqbzf1C4BO4bqTS1MnpgbH/pub?gid=158529845&output=csv';
+    const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vScAauPk8eWS8LSllwq9Bo3aWi9UPlouqb2p0fi3cLKKWv7MeFCS2eO7Tlqbzf1C4BO4bqTS1MnpgbH/pub?gid=388228536&single=true&output=csv';
     const response = await fetch(sheetUrl, { next: { revalidate: 3600 } });
     if (!response.ok) {
         throw new Error(`Failed to fetch Collections Google Sheet: ${response.statusText}`);
