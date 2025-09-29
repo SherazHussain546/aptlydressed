@@ -31,6 +31,12 @@
       "imageHint": "natural fabrics"
     },
     {
+      "id": "contact-hero",
+      "description": "A stylish flat lay of a desk with a laptop, notebook, and coffee.",
+      "imageUrl": "https://images.unsplash.com/photo-1455849318743-b2233052fcff?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjb250YWN0JTIwdXN8ZW58MHx8fHwxNzYxNjM3Mjg4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "contact us"
+    },
+    {
       "id": "collection-women",
       "description": "A collection of women's apparel hanging on a rack.",
       "imageUrl": "https://images.unsplash.com/photo-1554412933-514a83d2f3c8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx3b21lbnMlMjBmYXNoaW9ufGVufDB8fHx8MTc1OTA4MTcyNHww&ixlib=rb-4.1.0&q=80&w=1080",
