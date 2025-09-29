@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import type { Metadata } from 'next';
 import { blogPosts, placeholderImages } from '@/lib/data';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 type Props = {
   params: { slug: string }
@@ -71,6 +73,13 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
           className="prose lg:prose-lg max-w-3xl mx-auto prose-h2:font-headline prose-p:text-foreground/80 prose-a:text-primary hover:prose-a:text-primary/80"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
+        <div className="max-w-3xl mx-auto mt-8 text-center">
+            <Button asChild>
+                <Link href="https://www.blogger.com" target="_blank" rel="noopener noreferrer">
+                    Read The Blog on Blogger.com
+                </Link>
+            </Button>
+        </div>
       </div>
     </article>
   );
