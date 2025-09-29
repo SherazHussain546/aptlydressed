@@ -2,10 +2,16 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { Twitter, Facebook, Linkedin, Copy } from 'lucide-react';
+import { Twitter, Facebook, Linkedin, Copy, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import type { NewsPost } from '@/lib/types';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export function NewsPostShareButtons({ post, isFullPage = false }: { post: NewsPost, isFullPage?: boolean }) {
   const pathname = usePathname();
@@ -25,6 +31,43 @@ export function NewsPostShareButtons({ post, isFullPage = false }: { post: NewsP
         title: "Link Copied!",
         description: "The link to this post has been copied to your clipboard.",
     });
+  }
+  
+  if (!isFullPage) {
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                    <MoreHorizontal className="h-5 w-5" />
+                    <span className="sr-only">Share Post</span>
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={copyLink} disabled={!shareUrl}>
+                    <Copy className="mr-2 h-4 w-4" />
+                    <span>Copy link</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(post.title)}`} target="_blank" rel="noopener noreferrer">
+                        <Twitter className="mr-2 h-4 w-4" />
+                        <span>Share on Twitter</span>
+                    </a>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer">
+                        <Facebook className="mr-2 h-4 w-4" />
+                        <span>Share on Facebook</span>
+                    </a>
+                </DropdownMenuItem>
+                 <DropdownMenuItem asChild>
+                    <a href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(post.title)}`} target="_blank" rel="noopener noreferrer">
+                        <Linkedin className="mr-2 h-4 w-4" />
+                        <span>Share on LinkedIn</span>
+                    </a>
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
+    )
   }
 
   return (

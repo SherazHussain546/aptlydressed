@@ -24,11 +24,12 @@ export default function NewsAndEventsPage() {
           return (
             <Card key={post.slug} className="overflow-hidden">
                 <CardHeader>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-start justify-between gap-4">
                         <div>
                             <p className="font-semibold">APTLY DRESSED</p>
                             <p className="text-sm text-muted-foreground">{new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                         </div>
+                        <NewsPostShareButtons post={post} />
                     </div>
                 </CardHeader>
                 {image && (
@@ -61,7 +62,6 @@ export default function NewsAndEventsPage() {
                     View Post & Comments
                   </Link>
                 </Button>
-                <NewsPostShareButtons post={post} />
               </CardFooter>
             </Card>
           );
