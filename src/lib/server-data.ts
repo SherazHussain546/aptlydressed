@@ -64,22 +64,8 @@ async function loadCollectionsFromGoogleSheet(): Promise<Collection[]> {
         return records as Collection[];
     } catch (error) {
         console.error("Error loading collections from Google Sheet:", error);
-        // Fallback to dynamic generation if the sheet is not available
-        const products = await productsPromise;
-        const categories = Array.from(new Set(products.map(p => p.category)));
-        const collectionImageMapping: Record<string, string> = {
-            "Womens": "collection-women",
-            "Mens": "collection-men",
-            "Essentials": "collection-essentials",
-        };
-        const defaultImage = "collection-essentials";
-
-        return categories.map((category, index) => ({
-            id: (index + 1).toString(),
-            title: `${category}`,
-            href: `/shop?category=${category}`,
-            imageId: collectionImageMapping[category] || defaultImage,
-        }));
+        // Return empty array on error, so the fallback can be triggered.
+        return [];
     }
 }
 
@@ -87,6 +73,25 @@ export const productsPromise: Promise<Product[]> = loadProductsFromGoogleSheet()
 
 // This function will dynamically generate collections from product categories
 export async function getCollections(): Promise<Collection[]> {
-    return loadCollectionsFromGoogleSheet();
-}
+    const collections = await loadCollectionsFromGoogleSheet();
+    if (collections && collections.length > 0) {
+        return collections;
+    }
 
+    // Fallback to dynamic generation if the sheet is empty or fails to load
+    const products = await productsPromise;
+    const categories = Array.from(new Set(products.map(p => p.category)));
+    const collectionImageMapping: Record<string, string> = {
+        "Womens": "collection-women",
+        "Mens": "collection-men",
+        "Essentials": "collection-essentials",
+    };
+    const defaultImage = "collection-essentials";
+
+    return categories.map((category, index) => ({
+        id: (index + 1).toString(),
+        title: `${category}`,
+        href: `/shop?category=${category}`,
+        imageId: collectionImageMapping[category] || defaultImage,
+    }));
+}
