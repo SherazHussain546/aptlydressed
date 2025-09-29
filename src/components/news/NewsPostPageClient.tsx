@@ -3,7 +3,6 @@
 
 import Image from 'next/image';
 import { placeholderImages } from '@/lib/data';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import type { NewsPost } from '@/lib/types';
 import { NewsPostShareButtons } from './NewsPostShareButtons';
@@ -17,7 +16,7 @@ export function NewsPostPageClient({ post }: { post: NewsPost }) {
         <header className="mb-8">
             <div className="flex items-center gap-4 mb-4">
                 <div>
-                    <p className="font-semibold">Aptly Dressed</p>
+                    <p className="font-semibold">APTLY DRESSED</p>
                     <p className="text-sm text-muted-foreground">{new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                 </div>
             </div>

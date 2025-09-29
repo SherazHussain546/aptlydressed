@@ -5,9 +5,6 @@ import { newsPosts } from '@/lib/news-data';
 import { placeholderImages } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Logo } from '@/components/icons/Logo';
-import { Twitter, Facebook, Linkedin, Copy } from 'lucide-react';
 import { NewsPostShareButtons } from '@/components/news/NewsPostShareButtons';
 
 
@@ -29,7 +26,7 @@ export default function NewsAndEventsPage() {
                 <CardHeader>
                     <div className="flex items-center gap-4">
                         <div>
-                            <p className="font-semibold">Aptly Dressed</p>
+                            <p className="font-semibold">APTLY DRESSED</p>
                             <p className="text-sm text-muted-foreground">{new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                         </div>
                     </div>
