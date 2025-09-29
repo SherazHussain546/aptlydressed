@@ -21,7 +21,9 @@ import {
 
 const mainNavLinks = [
   { href: "/blog", label: "Blog" },
-  { href: "/#collections", label: "Collections" },
+  { href: "/sustainability", label: "Sustainability" },
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
 ];
 
 const shopCategories = [
