@@ -18,11 +18,12 @@ async function loadProductsFromGoogleSheet(): Promise<Product[]> {
       skip_empty_lines: true,
       trim: true,
       cast: (value, context) => {
-        if (['price', 'rating', 'reviewCount', 'stock'].includes(context.column as string)) {
+        if (['price', 'salePrice', 'rating', 'reviewCount', 'stock'].includes(context.column as string)) {
+          if (value === '' || value === null) return undefined;
           const num = parseFloat(value);
-          return isNaN(num) ? 0 : num;
+          return isNaN(num) ? (context.column === 'salePrice' ? undefined : 0) : num;
         }
-        if (['tags', 'sizes', 'details'].includes(context.column as string)) {
+        if (['tags', 'sizes', 'details', 'imageUrls'].includes(context.column as string)) {
             if (!value) return [];
             return value.split(',').map(item => item.trim()).filter(Boolean);
         }
@@ -32,10 +33,6 @@ async function loadProductsFromGoogleSheet(): Promise<Product[]> {
             const [name, hex] = item.split(':');
             return { name: name?.trim(), hex: hex?.trim() };
           }).filter(c => c.name && c.hex);
-        }
-        if (context.column === 'imageUrls') {
-            if (!value) return [];
-            return value.split(',').map(item => item.trim()).filter(Boolean);
         }
         return value;
       }

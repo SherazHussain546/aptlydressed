@@ -5,7 +5,9 @@ export interface Product {
   id: string;
   slug: string;
   name: string;
+  brand: string;
   price: number;
+  salePrice?: number;
   imageUrls: string[];
   description: string;
   category: 'Womens' | 'Mens' | 'Essentials' | string;

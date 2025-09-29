@@ -57,7 +57,8 @@ export default async function ProductPage({ params }: { params: { slug: string }
   if (!product) {
     notFound();
   }
-
+  
+  const onSale = product.salePrice && product.salePrice < product.price;
   const relatedProducts = products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
 
   return (
@@ -95,9 +96,20 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
         {/* Product Details */}
         <div>
-          <p className="text-sm text-muted-foreground">{product.category}</p>
+          <p className="text-sm font-medium text-muted-foreground">{product.brand}</p>
           <h1 className="text-3xl lg:text-4xl font-headline mt-1">{product.name}</h1>
-          <p className="text-2xl text-muted-foreground mt-2">${product.price.toFixed(2)}</p>
+          
+          <div className="mt-2 flex items-baseline gap-2">
+            {onSale ? (
+                <>
+                    <p className="text-2xl text-destructive font-semibold">${product.salePrice?.toFixed(2)}</p>
+                    <p className="text-xl text-muted-foreground line-through">${product.price.toFixed(2)}</p>
+                </>
+            ) : (
+                <p className="text-2xl text-muted-foreground">${product.price.toFixed(2)}</p>
+            )}
+          </div>
+
           <div className="flex items-center mt-4">
             <div className="flex items-center">
               {[...Array(5)].map((_, i) => (

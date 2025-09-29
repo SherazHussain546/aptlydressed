@@ -12,6 +12,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const primaryImageUrl = product.imageUrls && product.imageUrls.length > 0 ? product.imageUrls[0] : null;
+  const onSale = product.salePrice && product.salePrice < product.price;
 
   return (
     <Link href={`/products/${product.slug}`} className="group">
@@ -30,28 +31,40 @@ export function ProductCard({ product }: ProductCardProps) {
                 No Image
              </div>
           )}
-          {product.tags && product.tags.length > 0 && (
-            <div className="absolute top-3 left-3 flex flex-col gap-2">
-              {product.tags.map(tag => (
-                <Badge 
-                  key={tag}
-                  className={cn(
-                    "border-none",
-                    tag === 'New Arrival' && 'bg-accent text-accent-foreground',
-                    tag === 'Best Seller' && 'bg-primary text-primary-foreground'
-                  )}
-                >
-                  {tag}
+          <div className="absolute top-3 left-3 flex flex-col gap-2">
+            {onSale && (
+                <Badge className={cn("border-none", "bg-destructive text-destructive-foreground")}>
+                  Sale
                 </Badge>
-              ))}
-            </div>
-          )}
+            )}
+            {product.tags && product.tags.map(tag => (
+              <Badge 
+                key={tag}
+                className={cn(
+                  "border-none",
+                  tag === 'New Arrival' && 'bg-accent text-accent-foreground',
+                  tag === 'Best Seller' && 'bg-primary text-primary-foreground'
+                )}
+              >
+                {tag}
+              </Badge>
+            ))}
+          </div>
         </div>
       </div>
       <div className="mt-4">
-        <p className="text-xs text-muted-foreground">{product.category}</p>
+        <p className="text-xs text-muted-foreground">{product.brand}</p>
         <h3 className="font-medium text-foreground transition-colors group-hover:text-primary">{product.name}</h3>
-        <p className="mt-1 text-muted-foreground">${product.price.toFixed(2)}</p>
+        <div className="mt-1 flex items-baseline gap-2">
+            {onSale ? (
+                <>
+                    <p className="text-destructive font-semibold">${product.salePrice?.toFixed(2)}</p>
+                    <p className="text-sm text-muted-foreground line-through">${product.price.toFixed(2)}</p>
+                </>
+            ) : (
+                <p className="text-muted-foreground">${product.price.toFixed(2)}</p>
+            )}
+        </div>
       </div>
     </Link>
   );

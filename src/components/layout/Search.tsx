@@ -49,6 +49,7 @@ export function Search() {
     if (debouncedQuery) {
       const filtered = allProducts.filter(product =>
         product.name.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
+        product.brand.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
         product.category.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
         product.description.toLowerCase().includes(debouncedQuery.toLowerCase())
       ).slice(0, 10);
@@ -79,7 +80,7 @@ export function Search() {
           <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           <Input
             type="search"
-            placeholder="Search for products, categories, or keywords..."
+            placeholder="Search for products, brands, or keywords..."
             className="pl-10"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -93,7 +94,9 @@ export function Search() {
           <div className="mt-4 max-h-[60vh] overflow-y-auto">
             {debouncedQuery && filteredProducts.length > 0 && (
               <div className="space-y-4">
-                {filteredProducts.map(product => (
+                {filteredProducts.map(product => {
+                  const onSale = product.salePrice && product.salePrice < product.price;
+                  return (
                   <Link
                     key={product.id}
                     href={`/products/${product.slug}`}
@@ -116,10 +119,20 @@ export function Search() {
                     </div>
                     <div>
                       <p className="font-medium">{product.name}</p>
-                      <p className="text-sm text-muted-foreground">${product.price.toFixed(2)}</p>
+                      <p className="text-sm text-muted-foreground">{product.brand}</p>
+                      <div className="mt-1 flex items-baseline gap-2">
+                        {onSale ? (
+                            <>
+                                <p className="text-sm text-destructive font-semibold">${product.salePrice?.toFixed(2)}</p>
+                                <p className="text-xs text-muted-foreground line-through">${product.price.toFixed(2)}</p>
+                            </>
+                        ) : (
+                            <p className="text-sm text-muted-foreground">${product.price.toFixed(2)}</p>
+                        )}
+                      </div>
                     </div>
                   </Link>
-                ))}
+                )})}
               </div>
             )}
             {debouncedQuery && filteredProducts.length === 0 && (
