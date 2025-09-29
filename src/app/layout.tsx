@@ -5,6 +5,7 @@ import { Footer } from '@/components/layout/Footer';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/context/AuthContext';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { headers } from 'next/headers';
 
 export const metadata: Metadata = {
   title: {
@@ -20,6 +21,29 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headersList = headers();
+  const pathname = headersList.get('x-pathname') || '';
+
+  const isComingSoonPage = pathname === '/coming-soon';
+
+  if (isComingSoonPage) {
+    return (
+       <html lang="en" className="h-full">
+         <head>
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Arial:wght@400;700&display=swap" rel="stylesheet" />
+        </head>
+        <body className="font-body antialiased h-full">
+          <AuthProvider>
+            <main>{children}</main>
+            <Toaster />
+          </AuthProvider>
+        </body>
+      </html>
+    )
+  }
+
   return (
     <html lang="en" className="h-full">
       <head>
