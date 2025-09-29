@@ -18,8 +18,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { mainNavLinks } from "./Header";
-
 
 export const shopCategories = [
     { href: "/shop", label: "All Products" },
@@ -28,8 +26,17 @@ export const shopCategories = [
     { href: "/shop?category=Essentials", label: "Essentials" },
 ];
 
+type NavLink = {
+  href: string;
+  label: string;
+};
 
-export function HeaderClient({ showShopDropdown = false }: { showShopDropdown?: boolean }) {
+interface HeaderClientProps {
+  mainNavLinks?: NavLink[];
+  showShopDropdown?: boolean;
+}
+
+export function HeaderClient({ mainNavLinks, showShopDropdown = false }: HeaderClientProps) {
 
   if (showShopDropdown) {
     return (
@@ -84,7 +91,7 @@ export function HeaderClient({ showShopDropdown = false }: { showShopDropdown?: 
                 </AccordionItem>
                 </Accordion>
                 
-                {mainNavLinks.map((link) => (
+                {mainNavLinks && mainNavLinks.map((link) => (
                 <Link
                     key={link.href}
                     href={link.href}
