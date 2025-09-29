@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/carousel"
 import { Card, CardContent } from '@/components/ui/card';
 import { placeholderImages } from '@/lib/data';
+import { getOutfitRecommendations } from '@/ai/flows/ai-outfit-recommendation';
 
 type Props = {
   params: { slug: string }
@@ -50,6 +51,42 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         },
       ] : [],
     },
+  }
+}
+
+async function CompleteTheLook({ product, allProducts }: { product: any, allProducts: any[] }) {
+  try {
+    const allProductNames = allProducts.map(p => p.name);
+    const result = await getOutfitRecommendations({
+      productName: product.name,
+      productDescription: product.description,
+      allProductNames,
+    });
+    
+    const recommendedProducts = result.recommendations
+      .map(recName => allProducts.find(p => p.name === recName))
+      .filter(Boolean);
+
+    if (recommendedProducts.length === 0) {
+      return null;
+    }
+
+    return (
+      <section className="py-16 md:py-24">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-headline text-center mb-8">Complete the Look</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8 max-w-2xl mx-auto">
+            {recommendedProducts.map(p => (
+              p && <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+
+  } catch (error) {
+    console.error("Error getting outfit recommendations:", error);
+    return null;
   }
 }
 
@@ -166,6 +203,9 @@ export default async function ProductPage({ params }: { params: { slug: string }
         </div>
       </div>
     </div>
+
+    {/* AI Outfit Recommendations */}
+    <CompleteTheLook product={product} allProducts={products} />
     
     {/* Related Products */}
     <section className="bg-muted py-16 md:py-24">

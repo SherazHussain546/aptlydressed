@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/products/ProductCard';
 import { productsPromise, getCollections } from '@/lib/server-data';
-import { placeholderImages } from '@/lib/data';
+import { blogPosts, placeholderImages } from '@/lib/data';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
 const heroImage = placeholderImages.find(p => p.id === 'hero-1');
 
@@ -15,6 +16,9 @@ export default async function Home() {
   
   const newArrivals = products.filter(p => p.tags.includes('New Arrival')).slice(0, 4);
   const featuredProducts = products.filter(p => p.tags.includes('Featured')).slice(0, 4);
+  const latestPost = blogPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+  const latestPostImage = placeholderImages.find(p => p.id === latestPost.imageId);
+
 
   return (
     <div className="space-y-16 md:space-y-24">
@@ -81,6 +85,54 @@ export default async function Home() {
           })}
         </div>
       </section>
+
+      {/* From the Journal Section */}
+      {latestPost && (
+        <section className="bg-muted py-16 md:py-24">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-headline text-center mb-8">From the Journal</h2>
+            <div className="max-w-4xl mx-auto">
+              <Card className="grid grid-cols-1 md:grid-cols-2 overflow-hidden">
+                <div className="relative aspect-video md:aspect-auto">
+                  {latestPostImage && (
+                    <Link href={`/blog/${latestPost.slug}`} className="block group h-full">
+                      <Image
+                        src={latestPostImage.imageUrl}
+                        alt={latestPost.title}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        data-ai-hint={latestPostImage.imageHint}
+                      />
+                    </Link>
+                  )}
+                </div>
+                <div className="flex flex-col">
+                  <CardHeader>
+                    <p className="text-sm text-muted-foreground pt-1">
+                      By {latestPost.author} on {latestPost.date}
+                    </p>
+                    <CardTitle className="font-headline text-2xl">
+                      <Link href={`/blog/${latestPost.slug}`} className="hover:text-primary transition-colors">
+                        {latestPost.title}
+                      </Link>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex-grow">
+                    <p className="text-muted-foreground">{latestPost.excerpt}</p>
+                  </CardContent>
+                  <CardFooter>
+                    <Button asChild variant="link" className="p-0 h-auto">
+                      <Link href={`/blog/${latestPost.slug}`}>
+                        Read More
+                      </Link>
+                    </Button>
+                  </CardFooter>
+                </div>
+              </Card>
+            </div>
+          </div>
+        </section>
+      )}
       
       {/* Featured Products */}
       <section className="container mx-auto px-4">

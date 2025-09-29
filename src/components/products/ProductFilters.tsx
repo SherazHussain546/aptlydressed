@@ -97,11 +97,11 @@ export function ProductFilters({ filters, setFilters, allProducts }: ProductFilt
                         <AccordionItem value="category">
                             <AccordionTrigger>Category</AccordionTrigger>
                             <AccordionContent>
-                                <RadioGroup value={filters.category} onValueChange={handleCategoryChange}>
+                                <RadioGroup value={filters.category} onValueChange={handleCategoryChange} className="space-y-1">
                                     {allCategories.map(category => (
-                                        <div key={category} className="flex items-center space-x-2">
+                                        <div key={category} className="flex items-center space-x-2 p-1 -m-1 rounded-md transition-colors hover:bg-accent">
                                             <RadioGroupItem value={category} id={`cat-${category}`} />
-                                            <Label htmlFor={`cat-${category}`}>{category}</Label>
+                                            <Label htmlFor={`cat-${category}`} className="font-normal cursor-pointer flex-1">{category}</Label>
                                         </div>
                                     ))}
                                 </RadioGroup>
@@ -112,13 +112,13 @@ export function ProductFilters({ filters, setFilters, allProducts }: ProductFilt
                             <AccordionContent>
                                 <div className="grid grid-cols-3 gap-2">
                                     {allSizes.map(size => (
-                                        <div key={size} className="flex items-center space-x-2">
+                                        <div key={size} className="flex items-center space-x-2 p-1 -m-1 rounded-md transition-colors hover:bg-accent">
                                             <Checkbox
                                                 id={`size-${size}`}
                                                 checked={filters.sizes.includes(size)}
                                                 onCheckedChange={() => handleSizeChange(size)}
                                             />
-                                            <Label htmlFor={`size-${size}`}>{size}</Label>
+                                            <Label htmlFor={`size-${size}`} className="font-normal cursor-pointer flex-1">{size}</Label>
                                         </div>
                                     ))}
                                 </div>
@@ -127,15 +127,15 @@ export function ProductFilters({ filters, setFilters, allProducts }: ProductFilt
                         <AccordionItem value="color">
                             <AccordionTrigger>Color</AccordionTrigger>
                             <AccordionContent>
-                                <div className="space-y-2">
+                                <div className="space-y-1">
                                     {allColors.map(color => (
-                                        <div key={color} className="flex items-center space-x-2">
+                                        <div key={color} className="flex items-center space-x-2 p-1 -m-1 rounded-md transition-colors hover:bg-accent">
                                             <Checkbox
                                                 id={`color-${color}`}
                                                 checked={filters.colors.includes(color)}
                                                 onCheckedChange={() => handleColorChange(color)}
                                             />
-                                            <Label htmlFor={`color-${color}`}>{color}</Label>
+                                            <Label htmlFor={`color-${color}`} className="font-normal cursor-pointer flex-1">{color}</Label>
                                         </div>
                                     ))}
                                 </div>
