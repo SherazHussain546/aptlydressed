@@ -37,7 +37,10 @@ async function loadProductsFromGoogleSheet(): Promise<Product[]> {
       }
     });
 
-    return records as Product[];
+    return records.map((record: any) => ({
+      ...record,
+      imageUrls: Array.isArray(record.imageUrls) ? record.imageUrls : (record.imageUrls || '').split(',').map((item: string) => item.trim()).filter(Boolean),
+    })) as Product[];
 
   } catch (error) {
     console.error("Error loading products from Google Sheet:", error);
