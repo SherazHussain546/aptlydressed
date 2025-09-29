@@ -13,6 +13,7 @@ import {
   PaginationItem,
   PaginationNext,
   PaginationPrevious,
+  PaginationEllipsis
 } from "@/components/ui/pagination"
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -21,7 +22,7 @@ const PRODUCTS_PER_PAGE = 12;
 
 function ProductGridSkeleton() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8">
       {Array.from({ length: PRODUCTS_PER_PAGE }).map((_, i) => (
         <div key={i} className="space-y-2">
           <Skeleton className="aspect-[4/5] w-full" />
@@ -81,12 +82,13 @@ export function Shop({ allProducts }: ShopProps) {
     filtered = filtered.filter(p => p.price >= filters.priceRange[0] && p.price <= filters.priceRange[1]);
 
     if (filters.sortBy === 'price-asc') {
-      filtered.sort((a, b) => a.price - b.price);
+      filtered.sort((a, b) => (a.salePrice || a.price) - (b.salePrice || b.price));
     } else if (filters.sortBy === 'price-desc') {
-      filtered.sort((a, b) => b.price - a.price);
+      filtered.sort((a, b) => (b.salePrice || b.price) - (a.salePrice || a.price));
     } else if (filters.sortBy === 'newest') {
       filtered.sort((a, b) => (b.id > a.id ? 1 : -1));
     }
+
 
     return filtered;
   }, [filters, allProducts]);
@@ -107,6 +109,23 @@ export function Shop({ allProducts }: ShopProps) {
       window.scrollTo(0, 0);
     }
   }
+  
+  const getPaginationItems = () => {
+    if (totalPages <= 5) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+
+    if (currentPage <= 3) {
+      return [1, 2, 3, 'ellipsis', totalPages];
+    }
+
+    if (currentPage >= totalPages - 2) {
+      return [1, 'ellipsis', totalPages - 2, totalPages - 1, totalPages];
+    }
+
+    return [1, 'ellipsis-start', currentPage, 'ellipsis-end', totalPages];
+  };
+
 
   const pageTitle = filters.category !== 'All' ? filters.category : 'All Products';
   const pageDescription = filters.tags.includes('New Arrival') ? 'The latest additions to our curated collection.' : 'Discover our collection of timeless pieces.';
@@ -115,7 +134,7 @@ export function Shop({ allProducts }: ShopProps) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-8">
-            <h1 className="text-4xl font-headline">Shop {pageTitle}</h1>
+            <h1 className="text-3xl md:text-4xl font-headline">Shop {pageTitle}</h1>
             <p className="mt-2 text-muted-foreground">{pageDescription}</p>
         </div>
         <div className="flex flex-col gap-8">
@@ -129,13 +148,13 @@ export function Shop({ allProducts }: ShopProps) {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-headline">Shop {pageTitle}</h1>
+        <h1 className="text-3xl md:text-4xl font-headline">Shop {pageTitle}</h1>
         <p className="mt-2 text-muted-foreground">{pageDescription}</p>
       </div>
         <ProductFilters filters={filters} setFilters={setFilters} allProducts={allProducts} />
         <main className="w-full mt-8">
             {paginatedProducts.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8">
                     {paginatedProducts.map(product => (
                     <ProductCard key={product.id} product={product} />
                     ))}
@@ -151,21 +170,35 @@ export function Shop({ allProducts }: ShopProps) {
               <PaginationContent>
                 <PaginationItem>
                   <Button variant="ghost" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
-                    <PaginationPrevious href="#" onClick={(e) => e.preventDefault()} />
+                    <PaginationPrevious className="hidden sm:flex" href="#" onClick={(e) => e.preventDefault()} />
+                    <span className="sm:hidden">Prev</span>
                   </Button>
                 </PaginationItem>
                 
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                  <PaginationItem key={page}>
-                    <Button variant={currentPage === page ? 'default' : 'ghost'} onClick={() => handlePageChange(page)}>
-                      {page}
-                    </Button>
-                  </PaginationItem>
-                ))}
+                <div className="hidden sm:flex items-center gap-1">
+                  {getPaginationItems().map((page, index) => (
+                    <PaginationItem key={index}>
+                      {typeof page === 'number' ? (
+                        <Button variant={currentPage === page ? 'default' : 'ghost'} onClick={() => handlePageChange(page)}>
+                          {page}
+                        </Button>
+                      ) : (
+                        <PaginationEllipsis />
+                      )}
+                    </PaginationItem>
+                  ))}
+                </div>
+
+                <PaginationItem className="sm:hidden">
+                    <span className="text-sm font-medium">
+                        Page {currentPage} of {totalPages}
+                    </span>
+                </PaginationItem>
 
                 <PaginationItem>
                   <Button variant="ghost" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
-                    <PaginationNext href="#" onClick={(e) => e.preventDefault()}/>
+                    <PaginationNext className="hidden sm:flex" href="#" onClick={(e) => e.preventDefault()}/>
+                    <span className="sm:hidden">Next</span>
                   </Button>
                 </PaginationItem>
               </PaginationContent>

@@ -6,7 +6,7 @@ import { Menu, ChevronDown } from "lucide-react";
 
 import { Logo } from "@/components/icons/Logo";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -59,27 +59,28 @@ export function HeaderClient({ mainNavLinks, newArrivalsCategories = [], showSho
             <span className="sr-only">Toggle Menu</span>
             </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="pr-0">
+        <SheetContent side="left" className="pr-0 w-[80vw] max-w-sm">
             <div className="flex flex-col gap-6 pt-8">
             <div className="px-6">
                 <Logo />
             </div>
-            <nav className="flex flex-col gap-2 px-6">
+            <nav className="flex flex-col gap-1 px-6">
                 <Accordion type="single" collapsible className="w-full">
-                <AccordionItem value="new-arrivals">
-                    <AccordionTrigger className="text-lg font-medium text-foreground/80 transition-colors hover:text-primary hover:no-underline [&[data-state=open]>svg]:rotate-180">
+                <AccordionItem value="new-arrivals" className="border-b-0">
+                    <AccordionTrigger className="py-4 text-lg font-medium text-foreground/80 transition-colors hover:text-primary hover:no-underline [&[data-state=open]>svg]:rotate-180">
                     New Arrivals
                     </AccordionTrigger>
                     <AccordionContent>
                     <div className="flex flex-col gap-2 pl-4 pt-2">
                         {newArrivalsCategories.map((link) => (
-                        <Link
-                            key={link.href}
-                            href={link.href}
-                            className="text-base font-medium text-foreground/70 transition-colors hover:text-primary"
-                        >
-                            {link.label}
-                        </Link>
+                          <SheetClose asChild key={link.href}>
+                            <Link
+                                href={link.href}
+                                className="text-base font-medium text-foreground/70 transition-colors hover:text-primary"
+                            >
+                                {link.label}
+                            </Link>
+                          </SheetClose>
                         ))}
                     </div>
                     </AccordionContent>
@@ -87,13 +88,14 @@ export function HeaderClient({ mainNavLinks, newArrivalsCategories = [], showSho
                 </Accordion>
                 
                 {mainNavLinks && mainNavLinks.map((link) => (
-                <Link
-                    key={link.href}
-                    href={link.href}
-                    className="text-lg font-medium text-foreground/80 transition-colors hover:text-primary py-4"
-                >
-                    {link.label}
-                </Link>
+                  <SheetClose asChild key={link.href}>
+                    <Link
+                        href={link.href}
+                        className="py-4 text-lg font-medium text-foreground/80 transition-colors hover:text-primary"
+                    >
+                        {link.label}
+                    </Link>
+                  </SheetClose>
                 ))}
             </nav>
             </div>
