@@ -16,9 +16,6 @@ export function NewsPostPageClient({ post }: { post: NewsPost }) {
       <div className="max-w-3xl mx-auto">
         <header className="mb-8">
             <div className="flex items-center gap-4 mb-4">
-                <Avatar>
-                    <AvatarFallback>AD</AvatarFallback>
-                </Avatar>
                 <div>
                     <p className="font-semibold">Aptly Dressed</p>
                     <p className="text-sm text-muted-foreground">{new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>

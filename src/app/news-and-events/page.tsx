@@ -28,9 +28,6 @@ export default function NewsAndEventsPage() {
             <Card key={post.slug} className="overflow-hidden">
                 <CardHeader>
                     <div className="flex items-center gap-4">
-                        <Avatar>
-                            <AvatarFallback>AD</AvatarFallback>
-                        </Avatar>
                         <div>
                             <p className="font-semibold">Aptly Dressed</p>
                             <p className="text-sm text-muted-foreground">{new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
