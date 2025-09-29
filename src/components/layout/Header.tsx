@@ -9,29 +9,31 @@ import { HeaderClient } from "./HeaderClient";
 import { Search } from "./Search";
 
 export function Header() {
+
   const mainNavLinks = [
+    { href: "/shop?category=Mens", label: "Men" },
+    { href: "/shop?category=Womens", label: "Women" },
+    { href: "/shop?category=Shoes", label: "Shoes" },
     { href: "/contact", label: "Contact" },
   ];
 
-  const shopCategories = [
-      { href: "/shop", label: "All Products" },
-      { href: "/shop?category=Womens", label: "Women" },
-      { href: "/shop?category=Mens", label: "Men" },
-      { href: "/shop?category=Essentials", label: "Essentials" },
+  const newArrivalsCategories = [
+      { href: "/shop?category=Womens&tags=New+Arrival", label: "Women" },
+      { href: "/shop?category=Mens&tags=New+Arrival", label: "Men" },
   ];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <div className="flex items-center gap-6">
-          <HeaderClient mainNavLinks={mainNavLinks} shopCategories={shopCategories} />
+          <HeaderClient mainNavLinks={mainNavLinks} newArrivalsCategories={newArrivalsCategories} />
           <div className="hidden md:block">
             <Logo />
           </div>
         </div>
 
         <nav className="hidden md:flex items-center gap-6">
-          <HeaderClient showShopDropdown={true} shopCategories={shopCategories}/>
+          <HeaderClient showShopDropdown={true} newArrivalsCategories={newArrivalsCategories}/>
           {mainNavLinks.map((link) => (
             <Link
               key={link.href}

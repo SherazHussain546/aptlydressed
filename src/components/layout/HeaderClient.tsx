@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -26,25 +27,20 @@ type NavLink = {
 
 interface HeaderClientProps {
   mainNavLinks?: NavLink[];
+  newArrivalsCategories?: NavLink[];
   showShopDropdown?: boolean;
 }
 
-export function HeaderClient({ mainNavLinks, showShopDropdown = false }: HeaderClientProps) {
-  const shopCategories = [
-      { href: "/shop", label: "All Products" },
-      { href: "/shop?category=Womens", label: "Women" },
-      { href: "/shop?category=Mens", label: "Men" },
-      { href: "/shop?category=Essentials", label: "Essentials" },
-  ];
+export function HeaderClient({ mainNavLinks, newArrivalsCategories = [], showShopDropdown = false }: HeaderClientProps) {
 
   if (showShopDropdown) {
     return (
       <DropdownMenu>
           <DropdownMenuTrigger className="flex items-center gap-1 font-medium text-foreground/80 transition-colors hover:text-primary focus:outline-none">
-              Shop <ChevronDown className="h-4 w-4" />
+              New Arrivals <ChevronDown className="h-4 w-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-              {shopCategories.map((link) => (
+              {newArrivalsCategories.map((link) => (
                   <DropdownMenuItem key={link.href} asChild>
                       <Link href={link.href}>{link.label}</Link>
                   </DropdownMenuItem>
@@ -70,13 +66,13 @@ export function HeaderClient({ mainNavLinks, showShopDropdown = false }: HeaderC
             </div>
             <nav className="flex flex-col gap-2 px-6">
                 <Accordion type="single" collapsible className="w-full">
-                <AccordionItem value="shop">
+                <AccordionItem value="new-arrivals">
                     <AccordionTrigger className="text-lg font-medium text-foreground/80 transition-colors hover:text-primary hover:no-underline [&[data-state=open]>svg]:rotate-180">
-                    Shop
+                    New Arrivals
                     </AccordionTrigger>
                     <AccordionContent>
                     <div className="flex flex-col gap-2 pl-4 pt-2">
-                        {shopCategories.map((link) => (
+                        {newArrivalsCategories.map((link) => (
                         <Link
                             key={link.href}
                             href={link.href}
