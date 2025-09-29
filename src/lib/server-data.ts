@@ -5,7 +5,7 @@ import { parse } from 'csv-parse/sync';
 
 async function loadProductsFromGoogleSheet(): Promise<Product[]> {
   // Corresponds to the first sheet of the document
-  const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vScAauPk8eWS8LSllwq9Bo3aWi9UPlouqb2p0fi3cLKKWv7MeFCS2eO7Tlqbzf1C4BO4bqTS1MnpgbH/pub?gid=0&output=csv';
+  const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRNGfzuJ7gmJNQMIjN8dqT9Kmy3kLkJgDElpsw-mCEq3YBVBo7hnTqyXfj0ugLAtqwmr8Xv9hLUhyqL/pub?gid=0&single=true&output=csv';
   
   try {
     const response = await fetch(sheetUrl, { next: { revalidate: 3600 } }); // Re-fetch every hour
