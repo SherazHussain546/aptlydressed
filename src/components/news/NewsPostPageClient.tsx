@@ -1,5 +1,6 @@
 
 'use client';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Twitter, Facebook, Linkedin, Copy } from 'lucide-react';
@@ -13,11 +14,16 @@ import type { NewsPost } from '@/lib/types';
 export function NewsPostPageClient({ post }: { post: NewsPost }) {
   const pathname = usePathname();
   const { toast } = useToast();
+  const [shareUrl, setShareUrl] = useState('');
+
+  useEffect(() => {
+    setShareUrl(`${window.location.origin}${pathname}`);
+  }, [pathname]);
 
   const image = PlaceHolderImages.find(p => p.id === post.imageId);
-  const shareUrl = typeof window !== 'undefined' ? `${window.location.origin}${pathname}` : '';
 
   const copyLink = () => {
+    if (!shareUrl) return;
     navigator.clipboard.writeText(shareUrl);
     toast({
         title: "Link Copied!",
@@ -82,7 +88,7 @@ export function NewsPostPageClient({ post }: { post: NewsPost }) {
                             <Linkedin className="h-4 w-4" />
                         </a>
                     </Button>
-                    <Button variant="outline" size="icon" onClick={copyLink}>
+                    <Button variant="outline" size="icon" onClick={copyLink} disabled={!shareUrl}>
                         <Copy className="h-4 w-4" />
                     </Button>
                 </div>
