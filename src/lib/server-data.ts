@@ -89,3 +89,4 @@ export const productsPromise: Promise<Product[]> = loadProductsFromGoogleSheet()
 export async function getCollections(): Promise<Collection[]> {
     return loadCollectionsFromGoogleSheet();
 }
+
