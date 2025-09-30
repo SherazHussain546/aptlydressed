@@ -5,7 +5,7 @@ import { useEffect, useRef, useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
-import { Twitter, Instagram, Facebook, Loader2 } from "lucide-react";
+import { Linkedin, Instagram, Facebook, Loader2 } from "lucide-react";
 
 import { placeholderImages } from "@/lib/data";
 import { Logo } from "@/components/icons/Logo";
@@ -81,13 +81,13 @@ export default function ComingSoonPage() {
             <div className="mt-12">
                 <p className="text-sm text-primary-foreground/80 mb-4">Follow our journey</p>
                 <div className="flex justify-center space-x-6">
-                    <Link href="#" aria-label="Twitter">
-                        <Twitter className="h-6 w-6 text-primary-foreground/80 transition-colors hover:text-white" />
+                    <Link href="https://www.linkedin.com/company/aptlydressed" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                        <Linkedin className="h-6 w-6 text-primary-foreground/80 transition-colors hover:text-white" />
                     </Link>
-                    <Link href="#" aria-label="Instagram">
+                    <Link href="https://www.instagram.com/aptlydressed/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
                         <Instagram className="h-6 w-6 text-primary-foreground/80 transition-colors hover:text-white" />
                     </Link>
-                    <Link href="#" aria-label="Facebook">
+                    <Link href="https://www.facebook.com/aptlydressed/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
                         <Facebook className="h-6 w-6 text-primary-foreground/80 transition-colors hover:text-white" />
                     </Link>
                 </div>

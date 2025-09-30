@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useActionState } from "react";
 import { useFormStatus } from "react-dom";
-import { Twitter, Instagram, Facebook, Loader2 } from "lucide-react";
+import { Linkedin, Instagram, Facebook, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "@/components/icons/Logo";
 import { Button } from "@/components/ui/button";
@@ -48,13 +48,13 @@ export function Footer() {
               Timeless elegance, modern edge. Sustainable fashion for the style-conscious.
             </p>
             <div className="mt-6 flex space-x-4">
-              <Link href="#" aria-label="Twitter">
-                <Twitter className="h-6 w-6 text-muted-foreground transition-colors hover:text-primary" />
+              <Link href="https://www.linkedin.com/company/aptlydressed" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                <Linkedin className="h-6 w-6 text-muted-foreground transition-colors hover:text-primary" />
               </Link>
-              <Link href="#" aria-label="Instagram">
+              <Link href="https://www.instagram.com/aptlydressed/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
                 <Instagram className="h-6 w-6 text-muted-foreground transition-colors hover:text-primary" />
               </Link>
-              <Link href="#" aria-label="Facebook">
+              <Link href="https://www.facebook.com/aptlydressed/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
                 <Facebook className="h-6 w-6 text-muted-foreground transition-colors hover:text-primary" />
               </Link>
             </div>
