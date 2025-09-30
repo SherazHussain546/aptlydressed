@@ -1,4 +1,4 @@
-# Aptly Dressed eBoutique
+# [Aptly Dressed eBoutique](https://aptlydressed.com)
 
 ## Redefining Style Through Intentional Curation
 
