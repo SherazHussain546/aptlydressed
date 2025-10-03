@@ -1,5 +1,4 @@
 
-
 import type { Collection, BlogPost, ImagePlaceholder } from './types';
 
 export const placeholderImages: ImagePlaceholder[] = [
@@ -16,10 +15,10 @@ export const placeholderImages: ImagePlaceholder[] = [
       "imageHint": "fashion closet"
     },
     {
-      "id": "about-story",
-      "description": "A fashion designer sketching ideas in a notebook.",
-      "imageUrl": "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxmYXNoaW9uJTIwZGVzaWduZXJ8ZW58MHx8fHwxNzU5ODg0MjM3fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "fashion designer"
+      "id": "about-why",
+      "description": "A frustrated person looking at a laptop screen, overwhelmed with online shopping choices.",
+      "imageUrl": "https://images.unsplash.com/photo-1544256718-3bcf237f3974?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxmcnVzdHJhdGVkJTIwd2l0aCUyMGxhcHRvcHxlbnwwfHx8fDE3NjE3NjUwODd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "frustrated person"
     },
     {
       "id": "sustainability-hero",

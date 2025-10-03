@@ -3,9 +3,13 @@ import Image from 'next/image';
 import { placeholderImages } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Lightbulb, Check, Sparkles, Handshake } from 'lucide-react';
 
 const aboutHeroImage = placeholderImages.find(p => p.id === 'about-hero');
-const aboutStoryImage = placeholderImages.find(p => p.id === 'about-story');
+const whyImage = placeholderImages.find(p => p.id === 'about-why');
+const solutionImage = placeholderImages.find(p => p.id === 'about-hero');
+
 
 export default function AboutPage() {
   return (
@@ -28,80 +32,106 @@ export default function AboutPage() {
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-16 md:py-24 space-y-16">
+      <div className="container mx-auto px-4 py-16 md:py-24 space-y-20">
+
+        {/* Our "Why" Section */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div className="prose lg:prose-lg max-w-none prose-h2:font-headline">
-            <h2>A Message from Our Founders</h2>
-            <p className="font-semibold">Shaharyar Hussain & Sheraz Hussain</p>
-            <p>
-                From our home base here in beautiful Dublin, Ireland, we started APTLY DRESSED with a shared, powerful conviction: that the secret to great style isn't about having more clothes, but about having the <em>right</em> clothes.
-            </p>
-            <p>
-                The name APTLY DRESSED is the heart of our philosophy. ‘APTLY’ stands for Appropriate, and ‘DRESSED’ is for the art of dressing. Our mission is to guide you in finding the perfect, appropriate dress for any moment in your life—whether it’s for daily life, a vibrant festival, a special party, or a formal occasion.
-            </p>
-             <p>
-                In a world of overwhelming choice, we act as your personal curators and trusted partners. Our commitment is to build a lasting relationship with you. We tirelessly search for the best affiliate products from head to toe, sourced from partners anywhere in the world who share our values. We don't just look for style; we look for substance.
-            </p>
-            <p>
-                Every single item featured on APTLY DRESSED is hand-selected based on three uncompromising pillars: exceptional quality, true sustainability, and its power to be the perfect fit for your needs. Our promise is to bring you only the products we believe in, helping you build a wardrobe that is not only beautiful and mindful but also a true reflection of you. Thank you for trusting APTLY DRESSED. Let's redefine your style, together.
-            </p>
-          </div>
-          <div className="relative h-96 rounded-lg overflow-hidden">
-            {aboutStoryImage && (
-                 <Image
-                    src={aboutStoryImage.imageUrl}
-                    alt={aboutStoryImage.description}
-                    fill
-                    className="object-cover"
-                    data-ai-hint={aboutStoryImage.imageHint}
-                />
-            )}
-          </div>
+            <div className="prose lg:prose-lg max-w-none prose-h2:font-headline">
+                <h2 className="text-3xl">Our "Why": Ending the Click-and-Search Maze</h2>
+                <p>
+                Tired of the endless click-and-search maze? We know the frustration. You need a great outfit for a specific occasion—a party, a meeting, or just stylish daily wear—and end up bouncing between dozens of e-commerce sites. You find a jacket on one, a top on another, and the right shoes somewhere else entirely. It's exhausting.
+                </p>
+            </div>
+            <div className="relative h-96 rounded-lg overflow-hidden">
+                {whyImage && (
+                    <Image
+                        src={whyImage.imageUrl}
+                        alt={whyImage.description}
+                        fill
+                        className="object-cover"
+                        data-ai-hint={whyImage.imageHint}
+                    />
+                )}
+            </div>
         </section>
 
+        {/* Our Solution Section */}
         <section className="bg-muted -mx-4 px-4 py-16 md:-mx-8 md:px-8 md:py-24 rounded-lg">
-             <div className="container mx-auto">
-                <div className="text-center max-w-3xl mx-auto">
-                    <h2 className="text-3xl font-headline">Our Philosophy: The Art of Curation</h2>
-                    <p className="mt-4 text-lg text-muted-foreground">
-                    We navigate the world of fashion so you don't have to. Our philosophy is built on three core pillars that guide every recommendation we make.
+            <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div className="relative h-96 rounded-lg overflow-hidden order-last md:order-first">
+                    {solutionImage && (
+                        <Image
+                            src={solutionImage.imageUrl}
+                            alt={solutionImage.description}
+                            fill
+                            className="object-cover"
+                            data-ai-hint={solutionImage.imageHint}
+                        />
+                    )}
+                </div>
+                 <div className="prose lg:prose-lg max-w-none prose-h2:font-headline">
+                    <h2 className="text-3xl">Our Solution: Your Style, Seamlessly Delivered</h2>
+                    <p>
+                    <strong>APTLY DRESSED</strong> was created to be the antidote. We are your dedicated fashion affiliate platform, born from the simple idea that style should be seamless. Our mission is to aggregate the best, trendiest pieces from all the top <strong>clothing brands</strong> and bring them to you in one place.
                     </p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12 text-center">
-                    <div>
-                        <h3 className="text-2xl font-headline mb-2">Timeless over Trendy</h3>
-                        <p className="text-muted-foreground">We focus on versatile, high-quality essentials that form the foundation of a sophisticated wardrobe, ensuring you look great today and for years to come.</p>
-                    </div>
-                    <div>
-                        <h3 className="text-2xl font-headline mb-2">Quality over Quantity</h3>
-                        <p className="text-muted-foreground">We champion mindful consumption by selecting pieces made with superior materials and craftsmanship, helping you build a wardrobe that lasts.</p>
-                    </div>
-                    <div>
-                        <h3 className="text-2xl font-headline mb-2">Transparency & Trust</h3>
-                        <p className="text-muted-foreground">Your trust is our most valued asset. We are committed to honesty in all our recommendations and partnerships.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <section className="text-center max-w-4xl mx-auto">
-            <h2 className="text-3xl font-headline">Our Commitment to Transparency</h2>
-            <div className="prose prose-lg max-w-none mx-auto mt-4">
-                <p>
-                As a leading affiliate marketing partner, our integrity is the bedrock of our business. When you make a purchase through a link on our site, we may earn a small commission from the retailer, at absolutely no extra cost to you.
-                </p>
-                <p>
-                This model allows us to dedicate our time to discovering and curating the very best in fashion, without cluttering your experience with ads. We only partner with brands that meet our high standards for quality and ethics. Our recommendations are always driven by our genuine belief in the product, not by commission rates. We're honored to be your guide in the world of fashion and are committed to earning your trust with every click.
-                </p>
             </div>
         </section>
 
+        {/* Our Value Section */}
+        <section className="text-center max-w-4xl mx-auto">
+            <h2 className="text-3xl font-headline mb-4">Our Value: Simplifying Fashion for You</h2>
+            <p className="text-lg text-muted-foreground mb-12">
+            Our goal is to help you easily make up your mind and find the perfect outfit for any event. We focus on curating whole-outfit experiences, giving you the confidence to define your best personality every day.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="flex flex-col items-center">
+                    <div className="flex items-center justify-center h-12 w-12 rounded-full bg-primary text-primary-foreground mb-4">
+                        <Sparkles className="h-6 w-6" />
+                    </div>
+                    <h3 className="text-xl font-headline mb-2">Curated Experiences</h3>
+                    <p className="text-muted-foreground">We curate whole outfits, not just single items, to make styling effortless.</p>
+                </div>
+                <div className="flex flex-col items-center">
+                    <div className="flex items-center justify-center h-12 w-12 rounded-full bg-primary text-primary-foreground mb-4">
+                        <Check className="h-6 w-6" />
+                    </div>
+                    <h3 className="text-xl font-headline mb-2">Confident Choices</h3>
+                     <p className="text-muted-foreground">Find the most appropriate dressing for any occasion with ease.</p>
+                </div>
+                <div className="flex flex-col items-center">
+                    <div className="flex items-center justify-center h-12 w-12 rounded-full bg-primary text-primary-foreground mb-4">
+                        <Lightbulb className="h-6 w-6" />
+                    </div>
+                    <h3 className="text-xl font-headline mb-2">Define Your Personality</h3>
+                    <p className="text-muted-foreground">Gain the confidence to express your unique style every day.</p>
+                </div>
+            </div>
+        </section>
+
+        {/* How We Work Section */}
+         <section className="bg-card border rounded-lg p-8 lg:p-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                <div className="md:col-span-1">
+                     <div className="flex items-center gap-4">
+                        <Handshake className="h-10 w-10 text-primary" />
+                        <h2 className="text-3xl font-headline">How We Work</h2>
+                    </div>
+                </div>
+                <div className="md:col-span-2 prose max-w-none text-muted-foreground">
+                    <p>
+                    <strong>Style Suggestions, Direct Links.</strong> As an affiliate site, we do the heavy lifting of curation and trend-spotting. When you find your perfect ensemble, we provide the link. Your purchase, stock management, and service are handled directly by the trusted brand. We save you time; the brands handle the rest.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        {/* Call to Action */}
         <section className="text-center">
-          <h2 className="text-3xl font-headline">Join Our Community</h2>
-          <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">Ready to elevate your style? Explore our curated collections and discover pieces you'll love forever.</p>
+          <h2 className="text-3xl font-headline">Ready to Transform Your Style?</h2>
           <div className="mt-8">
             <Button asChild size="lg">
-              <Link href="/shop">Shop The Collections</Link>
+              <Link href="/shop">Stop searching. Start styling.</Link>
             </Button>
           </div>
         </section>
