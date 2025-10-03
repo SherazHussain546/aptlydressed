@@ -1,82 +1,75 @@
 /**
- * @fileoverview Firestore Security Rules for Aptly Dressed E-commerce Platform.
+ * @fileoverview Firestore Security Rules for Aptly Dressed e-commerce platform.
  *
  * Core Philosophy:
- * This ruleset enforces a user-ownership model for user profiles, orders, and order items.
- * Products and Style Recommendations are publicly accessible.
+ * This ruleset prioritizes strong authorization based on user ownership and well-defined access patterns.
+ * It enforces strict control over user data while allowing public read access to product and style recommendation information.
  *
  * Data Structure:
- * - User profiles are stored under `/users/{userId}`.
- * - Orders are stored as subcollections of users (`/users/{userId}/orders/{orderId}`).
- * - Order items are located as subcollections within each order (`/users/{userId}/orders/{orderId}/order_items/{orderItemId}`).
- * - Products are stored in the top-level `/products/{productId}` collection.
- * - Style recommendations are stored in the top-level `/style_recommendations/{styleRecommendationId}` collection.
+ * - User profiles and their associated data (orders, order items) are nested under /users/{userId} to establish clear ownership.
+ * - Products and style recommendations are stored in top-level collections for public access.
+ * - A new collection called "Newsletter" is created.
  *
  * Key Security Decisions:
- * - User data (profiles, orders, order items) is strictly controlled by the owning user.
- * - Products and Style Recommendations are publicly readable.
- * - Listing of user profiles is disallowed for privacy. Only the owner can read their own profile.
- * - No data shape validation is performed in this prototyping phase to allow for rapid iteration.
+ * - User data (profiles, orders, order items) is strictly controlled, accessible only to the authenticated user.
+ * - Public read access is granted for products and style recommendations.
+ * - Data validation is limited to ownership checks and relational integrity to allow for rapid prototyping.
  *
  * Denormalization for Authorization:
- * Path-based ownership is used throughout, eliminating the need for `get()` calls to determine ownership.
+ * - Path-based ownership is used for user-related data to avoid expensive `get()` calls for authorization.
+ *   For example, the userId is encoded in the path `/users/{userId}/orders/{orderId}`. This avoids needing to store the userId inside the Order document and needing to read it.
  *
  * Structural Segregation:
- * Private user data (profiles, orders) is stored under the `/users/{userId}` path, while public product data is stored in the top-level `/products` collection.
+ * - Public (products, style recommendations) and private (user profiles, orders) data are stored in separate collection groups,
+ *   improving security and performance for list operations.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Enforces owner-only access to user profile data.
+     * @description Allows authenticated users to manage their own profiles.
      * @path /users/{userId}
-     * @allow (create) User with UID 'user_abc' can create their profile at /users/user_abc.
-     * @allow (get) User with UID 'user_abc' can read their profile at /users/user_abc.
-     * @allow (update) User with UID 'user_abc' can update their profile at /users/user_abc.
-     * @allow (delete) User with UID 'user_abc' can delete their profile at /users/user_abc.
-     * @deny (create) User with UID 'user_xyz' cannot create a profile at /users/user_abc.
-     * @deny (get) User with UID 'user_xyz' cannot read the profile at /users/user_abc.
-     * @principle Enforces document ownership for all operations.
+     * @allow (create) - User with UID 'user_abc' can create their profile at /users/user_abc.
+     * @allow (get, update, delete) - User with UID 'user_abc' can get, update, and delete their profile at /users/user_abc.
+     * @deny (create) - User with UID 'user_xyz' cannot create a profile at /users/user_abc.
+     * @deny (get, update, delete) - User with UID 'user_xyz' cannot get, update, or delete the profile at /users/user_abc.
+     * @principle Enforces document ownership for user profiles.
      */
     match /users/{userId} {
-      // Helper function to check if the request is made by the owner
       function isOwner(userId) {
         return request.auth != null && request.auth.uid == userId;
       }
 
-      // Helper function to check if the request is made by the existing owner
       function isExistingOwner(userId) {
         return isOwner(userId) && resource != null;
       }
+
       allow get: if isOwner(userId);
-      allow list: if false; // Disallow listing of all users for privacy
+      allow list: if false;
       allow create: if isOwner(userId) && request.resource.data.id == userId;
       allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
       allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Enforces owner-only access to orders within a user's profile.
+     * @description Allows authenticated users to manage their own orders.
      * @path /users/{userId}/orders/{orderId}
-     * @allow (create) User with UID 'user_abc' can create an order at /users/user_abc/orders/order_123.
-     * @allow (get) User with UID 'user_abc' can read their order at /users/user_abc/orders/order_123.
-     * @allow (update) User with UID 'user_abc' can update their order at /users/user_abc/orders/order_123.
-     * @allow (delete) User with UID 'user_abc' can delete their order at /users/user_abc/orders/order_123.
-     * @deny (create) User with UID 'user_xyz' cannot create an order at /users/user_abc/orders/order_123.
-     * @deny (get) User with UID 'user_xyz' cannot read the order at /users/user_abc/orders/order_123.
-     * @principle Enforces document ownership for all operations.
+     * @allow (create) - User with UID 'user_abc' can create an order at /users/user_abc/orders/order_123.
+     * @allow (get, update, delete) - User with UID 'user_abc' can get, update, and delete their order at /users/user_abc/orders/order_123.
+     * @deny (create) - User with UID 'user_xyz' cannot create an order at /users/user_abc/orders/order_123.
+     * @deny (get, update, delete) - User with UID 'user_xyz' cannot get, update, or delete the order at /users/user_abc/orders/order_123.
+     * @principle Enforces document ownership for orders.
      */
     match /users/{userId}/orders/{orderId} {
-       // Helper function to check if the request is made by the owner
       function isOwner(userId) {
         return request.auth != null && request.auth.uid == userId;
       }
 
-      // Helper function to check if the request is made by the existing owner
       function isExistingOwner(userId) {
         return isOwner(userId) && resource != null;
       }
+
       allow get: if isOwner(userId);
       allow list: if isOwner(userId);
       allow create: if isOwner(userId);
@@ -85,26 +78,23 @@ service cloud.firestore {
     }
 
     /**
-     * @description Enforces owner-only access to order items within a user's order.
+     * @description Allows authenticated users to manage their own order items.
      * @path /users/{userId}/orders/{orderId}/order_items/{orderItemId}
-     * @allow (create) User with UID 'user_abc' can create an order item at /users/user_abc/orders/order_123/order_items/item_456.
-     * @allow (get) User with UID 'user_abc' can read their order item at /users/user_abc/orders/order_123/order_items/item_456.
-     * @allow (update) User with UID 'user_abc' can update their order item at /users/user_abc/orders/order_123/order_items/item_456.
-     * @allow (delete) User with UID 'user_abc' can delete their order item at /users/user_abc/orders/order_123/order_items/item_456.
-     * @deny (create) User with UID 'user_xyz' cannot create an order item at /users/user_abc/orders/order_123/order_items/item_456.
-     * @deny (get) User with UID 'user_xyz' cannot read the order item at /users/user_abc/orders/order_123/order_items/item_456.
-     * @principle Enforces document ownership for all operations.
+     * @allow (create) - User with UID 'user_abc' can create an order item at /users/user_abc/orders/order_123/order_items/item_456.
+     * @allow (get, update, delete) - User with UID 'user_abc' can get, update, and delete their order item at /users/user_abc/orders/order_123/order_items/item_456.
+     * @deny (create) - User with UID 'user_xyz' cannot create an order item at /users/user_abc/orders/order_123/order_items/item_456.
+     * @deny (get, update, delete) - User with UID 'user_xyz' cannot get, update, or delete the order item at /users/user_abc/orders/order_123/order_items/item_456.
+     * @principle Enforces document ownership for order items.
      */
     match /users/{userId}/orders/{orderId}/order_items/{orderItemId} {
-       // Helper function to check if the request is made by the owner
       function isOwner(userId) {
         return request.auth != null && request.auth.uid == userId;
       }
 
-      // Helper function to check if the request is made by the existing owner
       function isExistingOwner(userId) {
         return isOwner(userId) && resource != null;
       }
+
       allow get: if isOwner(userId);
       allow list: if isOwner(userId);
       allow create: if isOwner(userId);
@@ -113,14 +103,11 @@ service cloud.firestore {
     }
 
     /**
-     * @description Allows public read access to product information, with no write access.
+     * @description Allows public read access to products.
      * @path /products/{productId}
-     * @allow (get) Any user can read a product at /products/product_123.
-     * @allow (list) Any user can list products in the /products collection.
-     * @deny (create) No one can create products.
-     * @deny (update) No one can update products.
-     * @deny (delete) No one can delete products.
-     * @principle Allows public read access with no write access.
+     * @allow (get, list) - Any user (authenticated or not) can read product information.
+     * @deny (create, update, delete) - No one can create, update, or delete products through the client.
+     * @principle Allows public read access with no client-side write access.
      */
     match /products/{productId} {
       allow get: if true;
@@ -131,19 +118,31 @@ service cloud.firestore {
     }
 
     /**
-     * @description Allows public read access to style recommendations, with no write access.
+     * @description Allows public read access to style recommendations.
      * @path /style_recommendations/{styleRecommendationId}
-     * @allow (get) Any user can read a style recommendation at /style_recommendations/style_123.
-     * @allow (list) Any user can list style recommendations in the /style_recommendations collection.
-     * @deny (create) No one can create style recommendations.
-     * @deny (update) No one can update style recommendations.
-     * @deny (delete) No one can delete style recommendations.
-     * @principle Allows public read access with no write access.
+     * @allow (get, list) - Any user (authenticated or not) can read style recommendation information.
+     * @deny (create, update, delete) - No one can create, update, or delete style recommendations through the client.
+     * @principle Allows public read access with no client-side write access.
      */
     match /style_recommendations/{styleRecommendationId} {
       allow get: if true;
       allow list: if true;
       allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+
+     /**
+      * @description Allows anyone to create a newsletter subscription.
+      * @path /newsletter/{newsletterId}
+      * @allow (create) - Any user (authenticated or not) can create a newsletter subscription.
+      * @deny (get, list, update, delete) - No one can read, list, update, or delete newsletter subscriptions through the client.
+      * @principle Allows public creation with no client-side read/write access.
+      */
+    match /newsletter/{newsletterId} {
+      allow get: if false;
+      allow list: if false;
+      allow create: if true;
       allow update: if false;
       allow delete: if false;
     }

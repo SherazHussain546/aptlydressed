@@ -37,10 +37,10 @@ export function Footer() {
   useEffect(() => {
     if (state.message && state.success && state.email) {
       const email = state.email;
-      const notifymeRef = collection(firestore, "notifyme");
+      const newsletterRef = collection(firestore, "Newsletter");
       
       const data = { email: email, subscribedAt: new Date() };
-      addDoc(notifymeRef, data)
+      addDoc(newsletterRef, data)
         .then(() => {
           toast({
             title: 'Success',
@@ -50,7 +50,7 @@ export function Footer() {
         })
         .catch(async (serverError) => {
           const permissionError = new FirestorePermissionError({
-            path: notifymeRef.path,
+            path: newsletterRef.path,
             operation: 'create',
             requestResourceData: data,
           });
