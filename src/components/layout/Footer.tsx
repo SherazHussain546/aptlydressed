@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { subscribeToNewsletter, type NewsletterSubscribeState } from "@/app/actions/newsletter";
 import { useToast } from "@/hooks/use-toast";
 import { useFirestore, errorEmitter, FirestorePermissionError } from "@/firebase";
-import { collection, addDoc, where, query, getDocs } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -39,41 +39,23 @@ export function Footer() {
       const email = state.email;
       const notifymeRef = collection(firestore, "notifyme");
       
-      const q = query(notifymeRef, where("email", "==", email));
-      getDocs(q).then(querySnapshot => {
-        if (!querySnapshot.empty) {
+      const data = { email: email, subscribedAt: new Date() };
+      addDoc(notifymeRef, data)
+        .then(() => {
           toast({
-            title: 'Heads up!',
-            description: 'This email is already subscribed.',
-            variant: 'destructive',
+            title: 'Success',
+            description: 'Thank you for subscribing!',
           });
-          return;
-        }
-
-        const data = { email: email, subscribedAt: new Date() };
-        addDoc(notifymeRef, data)
-          .then(() => {
-            toast({
-              title: 'Success',
-              description: 'Thank you for subscribing!',
-            });
-            formRef.current?.reset();
-          })
-          .catch(async (serverError) => {
-            const permissionError = new FirestorePermissionError({
-              path: notifymeRef.path,
-              operation: 'create',
-              requestResourceData: data,
-            });
-            errorEmitter.emit('permission-error', permissionError);
-          });
-      }).catch(async (serverError) => {
+          formRef.current?.reset();
+        })
+        .catch(async (serverError) => {
           const permissionError = new FirestorePermissionError({
             path: notifymeRef.path,
-            operation: 'list',
+            operation: 'create',
+            requestResourceData: data,
           });
           errorEmitter.emit('permission-error', permissionError);
-      });
+        });
 
     } else if (state.message && !state.success) {
       toast({
