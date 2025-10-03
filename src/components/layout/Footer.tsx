@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { subscribeToNewsletter, type NewsletterSubscribeState } from "@/app/actions/newsletter";
 import { useToast } from "@/hooks/use-toast";
-import { useFirestore } from "@/firebase";
+import { useFirestore, errorEmitter, FirestorePermissionError } from "@/firebase";
 import { collection, addDoc, where, query, getDocs } from "firebase/firestore";
 
 function SubmitButton() {
@@ -35,57 +35,52 @@ export function Footer() {
   }, []);
 
   useEffect(() => {
-    if (state.message) {
-      if (state.success && state.email) {
-        // This effect runs on the client after the server action is successful
-        const handleClientSideSubscription = async (email: string) => {
-          try {
-            const notifymeRef = collection(firestore, "notifyme");
-            
-            // Check if email already exists on the client
-            const q = query(notifymeRef, where("email", "==", email));
-            const querySnapshot = await getDocs(q);
+    if (state.message && state.success && state.email) {
+      const email = state.email;
+      const notifymeRef = collection(firestore, "notifyme");
+      
+      const q = query(notifymeRef, where("email", "==", email));
+      getDocs(q).then(querySnapshot => {
+        if (!querySnapshot.empty) {
+          toast({
+            title: 'Heads up!',
+            description: 'This email is already subscribed.',
+            variant: 'destructive',
+          });
+          return;
+        }
 
-            if (!querySnapshot.empty) {
-              toast({
-                title: 'Heads up!',
-                description: 'This email is already subscribed.',
-                variant: 'destructive',
-              });
-              return;
-            }
-
-            // Add the new email
-            await addDoc(notifymeRef, {
-              email: email,
-              subscribedAt: new Date(),
-            });
-
+        const data = { email: email, subscribedAt: new Date() };
+        addDoc(notifymeRef, data)
+          .then(() => {
             toast({
               title: 'Success',
               description: 'Thank you for subscribing!',
             });
             formRef.current?.reset();
-          } catch (error) {
-            console.error("Error subscribing on client:", error);
-            toast({
-              title: 'Error',
-              description: 'Could not subscribe. Please try again.',
-              variant: 'destructive',
+          })
+          .catch(async (serverError) => {
+            const permissionError = new FirestorePermissionError({
+              path: notifymeRef.path,
+              operation: 'create',
+              requestResourceData: data,
             });
-          }
-        };
+            errorEmitter.emit('permission-error', permissionError);
+          });
+      }).catch(async (serverError) => {
+          const permissionError = new FirestorePermissionError({
+            path: notifymeRef.path,
+            operation: 'list',
+          });
+          errorEmitter.emit('permission-error', permissionError);
+      });
 
-        handleClientSideSubscription(state.email);
-
-      } else if (!state.success) {
-        // Handle validation errors from the server action
-        toast({
-          title: 'Heads up!',
-          description: state.message,
-          variant: 'destructive',
-        });
-      }
+    } else if (state.message && !state.success) {
+      toast({
+        title: 'Heads up!',
+        description: state.message,
+        variant: 'destructive',
+      });
     }
   }, [state, toast, firestore]);
   
