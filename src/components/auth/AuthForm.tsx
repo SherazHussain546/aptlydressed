@@ -20,12 +20,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
-import { Auth, getAuth } from "firebase/auth";
 
 export function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const auth = useAuth();
   const { isUserLoading } = useUser();
@@ -37,7 +38,7 @@ export function AuthForm() {
       if (isLogin) {
         initiateEmailSignIn(auth, email, password);
       } else {
-        initiateEmailSignUp(auth, email, password);
+        initiateEmailSignUp(auth, email, password, { firstName, lastName });
       }
     } catch (err: any) {
       setError(err.message);
@@ -65,6 +66,32 @@ export function AuthForm() {
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
+          {!isLogin && (
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="space-y-2 flex-1">
+                <Label htmlFor="firstName">First Name</Label>
+                <Input
+                  id="firstName"
+                  type="text"
+                  placeholder="Jane"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2 flex-1">
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input
+                  id="lastName"
+                  type="text"
+                  placeholder="Doe"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+          )}
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -84,6 +111,7 @@ export function AuthForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              minLength={6}
             />
           </div>
           <Button type="submit" className="w-full" disabled={isUserLoading}>
