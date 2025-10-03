@@ -35,7 +35,7 @@ export default function RootLayout({
       <body className="font-body antialiased h-full">
         <AuthProvider>
           <div className="flex min-h-screen flex-col">
-            <Header />
+            {pathname !== '/' && <Header />}
             {pathname !== '/' && <Breadcrumbs />}
             <main className="flex-grow">{children}</main>
             <Footer />
