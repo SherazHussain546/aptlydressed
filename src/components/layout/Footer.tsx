@@ -8,8 +8,10 @@ import Link from "next/link";
 import { Logo } from "@/components/icons/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { subscribeToNewsletter } from "@/app/actions/newsletter";
+import { subscribeToNewsletter, type NewsletterSubscribeState } from "@/app/actions/newsletter";
 import { useToast } from "@/hooks/use-toast";
+import { useFirestore } from "@/firebase";
+import { collection, addDoc, where, query, getDocs } from "firebase/firestore";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -21,27 +23,71 @@ function SubmitButton() {
 }
 
 export function Footer() {
-  const [state, formAction] = useActionState(subscribeToNewsletter, { message: '' });
+  const initialState: NewsletterSubscribeState = { message: '', success: false };
+  const [state, formAction] = useActionState(subscribeToNewsletter, initialState);
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const firestore = useFirestore();
 
   useEffect(() => {
     setCurrentYear(new Date().getFullYear());
   }, []);
 
   useEffect(() => {
-    if (state?.message) {
-      toast({
-        title: state.message.includes('Thank you') ? 'Success' : 'Heads up!',
-        description: state.message,
-        variant: state.message.includes('Thank you') ? 'default' : 'destructive',
-      });
-      if (state.message.includes('Thank you')) {
-        formRef.current?.reset();
+    if (state.message) {
+      if (state.success && state.email) {
+        // This effect runs on the client after the server action is successful
+        const handleClientSideSubscription = async (email: string) => {
+          try {
+            const notifymeRef = collection(firestore, "notifyme");
+            
+            // Check if email already exists on the client
+            const q = query(notifymeRef, where("email", "==", email));
+            const querySnapshot = await getDocs(q);
+
+            if (!querySnapshot.empty) {
+              toast({
+                title: 'Heads up!',
+                description: 'This email is already subscribed.',
+                variant: 'destructive',
+              });
+              return;
+            }
+
+            // Add the new email
+            await addDoc(notifymeRef, {
+              email: email,
+              subscribedAt: new Date(),
+            });
+
+            toast({
+              title: 'Success',
+              description: 'Thank you for subscribing!',
+            });
+            formRef.current?.reset();
+          } catch (error) {
+            console.error("Error subscribing on client:", error);
+            toast({
+              title: 'Error',
+              description: 'Could not subscribe. Please try again.',
+              variant: 'destructive',
+            });
+          }
+        };
+
+        handleClientSideSubscription(state.email);
+
+      } else if (!state.success) {
+        // Handle validation errors from the server action
+        toast({
+          title: 'Heads up!',
+          description: state.message,
+          variant: 'destructive',
+        });
       }
     }
-  }, [state, toast]);
+  }, [state, toast, firestore]);
   
   return (
     <footer className="bg-muted">
