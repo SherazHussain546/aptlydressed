@@ -31,12 +31,19 @@ export default function AboutPage() {
       <div className="container mx-auto px-4 py-16 md:py-24 space-y-16">
         <section className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div className="prose lg:prose-lg max-w-none prose-h2:font-headline">
-            <h2>Our Story</h2>
+            <h2>A Message from Our Founders</h2>
+            <p className="font-semibold">Shaharyar Hussain & Sheraz Hussain</p>
             <p>
-              Aptly Dressed was born from a simple idea: that fashion should be intentional, sustainable, and timeless. In a world saturated with fleeting trends, we saw a need for a trusted voice to cut through the noise. We are not just another fashion site; we are your most trusted partner in style.
+                From our home base here in beautiful Dublin, Ireland, we started APTLY DRESSED with a shared, powerful conviction: that the secret to great style isn't about having more clothes, but about having the <em>right</em> clothes.
             </p>
             <p>
-              Our journey began with a passion for discovering pieces that blend exceptional quality with modern design. We are dedicated to the art of curation, hand-selecting items from brands that share our commitment to craftsmanship and ethical practices.
+                The name APTLY DRESSED is the heart of our philosophy. ‘APTLY’ stands for Appropriate, and ‘DRESSED’ is for the art of dressing. Our mission is to guide you in finding the perfect, appropriate dress for any moment in your life—whether it’s for daily life, a vibrant festival, a special party, or a formal occasion.
+            </p>
+             <p>
+                In a world of overwhelming choice, we act as your personal curators and trusted partners. Our commitment is to build a lasting relationship with you. We tirelessly search for the best affiliate products from head to toe, sourced from partners anywhere in the world who share our values. We don't just look for style; we look for substance.
+            </p>
+            <p>
+                Every single item featured on APTLY DRESSED is hand-selected based on three uncompromising pillars: exceptional quality, true sustainability, and its power to be the perfect fit for your needs. Our promise is to bring you only the products we believe in, helping you build a wardrobe that is not only beautiful and mindful but also a true reflection of you. Thank you for trusting APTLY DRESSED. Let's redefine your style, together.
             </p>
           </div>
           <div className="relative h-96 rounded-lg overflow-hidden">
