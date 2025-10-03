@@ -1,0 +1,326 @@
+{
+  "entities": {
+    "Product": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Product",
+      "type": "object",
+      "description": "Represents a product sold on the Aptly Dressed e-commerce platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the product."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the product."
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the product."
+        },
+        "price": {
+          "type": "number",
+          "description": "Price of the product."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL of the product's main image.",
+          "format": "uri"
+        },
+        "category": {
+          "type": "string",
+          "description": "Category the product belongs to (e.g., dress, shirt, shoes)."
+        },
+        "sizes": {
+          "type": "array",
+          "description": "Available sizes for the product.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "colors": {
+          "type": "array",
+          "description": "Available colors for the product.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "styleRecommendationIds": {
+          "type": "array",
+          "description": "References to StyleRecommendations. (Relationship: StyleRecommendation N:N Product)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "price",
+        "imageUrl",
+        "category",
+        "sizes",
+        "colors"
+      ]
+    },
+    "UserProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserProfile",
+      "type": "object",
+      "description": "Represents a user profile on the Aptly Dressed e-commerce platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user profile."
+        },
+        "firstName": {
+          "type": "string",
+          "description": "First name of the user."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "Last name of the user."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the user.",
+          "format": "email"
+        },
+        "shippingAddresses": {
+          "type": "array",
+          "description": "Shipping addresses associated with the user.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "orderIds": {
+          "type": "array",
+          "description": "References to Orders. (Relationship: UserProfile 1:N Order)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "firstName",
+        "lastName",
+        "email"
+      ]
+    },
+    "Order": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Order",
+      "type": "object",
+      "description": "Represents an order placed by a user on the Aptly Dressed e-commerce platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the order."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to UserProfile. (Relationship: UserProfile 1:N Order)"
+        },
+        "orderDate": {
+          "type": "string",
+          "description": "Date when the order was placed.",
+          "format": "date-time"
+        },
+        "totalAmount": {
+          "type": "number",
+          "description": "Total amount of the order."
+        },
+        "shippingAddress": {
+          "type": "string",
+          "description": "Shipping address for the order."
+        },
+        "orderItemIds": {
+          "type": "array",
+          "description": "References to OrderItems. (Relationship: Order 1:N OrderItem)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "orderDate",
+        "totalAmount",
+        "shippingAddress"
+      ]
+    },
+    "OrderItem": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "OrderItem",
+      "type": "object",
+      "description": "Represents an item within an order on the Aptly Dressed e-commerce platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the order item."
+        },
+        "orderId": {
+          "type": "string",
+          "description": "Reference to Order. (Relationship: Order 1:N OrderItem)"
+        },
+        "productId": {
+          "type": "string",
+          "description": "Reference to Product. (Relationship: Product 1:N OrderItem)"
+        },
+        "quantity": {
+          "type": "number",
+          "description": "Quantity of the product in the order item."
+        },
+        "itemPrice": {
+          "type": "number",
+          "description": "Price of the individual item."
+        }
+      },
+      "required": [
+        "id",
+        "orderId",
+        "productId",
+        "quantity",
+        "itemPrice"
+      ]
+    },
+    "StyleRecommendation": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "StyleRecommendation",
+      "type": "object",
+      "description": "Represents a style recommendation generated for a user based on AI analysis.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the style recommendation."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the style recommendation, generated by AI."
+        },
+        "reasoning": {
+          "type": "string",
+          "description": "Reasoning behind the style recommendation, as determined by AI."
+        },
+        "productIds": {
+          "type": "array",
+          "description": "References to Products. (Relationship: StyleRecommendation N:N Product)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "description",
+        "reasoning"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "UserProfile",
+          "schema": {
+            "$ref": "#/backend/entities/UserProfile"
+          },
+          "description": "Stores user profile information.  Path-based ownership simplifies security rules. Includes the user's unique ID in the document ID.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/orders/{orderId}",
+        "definition": {
+          "entityName": "Order",
+          "schema": {
+            "$ref": "#/backend/entities/Order"
+          },
+          "description": "Stores orders associated with a specific user. Path-based ownership simplifies security rules and enables efficient retrieval of a user's order history. Includes the user's unique ID in the parent path.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "orderId",
+              "description": "The unique identifier for the order."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/orders/{orderId}/order_items/{orderItemId}",
+        "definition": {
+          "entityName": "OrderItem",
+          "schema": {
+            "$ref": "#/backend/entities/OrderItem"
+          },
+          "description": "Stores order items associated with a specific order. Path-based ownership simplifies security rules and enables efficient retrieval of order items for a specific order. Includes the user's and order's unique IDs in the parent path.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "orderId",
+              "description": "The unique identifier for the order."
+            },
+            {
+              "name": "orderItemId",
+              "description": "The unique identifier for the order item."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/products/{productId}",
+        "definition": {
+          "entityName": "Product",
+          "schema": {
+            "$ref": "#/backend/entities/Product"
+          },
+          "description": "Stores product information.  Allows public read access for displaying products.",
+          "params": [
+            {
+              "name": "productId",
+              "description": "The unique identifier for the product."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/style_recommendations/{styleRecommendationId}",
+        "definition": {
+          "entityName": "StyleRecommendation",
+          "schema": {
+            "$ref": "#/backend/entities/StyleRecommendation"
+          },
+          "description": "Stores style recommendations generated for users. Allows access to anyone.",
+          "params": [
+            {
+              "name": "styleRecommendationId",
+              "description": "The unique identifier for the style recommendation."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure is designed to support the Aptly Dressed e-commerce platform, focusing on user profiles, products, orders, style recommendations, and order items. The structure emphasizes clear relationships and authorization independence.  User profiles are stored under `/users/{userId}` enabling path-based ownership, simplifying security rules. Orders are stored as subcollections of users (`/users/{userId}/orders/{orderId}`), further reinforcing ownership and allowing for easy retrieval of a user's order history. Order items are located as subcollections within each order (`/users/{userId}/orders/{orderId}/order_items/{orderItemId}`), thus creating a natural hierarchy.  Products and StyleRecommendations exist in their own top-level collections (`/products/{productId}` and `/style_recommendations/{styleRecommendationId}`), respectively. This design ensures that rules do not require `get()` calls to parent documents for authorization, preventing broken atomic operations (transactions/batches). Authorization Independence is achieved via path-based ownership for user-related data. The QAPs are supported by segregating the data based on ownership and access patterns, allowing secure list operations within the user's scope."
+  }
+}
