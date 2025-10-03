@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { FirebaseError } from 'firebase/app';
 
 export function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
@@ -36,12 +37,23 @@ export function AuthForm() {
     setError(null);
     try {
       if (isLogin) {
-        initiateEmailSignIn(auth, email, password);
+        await initiateEmailSignIn(auth, email, password);
       } else {
-        initiateEmailSignUp(auth, email, password, { firstName, lastName });
+        await initiateEmailSignUp(auth, email, password, { firstName, lastName });
       }
     } catch (err: any) {
-      setError(err.message);
+       if (err instanceof FirebaseError) {
+        if (err.code === 'auth/email-already-in-use') {
+          setError('This email address is already in use. Please sign in or use a different email.');
+        } else if (err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
+          setError('Invalid email or password. Please try again.');
+        }
+        else {
+          setError(err.message);
+        }
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
     }
   };
 
