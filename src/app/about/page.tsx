@@ -23,7 +23,7 @@ export default function AboutPage() {
         )}
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative h-full flex flex-col items-center justify-center text-center text-white px-4">
-          <h1 className="text-4xl md:text-6xl font-headline max-w-4xl">Curating Style, Inspiring Confidence</h1>
+          <h1 className="text-4xl md:text-6xl font-headline max-w-4xl">Your Best Style, Expertly Curated.</h1>
           <p className="mt-4 text-lg max-w-2xl">We believe in the power of a well-curated wardrobe to simplify life and elevate the everyday.</p>
         </div>
       </header>

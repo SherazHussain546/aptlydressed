@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useRef, useActionState } from "react";
+import { useEffect, useRef, useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { Linkedin, Instagram, Facebook, Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -24,6 +24,11 @@ export function Footer() {
   const [state, formAction] = useActionState(subscribeToNewsletter, { message: '' });
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear());
+  }, []);
 
   useEffect(() => {
     if (state?.message) {
@@ -45,7 +50,7 @@ export function Footer() {
           <div className="col-span-1 md:col-span-2 lg:col-span-1">
             <Logo />
             <p className="mt-4 text-muted-foreground">
-              Timeless elegance, modern edge. Sustainable fashion for the style-conscious.
+              Your Best Style, Expertly Curated. Sustainable fashion for the style-conscious.
             </p>
             <div className="mt-6 flex space-x-4">
               <Link href="https://www.linkedin.com/company/aptlydressed" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
@@ -91,7 +96,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-12 border-t pt-8 text-center text-sm text-muted-foreground space-y-2">
-          <p>&copy; {new Date().getFullYear()} Aptly Dressed. An affiliate marketing partner.</p>
+          <p>&copy; {currentYear} Aptly Dressed. An affiliate marketing partner.</p>
           <p>Powered by <a href="https://synctech.ie" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">SYNC TECH</a></p>
         </div>
       </div>

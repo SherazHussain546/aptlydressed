@@ -36,8 +36,8 @@ export default async function Home() {
         )}
         <div className="absolute inset-0 bg-black/30" />
         <div className="relative h-full flex flex-col items-center justify-center text-center text-white px-4">
-          <h1 className="text-4xl md:text-6xl font-headline mb-4">Timeless Elegance, Modern Edge</h1>
-          <p className="max-w-2xl mb-8 text-lg">Discover our new collection, crafted for the style-conscious individual.</p>
+          <h1 className="text-4xl md:text-6xl font-headline mb-4">Your Best Style, Expertly Curated.</h1>
+          <p className="max-w-2xl mb-8 text-lg">Discover timeless elegance with a modern edge. Sustainable fashion for the style-conscious individual.</p>
           <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">
             <Link href="/shop">Shop Now</Link>
           </Button>
