@@ -2,158 +2,133 @@
  * @fileoverview Firestore Security Rules for Aptly Dressed e-commerce platform.
  *
  * Core Philosophy:
- * This ruleset prioritizes security through path-based ownership for user data
- * and public read access for product and style recommendation data. It avoids
- * complex queries in rules by denormalizing data where necessary to make
- * authorization decisions directly on the accessed document.
+ * This ruleset enforces a strict user-ownership model for user profiles, orders, and order items,
+ * while allowing public read access to products and style recommendations.
  *
  * Data Structure:
- * - /users/{userId}: Stores user profile information.
- * - /users/{userId}/orders/{orderId}: Stores orders associated with a specific user.
- * - /users/{userId}/orders/{orderId}/order_items/{orderItemId}: Stores order items associated with a specific order.
- * - /products/{productId}: Stores product information.
- * - /style_recommendations/{styleRecommendationId}: Stores AI Style Recommendations
+ * - User profiles are stored under `/users/{userId}`.
+ * - Orders are stored as subcollections of users: `/users/{userId}/orders/{orderId}`.
+ * - Order items are stored as subcollections within each order: `/users/{userId}/orders/{orderId}/order_items/{orderItemId}`.
+ * - Products are stored in the top-level collection `/products/{productId}`.
+ * - Style recommendations are stored in the top-level collection `/style_recommendations/{styleRecommendationId}`.
  *
  * Key Security Decisions:
- * - User data is strictly controlled by the owning user.
- * - Products and Style Recommendations are publicly readable but the app doesn't expose write access for any user (admin functions are out of scope).
- * - List operations are secured to prevent unauthorized access to user data.
+ * - Users can only access their own profile data, orders, and order items.
+ * - Products and style recommendations are publicly readable.
+ * - Listing of all users is disallowed.
+ * - No write access is granted to the public without authentication.
  *
  * Denormalization for Authorization:
- *  - User ownership is enforced by nesting data under the /users/{userId} path.
+ * The data structure is designed to avoid `get()` calls for authorization.
+ * User ownership is derived from the path structure (e.g., `/users/{userId}`).
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Checks if the request is authenticated.
-     */
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    /**
-     * @description Checks if the authenticated user's ID matches the provided userId.
-     */
-    function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
-    }
-
-    /**
-     * @description Checks if the authenticated user's ID matches the provided userId and the resource exists.
-     */
-    function isExistingOwner(userId) {
-      return isOwner(userId) && exists(resource);
-    }
-
-    /**
-     * @description Enforces that an 'id' field within the request matches the document ID in the path. Used to maintain relational integrity.
-     */
-    function isValidOwnerIdOnCreate(ownerId) {
-        return request.resource.data.id == ownerId;
-    }
-
-    /**
-     * @description Checks if the request to create a resource contains the proper creator id.
-     */
-    function isCreatorIdValid(creatorId){
-       return request.resource.data.creatorId == request.auth.uid;
-    }
-
-    /**
-     * @description Checks if a field is immutable by comparing the existing value with the requested value.
-     * @param {string} field - The name of the field to check.
-     */
-    function isImmutable(field) {
-      return request.resource.data[field] == resource.data[field];
-    }
-
-    /**
-     * @description Rules for /users/{userId} documents.
+     * @description Controls access to user profile documents.
      * @path /users/{userId}
-     * @allow (create) - Authenticated user with matching user ID can create their profile.
-     * @allow (get, list) - Authenticated user with matching user ID can read their profile.
-     * @allow (update, delete) - Authenticated user with matching user ID can update/delete their profile.
-     * @deny (create) - Authenticated user trying to create a profile with a mismatched user ID.
-     * @principle Enforces document ownership for all operations.
+     * @allow (create) - Authenticated user can create their own profile if the userId matches their auth.uid.
+     * @allow (get, list, update, delete) - Authenticated user can read, update, and delete their own profile if the userId matches their auth.uid.
+     * @deny (create) - If the user is not authenticated.
+     * @deny (get, list, update, delete) - If the userId does not match the authenticated user's uid.
+     * @principle Enforces document ownership and prevents unauthorized access to user profiles.
      */
     match /users/{userId} {
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
       allow get: if isOwner(userId);
       allow list: if false;
-      allow create: if isOwner(userId) && isValidOwnerIdOnCreate(userId);
-      allow update: if isOwner(userId);
-      allow delete: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Rules for /users/{userId}/orders/{orderId} documents.
+     * @description Controls access to order documents within a user's profile.
      * @path /users/{userId}/orders/{orderId}
-     * @allow (create) - Authenticated user with matching user ID can create an order for themselves.
-     * @allow (get, list) - Authenticated user with matching user ID can read their orders.
-     * @allow (update, delete) - Authenticated user with matching user ID can update/delete their orders.
-     * @deny (create) - Authenticated user trying to create an order for a different user.
-     * @principle Enforces document ownership for all operations.
+     * @allow (create) - Authenticated user can create an order under their userId.
+     * @allow (get, list, update, delete) - Authenticated user can read, update, and delete orders under their userId.
+     * @deny (create) - If the user is not authenticated or if the userId does not match their auth.uid.
+     * @deny (get, list, update, delete) - If the userId does not match the authenticated user's uid.
+     * @principle Enforces document ownership for orders and prevents unauthorized access.
      */
     match /users/{userId}/orders/{orderId} {
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
       allow get: if isOwner(userId);
       allow list: if isOwner(userId);
       allow create: if isOwner(userId);
-      allow update: if isOwner(userId);
-      allow delete: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Rules for /users/{userId}/orders/{orderId}/order_items/{orderItemId} documents.
+     * @description Controls access to order item documents within an order.
      * @path /users/{userId}/orders/{orderId}/order_items/{orderItemId}
-     * @allow (create) - Authenticated user with matching user ID can create an order item for their order.
-     * @allow (get, list) - Authenticated user with matching user ID can read their order items.
-     * @allow (update, delete) - Authenticated user with matching user ID can update/delete their order items.
-     * @deny (create) - Authenticated user trying to create an order item for a different user's order.
-     * @principle Enforces document ownership for all operations.
+     * @allow (create) - Authenticated user can create an order item under their order.
+     * @allow (get, list, update, delete) - Authenticated user can read, update, and delete order items under their order.
+     * @deny (create) - If the user is not authenticated or if the userId does not match their auth.uid.
+     * @deny (get, list, update, delete) - If the userId does not match the authenticated user's uid.
+     * @principle Enforces document ownership for order items and prevents unauthorized access.
      */
     match /users/{userId}/orders/{orderId}/order_items/{orderItemId} {
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
       allow get: if isOwner(userId);
       allow list: if isOwner(userId);
       allow create: if isOwner(userId);
-      allow update: if isOwner(userId);
-      allow delete: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Rules for /products/{productId} documents.
+     * @description Controls access to product documents.
      * @path /products/{productId}
-     * @allow (get, list) - Anyone can read product information.
-     * @deny (create, update, delete) - No one can create, update, or delete products through the client.
-     * @principle Allows public read access, restricts write access.
+     * @allow (get, list) - Allows anyone to read product information.
+     * @deny (create, update, delete) - Prevents anyone from creating, updating, or deleting products without authentication.
+     * @principle Allows public read access while restricting write access to prevent unauthorized modifications.
      */
     match /products/{productId} {
       allow get: if true;
       allow list: if true;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
     }
 
     /**
-     * @description Rules for /style_recommendations/{styleRecommendationId} documents.
+     * @description Controls access to style recommendation documents.
      * @path /style_recommendations/{styleRecommendationId}
-     * @allow (get, list) - Anyone can read style recommendations.
-     * @deny (create, update, delete) - No one can create, update, or delete style recommendations through the client.
-     * @principle Allows public read access, restricts write access.
+     * @allow (get, list) - Allows anyone to read style recommendation information.
+     * @deny (create, update, delete) - Prevents anyone from creating, updating, or deleting style recommendations without authentication.
+     * @principle Allows public read access while restricting write access to prevent unauthorized modifications.
      */
     match /style_recommendations/{styleRecommendationId} {
       allow get: if true;
       allow list: if true;
-    }
-
-    /**
-     * @description Fixes the reported error: Missing or insufficient permissions to `list` the `notifyme` collection.
-     * @path /notifyme
-     * @allow (get, list) - Anyone can list the `notifyme` collection.
-     * @deny (create, update, delete) - No one can create, update, or delete documents in the `notifyme` collection through the client.
-     * @principle Allows public read access, restricts write access.
-     */
-    match /notifyme {
-      allow get: if true;
-      allow list: if true;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
     }
   }
 }
