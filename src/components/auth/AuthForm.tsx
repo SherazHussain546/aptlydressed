@@ -1,7 +1,12 @@
+
 "use client";
 
 import { useState } from "react";
-import { useAuth } from "@/context/AuthContext";
+import {
+  initiateEmailSignIn,
+  initiateEmailSignUp,
+} from "@/firebase/non-blocking-login";
+import { useAuth, useUser } from "@/firebase";
 import {
   Card,
   CardContent,
@@ -15,22 +20,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { Auth, getAuth } from "firebase/auth";
 
 export function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const { signUp, signIn, loading } = useAuth();
+  const auth = useAuth();
+  const { isUserLoading } = useUser();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     try {
       if (isLogin) {
-        await signIn(email, password);
+        initiateEmailSignIn(auth, email, password);
       } else {
-        await signUp(email, password);
+        initiateEmailSignUp(auth, email, password);
       }
     } catch (err: any) {
       setError(err.message);
@@ -79,8 +86,12 @@ export function AuthForm() {
               required
             />
           </div>
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Processing..." : isLogin ? "Sign In" : "Sign Up"}
+          <Button type="submit" className="w-full" disabled={isUserLoading}>
+            {isUserLoading
+              ? "Processing..."
+              : isLogin
+              ? "Sign In"
+              : "Sign Up"}
           </Button>
         </form>
       </CardContent>

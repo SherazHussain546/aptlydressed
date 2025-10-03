@@ -1,11 +1,14 @@
+
 'use server';
 
 import { z } from 'zod';
-import { firestore } from '@/lib/firebase-admin';
+import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
+import { initializeFirebase } from '@/firebase';
 
 const emailSchema = z.string().email({ message: "Please enter a valid email address." });
 
 export async function subscribeToNewsletter(prevState: any, formData: FormData) {
+  const { firestore } = initializeFirebase();
   const email = formData.get('email');
   
   const validatedEmail = emailSchema.safeParse(email);
@@ -17,16 +20,18 @@ export async function subscribeToNewsletter(prevState: any, formData: FormData) 
   }
 
   try {
-    const newsletterRef = firestore.collection('newsletter');
+    const newsletterRef = collection(firestore, 'newsletter');
     
     // Check if email already exists
-    const snapshot = await newsletterRef.where('email', '==', validatedEmail.data).limit(1).get();
+    const q = query(newsletterRef, where('email', '==', validatedEmail.data));
+    const snapshot = await getDocs(q);
+
     if (!snapshot.empty) {
       return { message: 'This email is already subscribed.' };
     }
 
     // Add new email
-    await newsletterRef.add({
+    await addDoc(newsletterRef, {
       email: validatedEmail.data,
       subscribedAt: new Date(),
     });

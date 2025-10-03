@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useAuth } from "@/context/AuthContext";
+import { useUser, useAuth } from "@/firebase";
 import { AuthForm } from "@/components/auth/AuthForm";
 import {
   Card,
@@ -11,11 +12,24 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { signOut } from "firebase/auth";
+import { useToast } from "@/hooks/use-toast";
 
 export default function AccountPage() {
-  const { user, loading, signOutUser } = useAuth();
+  const { user, isUserLoading } = useUser();
+  const auth = useAuth();
+  const { toast } = useToast();
 
-  if (loading) {
+  const handleSignOut = () => {
+    signOut(auth).then(() => {
+      toast({
+        title: "Signed Out",
+        description: "You have been successfully signed out.",
+      });
+    });
+  };
+
+  if (isUserLoading) {
     return (
       <div className="container mx-auto px-4 py-8 md:py-16">
         <h1 className="text-4xl font-headline mb-8">My Account</h1>
@@ -53,7 +67,7 @@ export default function AccountPage() {
               <p>
                 <strong>User ID:</strong> {user.uid}
               </p>
-              <Button onClick={signOutUser} variant="destructive">
+              <Button onClick={handleSignOut} variant="destructive">
                 Sign Out
               </Button>
             </CardContent>

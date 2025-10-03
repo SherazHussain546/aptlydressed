@@ -4,9 +4,9 @@ import './globals.css';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Toaster } from '@/components/ui/toaster';
-import { AuthProvider } from '@/context/AuthContext';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { headers } from 'next/headers';
+import { FirebaseClientProvider } from '@/firebase';
 
 export const metadata: Metadata = {
   title: {
@@ -33,7 +33,7 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Arial:wght@400;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased h-full">
-        <AuthProvider>
+        <FirebaseClientProvider>
           <div className="flex min-h-screen flex-col">
             {pathname !== '/' && <Header />}
             {pathname !== '/' && <Breadcrumbs />}
@@ -41,7 +41,7 @@ export default function RootLayout({
             <Footer />
           </div>
           <Toaster />
-        </AuthProvider>
+        </FirebaseClientProvider>
       </body>
     </html>
   );
