@@ -74,6 +74,7 @@ export function Footer() {
     { href: "/contact", label: "Contact" },
     { href: "/affiliate-disclosure", label: "Affiliate Disclosure" },
     { href: "/business-portfolio", label: "Business Portfolio" },
+    { href: "/privacy-policy", label: "Privacy Policy" },
     { href: "/account", label: "Login / Signup" },
   ];
 

@@ -7,6 +7,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { headers } from 'next/headers';
 import { FirebaseClientProvider } from '@/firebase';
+import { CookieBanner } from '@/components/layout/CookieBanner';
 
 export const metadata: Metadata = {
   title: {
@@ -41,6 +42,7 @@ export default function RootLayout({
             <Footer />
           </div>
           <Toaster />
+          <CookieBanner />
         </FirebaseClientProvider>
       </body>
     </html>
