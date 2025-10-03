@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { useEffect, useRef, useActionState } from "react";
@@ -45,7 +44,7 @@ export default function ComingSoonPage() {
   }, [state, toast]);
 
   return (
-    <div className="relative min-h-screen w-full">
+    <div className="relative flex-grow flex flex-col items-center justify-center">
       {heroImage && (
         <Image
           src={heroImage.imageUrl}
@@ -57,7 +56,7 @@ export default function ComingSoonPage() {
         />
       )}
       <div className="absolute inset-0 bg-black/60" />
-      <div className="relative h-full min-h-screen flex flex-col items-center justify-center text-center text-white px-4">
+      <div className="relative h-full flex flex-col items-center justify-center text-center text-white px-4 py-16">
         <div className="max-w-3xl">
             <div className="mb-8">
                 <Logo />
@@ -93,25 +92,8 @@ export default function ComingSoonPage() {
                     <SubmitButton />
                 </form>
             </div>
-            
-            <div className="mt-12">
-                <p className="text-sm text-primary-foreground/80 mb-4">Follow our journey</p>
-                <div className="flex justify-center space-x-6">
-                    <Link href="https://www.linkedin.com/company/aptlydressed" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-                        <Linkedin className="h-6 w-6 text-primary-foreground/80 transition-colors hover:text-white" />
-                    </Link>
-                    <Link href="https://www.instagram.com/aptlydressed/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                        <Instagram className="h-6 w-6 text-primary-foreground/80 transition-colors hover:text-white" />
-                    </Link>
-                    <Link href="https://www.facebook.com/aptlydressed/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                        <Facebook className="h-6 w-6 text-primary-foreground/80 transition-colors hover:text-white" />
-                    </Link>
-                </div>
-            </div>
         </div>
       </div>
     </div>
   );
 }
-
-    
