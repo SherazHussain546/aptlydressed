@@ -52,7 +52,7 @@ export default function ContactPage() {
                     <Phone className="h-6 w-6 text-primary" />
                     <div>
                         <h3 className="font-semibold text-lg">Phone</h3>
-                        <p className="text-muted-foreground">(555) 123-4567 (Customer Support)</p>
+                        <p className="text-muted-foreground">(353) 830 68 2026</p>
                     </div>
                  </div>
                   <div className="flex items-center gap-4">
