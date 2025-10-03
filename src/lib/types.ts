@@ -1,4 +1,5 @@
 
+
 export interface Product {
   id: string;
   slug: string;
@@ -51,3 +52,10 @@ export type ImagePlaceholder = {
   imageUrl: string;
   imageHint: string;
 };
+
+export interface UserProfile {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
