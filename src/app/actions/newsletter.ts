@@ -6,20 +6,22 @@ import { firestore } from '@/lib/firebase-admin';
 
 const emailSchema = z.string().email({ message: "Please enter a valid email address." });
 
+// This is what needs to be passed to useActionState
 export async function subscribeToNewsletter(prevState: any, formData: FormData) {
-  const validatedFields = emailSchema.safeParse(formData.get('email'));
+  const validatedEmail = emailSchema.safeParse(formData.get('email'));
 
-  if (!validatedFields.success) {
+  if (!validatedEmail.success) {
     return {
-      message: validatedFields.error.errors[0].message,
+      message: validatedEmail.error.errors[0].message,
     };
   }
   
-  const email = validatedFields.data;
+  const email = validatedEmail.data;
 
   try {
-    const newsletterRef = firestore.collection('subscribers');
+    const newsletterRef = firestore.collection('notifyme');
     
+    // Check if email already exists
     const snapshot = await newsletterRef.where('email', '==', email).limit(1).get();
 
     if (!snapshot.empty) {
