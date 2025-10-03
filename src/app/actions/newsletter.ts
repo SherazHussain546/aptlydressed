@@ -18,7 +18,7 @@ export async function subscribeToNewsletter(prevState: any, formData: FormData) 
   const email = validatedFields.data;
 
   try {
-    const newsletterRef = firestore.collection('newsletter_subscriptions');
+    const newsletterRef = firestore.collection('subscribers');
     
     const snapshot = await newsletterRef.where('email', '==', email).limit(1).get();
 
