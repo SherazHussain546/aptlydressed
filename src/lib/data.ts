@@ -29,7 +29,7 @@ export const placeholderImages: ImagePlaceholder[] = [
     {
       "id": "sustainability-materials",
       "description": "Close up of natural fabric textures like cotton and linen.",
-      "imageUrl": "https://images.unsplash.com/photo-1620721248234-a8286214a13d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxuYXR1cmFsJTIwZmFicmljc3xlbnwwfHx8fDE3NTk4ODU5NDR8MA&ixlib.rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1687405181991-ac537513efdc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxOXx8c3VzdGFpbmFiaWxpdHklMjBjbG90aGluZ3xlbnwwfHx8fDE3NTk1MDkyNDh8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "natural fabrics"
     },
     {
@@ -221,7 +221,7 @@ export const placeholderImages: ImagePlaceholder[] = [
     {
       "id": "blog-3",
       "description": "Desk with a laptop showing a fashion website, a cup of coffee and a plant.",
-      "imageUrl": "https://images.unsplash.com/photo-1546952859-6e63fac20b90?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxmYXNoaW9uJTIwYmxvZ3xlbnwwfHx8fDE3NTkwNTg3ODd8MA&ixlib.rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1546952859-6e63fac20b90?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxmYXNoaW9uJTIwYmxvZ3xlbnwwfHx8fDE3NTkwNTg3ODd8MA&ixlib-rb-4.1.0&q=80&w=1080",
       "imageHint": "fashion blog"
     },
     {
