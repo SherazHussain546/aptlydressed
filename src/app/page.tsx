@@ -1,148 +1,117 @@
 
-import Image from 'next/image';
-import Link from 'next/link';
 
-import { Button } from '@/components/ui/button';
-import { ProductCard } from '@/components/products/ProductCard';
-import { productsPromise, getCollections } from '@/lib/server-data';
-import { blogPosts, placeholderImages } from '@/lib/data';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+"use client";
 
-const heroImage = placeholderImages.find(p => p.id === 'hero-1');
+import { useEffect, useRef, useActionState } from "react";
+import { useFormStatus } from "react-dom";
+import Image from "next/image";
+import Link from "next/link";
+import { Linkedin, Instagram, Facebook, Loader2, Handshake } from "lucide-react";
 
-export default async function Home() {
-  const products = await productsPromise;
-  const collections = await getCollections();
-  
-  const newArrivals = products.filter(p => p.tags.includes('New Arrival')).slice(0, 4);
-  const featuredProducts = products.filter(p => p.tags.includes('Featured')).slice(0, 4);
-  const latestPost = blogPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
-  const latestPostImage = placeholderImages.find(p => p.id === latestPost.imageId);
+import { placeholderImages } from "@/lib/data";
+import { Logo } from "@/components/icons/Logo";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { subscribeToNewsletter } from "@/app/actions/newsletter";
+import { useToast } from "@/hooks/use-toast";
 
+const heroImage = placeholderImages.find(p => p.id === 'collaborate-hero');
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return (
+    <Button type="submit" size="lg" className="w-full md:w-auto bg-primary hover:bg-primary/90" disabled={pending}>
+      {pending ? <Loader2 className="animate-spin" /> : 'Notify Me'}
+    </Button>
+  );
+}
+
+export default function ComingSoonPage() {
+  const [state, formAction] = useActionState(subscribeToNewsletter, { message: '' });
+  const { toast } = useToast();
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (state?.message) {
+      toast({
+        title: state.message.includes('Thank you') ? 'Success' : 'Heads up!',
+        description: state.message,
+        variant: state.message.includes('Thank you') ? 'default' : 'destructive',
+      });
+      if (state.message.includes('Thank you')) {
+        formRef.current?.reset();
+      }
+    }
+  }, [state, toast]);
 
   return (
-    <div className="space-y-16 md:space-y-24">
-      {/* Hero Section */}
-      <section className="relative h-[60vh] md:h-[80vh] w-full">
-        {heroImage && (
-          <Image
-            src={heroImage.imageUrl}
-            alt={heroImage.description}
-            fill
-            className="object-cover"
-            priority
-            data-ai-hint={heroImage.imageHint}
-          />
-        )}
-        <div className="absolute inset-0 bg-black/30" />
-        <div className="relative h-full flex flex-col items-center justify-center text-center text-white px-4">
-          <h1 className="text-4xl md:text-6xl font-headline mb-4">Your Best Style, Expertly Curated.</h1>
-          <p className="max-w-2xl mb-8 text-lg">Discover timeless elegance with a modern edge. Sustainable fashion for the style-conscious individual.</p>
-          <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-            <Link href="/shop">Shop Now</Link>
-          </Button>
-        </div>
-      </section>
-
-      {/* New Arrivals */}
-      <section className="container mx-auto px-4">
-        <h2 className="text-3xl font-headline text-center mb-8">New Arrivals</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {newArrivals.map(product => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-        <div className="text-center mt-8">
-          <Button asChild variant="outline">
-            <Link href="/shop">View All</Link>
-          </Button>
-        </div>
-      </section>
-
-      {/* Collections Section */}
-      <section className="container mx-auto px-4">
-        <h2 className="text-3xl font-headline text-center mb-8">Curated Collections</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {collections.slice(0,3).map(collection => {
-            const collectionImage = placeholderImages.find(p => p.id === collection.imageId);
-            return (
-              <Link key={collection.id} href={collection.href} className="group relative h-96 block">
-                {collectionImage && (
-                  <Image
-                    src={collectionImage.imageUrl}
-                    alt={collectionImage.description}
-                    fill
-                    className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
-                    data-ai-hint={collectionImage.imageHint}
-                  />
-                )}
-                <div className="absolute inset-0 bg-black/40 rounded-lg" />
-                <div className="relative h-full flex items-center justify-center">
-                  <h3 className="text-3xl font-headline text-white">{collection.title}</h3>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* From the Journal Section */}
-      {latestPost && (
-        <section className="bg-muted py-16 md:py-24">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl font-headline text-center mb-8">From the Journal</h2>
-            <div className="max-w-4xl mx-auto">
-              <Card className="grid grid-cols-1 md:grid-cols-2 overflow-hidden">
-                <div className="relative aspect-video md:aspect-auto">
-                  {latestPostImage && (
-                    <Link href={`/blog/${latestPost.slug}`} className="block group h-full">
-                      <Image
-                        src={latestPostImage.imageUrl}
-                        alt={latestPost.title}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        data-ai-hint={latestPostImage.imageHint}
-                      />
-                    </Link>
-                  )}
-                </div>
-                <div className="flex flex-col">
-                  <CardHeader>
-                    <p className="text-sm text-muted-foreground pt-1">
-                      By {latestPost.author} on {latestPost.date}
-                    </p>
-                    <CardTitle className="font-headline text-2xl">
-                      <Link href={`/blog/${latestPost.slug}`} className="hover:text-primary transition-colors">
-                        {latestPost.title}
-                      </Link>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex-grow">
-                    <p className="text-muted-foreground">{latestPost.excerpt}</p>
-                  </CardContent>
-                  <CardFooter>
-                    <Button asChild variant="link" className="p-0 h-auto">
-                      <Link href={`/blog/${latestPost.slug}`}>
-                        Read More
-                      </Link>
-                    </Button>
-                  </CardFooter>
-                </div>
-              </Card>
-            </div>
-          </div>
-        </section>
+    <div className="relative min-h-screen w-full">
+      {heroImage && (
+        <Image
+          src={heroImage.imageUrl}
+          alt={heroImage.description}
+          fill
+          className="object-cover"
+          priority
+          data-ai-hint={heroImage.imageHint}
+        />
       )}
-      
-      {/* Featured Products */}
-      <section className="container mx-auto px-4">
-        <h2 className="text-3xl font-headline text-center mb-8">Featured Products</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {featuredProducts.map(product => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+      <div className="absolute inset-0 bg-black/60" />
+      <div className="relative h-full min-h-screen flex flex-col items-center justify-center text-center text-white px-4">
+        <div className="max-w-3xl">
+            <div className="mb-8">
+                <Logo />
+            </div>
+
+            <h1 className="text-4xl md:text-6xl font-headline mb-4">A New Destination for Timeless Style is Coming Soon</h1>
+            <p className="max-w-2xl mx-auto mb-8 text-lg text-primary-foreground/90">
+                Aptly Dressed is a new, content-driven affiliate platform connecting the most discerning brands with style-conscious consumers. We are building a curated ecosystem based on quality, sustainability, and timeless design.
+            </p>
+            
+            <div className="bg-white/10 backdrop-blur-sm p-6 md:p-8 rounded-xl border border-white/20">
+                <h2 className="text-2xl font-headline text-white mb-4 flex items-center justify-center gap-3"><Handshake/> For Brands & Partners</h2>
+                <p className="text-primary-foreground/90 mb-6">
+                    We are now seeking launch partners who share our passion for quality craftsmanship and sustainable practices. If your brand aligns with our ethos of modern elegance, we invite you to get in touch.
+                </p>
+                <Button asChild size="lg">
+                    <a href="mailto:contact@aptlydressed.com">
+                        Partner With Us
+                    </a>
+                </Button>
+            </div>
+            
+            <div className="mt-12">
+                <p className="text-sm text-primary-foreground/80 mb-2">Sign up for our public launch announcement:</p>
+                <form ref={formRef} action={formAction} className="w-full max-w-md mx-auto flex flex-col md:flex-row gap-2">
+                    <Input
+                        type="email"
+                        name="email"
+                        placeholder="Enter your email address"
+                        className="bg-white/90 text-foreground flex-grow text-center md:text-left"
+                        required
+                    />
+                    <SubmitButton />
+                </form>
+            </div>
+            
+            <div className="mt-12">
+                <p className="text-sm text-primary-foreground/80 mb-4">Follow our journey</p>
+                <div className="flex justify-center space-x-6">
+                    <Link href="https://www.linkedin.com/company/aptlydressed" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                        <Linkedin className="h-6 w-6 text-primary-foreground/80 transition-colors hover:text-white" />
+                    </Link>
+                    <Link href="https://www.instagram.com/aptlydressed/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                        <Instagram className="h-6 w-6 text-primary-foreground/80 transition-colors hover:text-white" />
+                    </Link>
+                    <Link href="https://www.facebook.com/aptlydressed/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                        <Facebook className="h-6 w-6 text-primary-foreground/80 transition-colors hover:text-white" />
+                    </Link>
+                </div>
+            </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 }
+
+    

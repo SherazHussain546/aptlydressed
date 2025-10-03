@@ -107,7 +107,7 @@ export default function ProposalPage() {
                     <li><strong>Vision:</strong> To become the world's leading and most trusted digital destination for curated outfit discovery and style inspiration.</li>
                 </ul>
 
-                <p><strong>2.3 Team & Management:</strong> Founded by the SS Brothers (Shaharyar Hussain and <a href="https://sherazhussain.synctech.ie" target="_blank" rel="noopener noreferrer">Sheraz Hussain</a>), our team combines a deep passion for fashion with a keen understanding of the digital landscape. Our strategic partnership with <strong><a href="https://synctech.ie" target="_blank" rel="noopener noreferrer">SYNC TECH Solutions</a></strong> provides us with best-in-class expertise in platform development, data security, and scalability, ensuring our technological infrastructure is as robust and forward-thinking as our fashion-forward vision.</p>
+                <p><strong>2.3 Team & Management:</strong> Founded by the Hussain Brothers (Shaharyar Hussain and <a href="https://sherazhussain.synctech.ie" target="_blank" rel="noopener noreferrer">Sheraz Hussain</a>), our team combines a deep passion for fashion with a keen understanding of the digital landscape. Our strategic partnership with <strong><a href="https://synctech.ie" target="_blank" rel="noopener noreferrer">SYNC TECH Solutions</a></strong> provides us with best-in-class expertise in platform development, data security, and scalability, ensuring our technological infrastructure is as robust and forward-thinking as our fashion-forward vision.</p>
             </div>
           </section>
 
@@ -299,7 +299,7 @@ export default function ProposalPage() {
                 <ul>
                     <li><strong>8.1 Market Research Data:</strong> Detailed reports on market size, growth trends, and consumer behavior from sources such as Statista, Google Trends, and industry-specific market analyses.</li>
                     <li><strong>8.2 Legal and Regulatory Documents:</strong> Proof of DBA filing and other relevant business registration documents.</li>
-                    <li><strong>8.3 Resumes/CVs:</strong> Detailed professional backgrounds of the founding team, the SS Brothers (Shaharyar Hussain and <a href="https://sherazhussain.synctech.ie" target="_blank" rel="noopener noreferrer">Sheraz Hussain</a>).</li>
+                    <li><strong>8.3 Resumes/CVs:</strong> Detailed professional backgrounds of the founding team, the Hussain Brothers (Shaharyar Hussain and <a href="https://sherazhussain.synctech.ie" target="_blank" rel="noopener noreferrer">Sheraz Hussain</a>).</li>
                 </ul>
             </div>
           </section>
@@ -308,3 +308,5 @@ export default function ProposalPage() {
     </div>
   );
 }
+
+    

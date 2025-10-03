@@ -24,7 +24,7 @@ export default function RootLayout({
   const headersList = headers();
   const pathname = headersList.get('x-pathname') || '';
 
-  const isComingSoonPage = pathname === '/coming-soon';
+  const isComingSoonPage = pathname === '/';
 
   if (isComingSoonPage) {
     return (
@@ -65,3 +65,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+    
