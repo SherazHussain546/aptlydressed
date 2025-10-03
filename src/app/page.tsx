@@ -37,11 +37,11 @@ export default function ComingSoonPage() {
   useEffect(() => {
     if (state.message && state.success && state.email) {
       const email = state.email;
-      const notifymeRef = collection(firestore, "notifyme");
+      const subscribersRef = collection(firestore, "subscribers");
       
-      const data = { email: email, subscribedAt: new Date() };
+      const data = { email: email, subscribedAt: new Date(), source: 'coming-soon' };
       
-      addDoc(notifymeRef, data)
+      addDoc(subscribersRef, data)
         .then(() => {
           toast({
             title: 'Success',
@@ -51,10 +51,8 @@ export default function ComingSoonPage() {
         })
         .catch(async (serverError) => {
           console.error("Firestore Error:", serverError);
-          // Even if the duplicate check is removed, we keep the error handling
-          // in case other security rules prevent the write.
           const permissionError = new FirestorePermissionError({
-            path: notifymeRef.path,
+            path: subscribersRef.path,
             operation: 'create',
             requestResourceData: data,
           });
