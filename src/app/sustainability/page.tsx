@@ -41,7 +41,10 @@ export default function SustainabilityPage() {
             <h2 className="text-3xl font-headline">Our Pledge for the Planet</h2>
             <div className="prose prose-lg max-w-none mx-auto mt-4">
                 <p>
-                At Aptly Dressed, our love for fashion is matched by our respect for the planet. We are dedicated to promoting a more thoughtful and sustainable approach to style. For us, this isn't a trend; it's a core principle that guides every recommendation we make. We partner with brands that share our vision for a circular fashion economy, prioritizing environmental stewardship and ethical practices from start to finish.
+                At APTLY DRESSED, our love for fashion is matched by our deep respect for the planet and its people. We are dedicated to promoting a more thoughtful and sustainable approach to style. For us, this isn't a trend; it's a core principle that guides every recommendation we make. We believe that looking good and doing good should go hand in hand.
+                </p>
+                <p>
+                We partner with brands that share our vision for a circular fashion economy, prioritizing environmental stewardship and ethical practices from the initial design to the final product. We seek out innovation that reduces waste, champions fair labor, and creates beautiful clothing that lasts.
                 </p>
             </div>
         </section>
@@ -61,12 +64,12 @@ export default function SustainabilityPage() {
             <div className="prose lg:prose-lg max-w-none prose-h2:font-headline">
                 <h2>Our Sustainable Criteria</h2>
                 <p>
-                We carefully vet our partner brands based on a set of rigorous criteria to ensure they align with our values. We champion brands that are transparent about their supply chain and committed to making a positive impact.
+                We carefully vet our partner brands based on a set of rigorous criteria to ensure they align with our values. We champion brands that are transparent about their supply chain and committed to making a positive impact. Here’s what we look for:
                 </p>
                 <ul>
-                    <li><strong>Eco-Friendly Materials:</strong> We prioritize products made from sustainable materials like organic cotton, linen, Tencel™, and recycled fabrics that minimize water usage and pollution.</li>
-                    <li><strong>Ethical Production:</strong> We partner with brands that ensure fair wages, safe working conditions, and respect for artisans throughout their supply chain.</li>
-                    <li><strong>Timeless Design & Durability:</strong> We believe in buying better, not more. Our curated collections feature high-quality, timeless pieces designed to be cherished for years, reducing waste and promoting mindful consumption.</li>
+                    <li><strong>Eco-Friendly Materials:</strong> We prioritize products made from sustainable and innovative materials like organic cotton, linen, Tencel™, and recycled fabrics. These choices minimize water usage, reduce pollution, and lower the carbon footprint of your wardrobe.</li>
+                    <li><strong>Ethical Production:</strong> We partner with brands that ensure fair wages, safe working conditions, and respect for artisans throughout their supply chain. We believe that the people who make our clothes are just as important as the people who wear them.</li>
+                    <li><strong>Timeless Design & Durability:</strong> In line with our core philosophy, we believe in buying better, not more. Our curated collections feature high-quality, timeless pieces designed to be cherished for years, reducing fashion waste and promoting mindful consumption.</li>
                 </ul>
             </div>
         </section>
@@ -74,9 +77,9 @@ export default function SustainabilityPage() {
         <section className="bg-muted -mx-4 px-4 py-16 md:-mx-8 md:px-8 md:py-24 rounded-lg">
              <div className="container mx-auto">
                 <div className="text-center max-w-3xl mx-auto">
-                    <h2 className="text-3xl font-headline">Conscious Consumerism</h2>
+                    <h2 className="text-3xl font-headline">Conscious Consumerism: Your Role in the Movement</h2>
                     <p className="mt-4 text-lg text-muted-foreground">
-                    We empower you to make informed choices. By choosing pieces from our collections, you're not just elevating your wardrobe—you're supporting a movement towards a more responsible fashion industry.
+                    We empower you to make informed choices that reflect your values. By choosing pieces from our collections, you're not just elevating your wardrobe—you're supporting a global movement towards a more responsible and transparent fashion industry. Every purchase is a vote for the future you want to see.
                     </p>
                 </div>
             </div>
