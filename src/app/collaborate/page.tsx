@@ -101,13 +101,13 @@ export default function CollaboratePage() {
             </p>
             <div className="mt-8">
                 <Button asChild size="lg">
-                    <a href="mailto:contact@aptlydressed.com">
+                    <a href="mailto:aptlydressed@outlook.com">
                         <Mail className="mr-2 h-5 w-5" /> Get in Touch
                     </a>
                 </Button>
             </div>
              <div className="mt-4 text-sm text-muted-foreground">
-                <p>For partnership inquiries, please email us at <a href="mailto:contact@aptlydressed.com" className="underline hover:text-primary">contact@aptlydressed.com</a>.</p>
+                <p>For partnership inquiries, please email us at <a href="mailto:aptlydressed@outlook.com" className="underline hover:text-primary">aptlydressed@outlook.com</a>.</p>
             </div>
         </section>
       </div>

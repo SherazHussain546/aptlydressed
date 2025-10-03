@@ -73,7 +73,7 @@ export default function ComingSoonPage() {
                     We are now seeking launch partners who share our passion for quality craftsmanship and sustainable practices. If your brand aligns with our ethos of modern elegance, we invite you to get in touch.
                 </p>
                 <Button asChild size="lg">
-                    <a href="mailto:contact@aptlydressed.com">
+                    <a href="mailto:aptlydressed@outlook.com">
                         Partner With Us
                     </a>
                 </Button>
