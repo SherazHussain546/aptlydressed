@@ -1,10 +1,35 @@
+/**
+ * @fileOverview Firestore Security Rules for Aptly Dressed e-commerce platform.
+ *
+ * Core Philosophy:
+ * This ruleset employs a strict user-ownership model for user profiles, orders, and order items,
+ * while allowing public read access to products and style recommendations.
+ *
+ * Data Structure:
+ * - User profiles are stored under `/users/{userId}`.
+ * - Orders are stored as subcollections of users: `/users/{userId}/orders/{orderId}`.
+ * - Order items are stored as subcollections within each order: `/users/{userId}/orders/{orderId}/order_items/{orderItemId}`.
+ * - Products are stored in a top-level collection: `/products/{productId}`.
+ * - Style recommendations are stored in a top-level collection: `/style_recommendations/{styleRecommendationId}`.
+ * - Newsletter subscriptions are stored in the `/Newsletter` collection.
+ *
+ * Key Security Decisions:
+ * - Users can only access their own profiles, orders, and order items.
+ * - Products and style recommendations are publicly readable.
+ * - Listing of user profiles is disallowed.
+ * - Newsletter subscriptions are open to everyone.
+ *
+ * Denormalization for Authorization:
+ *  - Path-based ownership is enforced for user-related data, eliminating the need for `get()` calls
+ *    to parent documents for authorization.
+ */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Checks if the request is authenticated.
-     * @returns {boolean} True if the request is authenticated, false otherwise.
+     * @description Checks if the request is made by a signed-in user.
+     * @returns {boolean} True if the user is signed in, false otherwise.
      */
     function isSignedIn() {
       return request.auth != null;
@@ -12,119 +37,116 @@ service cloud.firestore {
 
     /**
      * @description Checks if the authenticated user ID matches the provided user ID.
-     * @param {string} userId - The user ID to compare against the authenticated user's ID.
-     * @returns {boolean} True if the user IDs match, false otherwise.
+     * @param {string} userId - The user ID to compare against.
+     * @returns {boolean} True if the user ID matches, false otherwise.
+     * @example isOwner('someUserId') will return true if request.auth.uid == 'someUserId'.
      */
     function isOwner(userId) {
       return request.auth.uid == userId;
     }
 
     /**
-     * @description Checks if the authenticated user is the owner of the existing document.
-     * @param {string} userId - The user ID of the owner.
-     * @returns {boolean} True if the user is the owner and the document exists, false otherwise.
+     * @description Checks if the authenticated user is the owner of an existing document.
+     * @param {string} userId - The user ID to compare against.
+     * @returns {boolean} True if the user ID matches and the document exists.
      */
     function isExistingOwner(userId) {
-      return isOwner(userId) && 'name' in resource.data;
+      return isOwner(userId) && resource != null;
+    }
+
+
+    /**
+     * @description Rule for the Newsletter collection. Anyone can submit a subscription.
+     * @path /Newsletter
+     * @allow (create) An unauthenticated user can create a subscription request with an email and subscribedAt.
+     * @deny (create) No denial conditions, as any user is permitted to create a subscription.
+     * @principle Allows unauthenticated users to sign up for the newsletter
+     */
+    match /Newsletter {
+      allow create: if true;
+      allow get: if false;
+      allow list: if false;
+      allow update: if false;
+      allow delete: if false;
     }
 
     /**
-     * @description Security rules for user profiles.
+     * @description Rules for user profiles.
      * @path /users/{userId}
-     * @allow (create) - Authenticated user can create their own profile.
-     * @allow (get) - Authenticated user can read their own profile.
-     * @allow (update) - Authenticated user can update their own profile.
-     * @allow (delete) - Authenticated user can delete their own profile.
-     * @deny (create) - Non-authenticated user cannot create a profile.
-     * @deny (get) - Non-authenticated user cannot read a profile.
-     * @deny (update) - Non-authenticated user cannot update a profile.
-     * @deny (delete) - Non-authenticated user cannot delete a profile.
-     * @principle Enforces document ownership for writes.
+     * @allow (create) A user can create their own profile.
+     * @allow (get, update, delete) A user can only access their own profile.
+     * @deny (create) A user cannot create a profile with an ID that does not match their own.
+     * @deny (get, update, delete) A user cannot access another user's profile.
+     * @principle Enforces document ownership for writes and restricts access to a user's own data tree.
      */
     match /users/{userId} {
+      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.id == userId;
       allow get: if isOwner(userId);
       allow list: if false;
-      allow create: if isOwner(userId) && isSignedIn();
-      allow update: if isOwner(userId);
-      allow delete: if isOwner(userId);
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Security rules for orders within a user's profile.
+     * @description Rules for orders belonging to a user.
      * @path /users/{userId}/orders/{orderId}
-     * @allow (create) - Authenticated user can create an order for themselves.
-     * @allow (get) - Authenticated user can read their own orders.
-     * @allow (update) - Authenticated user can update their own orders.
-     * @allow (delete) - Authenticated user can delete their own orders.
-     * @deny (create) - Non-authenticated user cannot create an order.
-     * @deny (get) - Non-authenticated user cannot read orders.
-     * @deny (update) - Non-authenticated user cannot update orders.
-     * @deny (delete) - Non-authenticated user cannot delete orders.
-     * @principle Enforces document ownership for writes within a user's scope.
+     * @allow (create) A user can create an order for themselves.
+     * @allow (get, update, delete) A user can only access their own orders.
+     * @deny (create) A user cannot create an order under another user's profile.
+     * @deny (get, update, delete) A user cannot access another user's order.
+     * @principle Enforces document ownership for writes and restricts access to a user's own data tree.
      */
     match /users/{userId}/orders/{orderId} {
+      allow create: if isSignedIn() && isOwner(userId);
       allow get: if isOwner(userId);
-      allow list: if false;
-      allow create: if isOwner(userId) && isSignedIn();
-      allow update: if isOwner(userId);
-      allow delete: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Security rules for order items within an order.
+     * @description Rules for order items belonging to an order of a user.
      * @path /users/{userId}/orders/{orderId}/order_items/{orderItemId}
-     * @allow (create) - Authenticated user can create an order item for their own order.
-     * @allow (get) - Authenticated user can read order items for their own order.
-     * @allow (update) - Authenticated user can update order items for their own order.
-     * @allow (delete) - Authenticated user can delete order items for their own order.
-     * @deny (create) - Non-authenticated user cannot create an order item.
-     * @deny (get) - Non-authenticated user cannot read order items.
-     * @deny (update) - Non-authenticated user cannot update order items.
-     * @deny (delete) - Non-authenticated user cannot delete order items.
-     * @principle Enforces document ownership for writes within a user's order scope.
+     * @allow (create) A user can create an order item for their order.
+     * @allow (get, update, delete) A user can only access their own order items.
+     * @deny (create) A user cannot create an order item under another user's order.
+     * @deny (get, update, delete) A user cannot access another user's order item.
+     * @principle Enforces document ownership for writes and restricts access to a user's own data tree.
      */
     match /users/{userId}/orders/{orderId}/order_items/{orderItemId} {
+      allow create: if isSignedIn() && isOwner(userId);
       allow get: if isOwner(userId);
-      allow list: if false;
-      allow create: if isOwner(userId) && isSignedIn();
-      allow update: if isOwner(userId);
-      allow delete: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Security rules for products.
+     * @description Rules for products. Products are publicly readable.
      * @path /products/{productId}
-     * @allow (get) - Anyone can read product information.
-     * @allow (list) - Anyone can list products.
-     * @deny (create) - Only authenticated users can create products.
-     * @deny (update) - Only authenticated users can update products.
-     * @deny (delete) - Only authenticated users can delete products.
-     * @principle Allows public read access for products.
+     * @allow (get, list) Any user can read product information.
+     * @deny (create, update, delete) No one can create, update, or delete products.
+     * @principle Allows public read access but restricts write access.
      */
     match /products/{productId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if isSignedIn();  // TODO: Add admin validation once the schema is updated with an ownership field.
-      allow update: if isSignedIn();  // TODO: Add admin validation once the schema is updated with an ownership field.
-      allow delete: if isSignedIn();  // TODO: Add admin validation once the schema is updated with an ownership field.
+      allow get, list: if true;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
     }
 
     /**
-     * @description Security rules for style recommendations.
+     * @description Rules for style recommendations. Style recommendations are publicly readable.
      * @path /style_recommendations/{styleRecommendationId}
-     * @allow (get) - Anyone can read style recommendations.
-     * @allow (list) - Anyone can list style recommendations.
-     * @deny (create) - Only authenticated users can create style recommendations.
-     * @deny (update) - Only authenticated users can update style recommendations.
-     * @deny (delete) - Only authenticated users can delete style recommendations.
-     * @principle Allows public read access for style recommendations.
+     * @allow (get, list) Any user can read style recommendation information.
+     * @deny (create, update, delete) No one can create, update, or delete style recommendations.
+     * @principle Allows public read access but restricts write access.
      */
     match /style_recommendations/{styleRecommendationId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if isSignedIn();  // TODO: Add admin validation once the schema is updated with an ownership field.
-      allow update: if isSignedIn();  // TODO: Add admin validation once the schema is updated with an ownership field.
-      allow delete: if isSignedIn();  // TODO: Add admin validation once the schema is updated with an ownership field.
+      allow get, list: if true;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
     }
   }
 }
