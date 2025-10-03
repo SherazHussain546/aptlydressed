@@ -11,13 +11,13 @@ export const placeholderImages: ImagePlaceholder[] = [
     {
       "id": "about-hero",
       "description": "A well-lit, organized closet with minimalist clothing.",
-      "imageUrl": "https://images.unsplash.com/photo-1445205170230-053b83016050?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwY2xvc2V0fGVufDB8fHx8MTc1OTg4NDEyMHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1445205170230-053b83016050?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwY2xvc2V0fGVufDB8fHx8MTc1OTg4NDEyMHww&ixlib.rb-4.1.0&q=80&w=1080",
       "imageHint": "fashion closet"
     },
     {
       "id": "about-why",
       "description": "A frustrated person looking at a laptop screen, overwhelmed with online shopping choices.",
-      "imageUrl": "https://images.unsplash.com/photo-1550623627-983460052759?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjbGlja3xlbnwwfHx8fDE3NTk1MDg4MzN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1550623627-983460052759?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjbGlja3xlbnwwfHx8fDE3NTk1MDg4MzN8MA&ixlib-rb-4.1.0&q=80&w=1080",
       "imageHint": "click maze"
     },
     {
@@ -29,7 +29,7 @@ export const placeholderImages: ImagePlaceholder[] = [
     {
       "id": "sustainability-materials",
       "description": "Close up of natural fabric textures like cotton and linen.",
-      "imageUrl": "https://images.unsplash.com/photo-1687405181991-ac537513efdc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxOXx8c3VzdGFpbmFiaWxpdHklMjBjbG90aGluZ3xlbnwwfHx8fDE3NTk1MDkyNDh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1687405181991-ac537513efdc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxOXx8c3VzdGFpbmFiaWxpdHklMjBjbG90aGluZ3xlbnwwfHx8fDE3NTk1MDkyNDh8MA&ixlib.rb-4.1.0&q=80&w=1080",
       "imageHint": "natural fabrics"
     },
     {
@@ -43,6 +43,12 @@ export const placeholderImages: ImagePlaceholder[] = [
       "description": "Two people shaking hands in a modern, well-lit office setting, signifying a partnership agreement.",
       "imageUrl": "https://images.unsplash.com/photo-1520881363902-a0ff4e722963?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwYXJ0bmVyc2hpcCUyMHNoYWtpbmclMjBoYW5kc3xlbnwwfHx8fDE3NjE2NzU0MzZ8MA&ixlib.rb-4.1.0&q=80&w=1080",
       "imageHint": "partnership agreement"
+    },
+    {
+      "id": "portfolio-hero",
+      "description": "A moodboard with fashion sketches, fabric swatches, and design concepts.",
+      "imageUrl": "https://images.unsplash.com/photo-1516253593875-bd7ba04221a3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxmYXNoaW9uJTIwZGVzaWduJTIwc3R1ZGlvfGVufDB8fHx8MTc2MjI0NzE3Nnww&ixlib.rb-4.1.0&q=80&w=1080",
+      "imageHint": "fashion design"
     },
     {
       "id": "collection-women",
@@ -77,7 +83,7 @@ export const placeholderImages: ImagePlaceholder[] = [
     {
       "id": "product-1-3",
       "description": "Fabric detail of The Minimalist Tee.",
-      "imageUrl": "https://images.unsplash.com/photo-1606343131474-abc41dc6bb7d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjb3R0b24lMjBmYWJyaWN8ZW58MHx8fHwxNzU5MDkzOTUxfDA&ixlib.rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1606343131474-abc41dc6bb7d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjb3R0b24lMjBmYWJyaWN8ZW58MHx8fHwxNzU5MDkzOTUxfDA&ixlib-rb-4.1.0&q=80&w=1080",
       "imageHint": "cotton fabric"
     },
     {
@@ -119,25 +125,25 @@ export const placeholderImages: ImagePlaceholder[] = [
     {
       "id": "product-4-1",
       "description": "The Effortless Silk Blouse in off-white.",
-      "imageUrl": "https://images.unsplash.com/photo-1756483496981-05b741fdd40a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxzaWxrJTIwYmxvdXNlfGVufDB8fHx8MTc1OTA4MDY0NHww&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1756483496981-05b741fdd40a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxzaWxrJTIwYmxvdXNlfGVufDB8fHx8MTc1OTA4MDY0NHww&ixlib.rb-4.1.0&q=80&w=1080",
       "imageHint": "silk blouse"
     },
     {
       "id": "product-4-2",
       "description": "Model wearing The Effortless Silk Blouse.",
-      "imageUrl": "https://images.unsplash.com/photo-1541519481457-763224276691?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxmYXNoaW9uJTIwbW9kZWx8ZW58MHx8fHwxNzU5MDQ0NTU4fDA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1541519481457-763224276691?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxmYXNoaW9uJTIwbW9kZWx8ZW58MHx8fHwxNzU5MDQ0NTU4fDA&ixlib.rb-4.1.0&q=80&w=1080",
       "imageHint": "fashion model"
     },
     {
       "id": "product-4-3",
       "description": "Detail of the cuff on The Effortless Silk Blouse.",
-      "imageUrl": "https://images.unsplash.com/photo-1606765729255-ae25ca132476?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxibG91c2UlMjBjdWZmfGVufDB8fHx8MTc1OTA5Mzk1MXww&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1606765729255-ae25ca132476?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxibG91c2UlMjBjdWZmfGVufDB8fHx8MTc1OTA5Mzk1MXww&ixlib.rb-4.1.0&q=80&w=1080",
       "imageHint": "blouse cuff"
     },
     {
       "id": "product-5-1",
       "description": "The Modernist Wool Sweater in grey.",
-      "imageUrl": "https://images.unsplash.com/photo-1601379327928-bedfaf9da2d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3b29sJTIwc3dlYXRlcnxlbnwwfHx8fDE3NTkwMDEwNzN8MA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1601379327928-bedfaf9da2d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3b29sJTIwc3dlYXRlcnxlbnwwfHx8fDE3NTkwMDEwNzN8MA&ixlib.rb-4.1.0&q=80&w=1080",
       "imageHint": "wool sweater"
     },
     {
@@ -149,7 +155,7 @@ export const placeholderImages: ImagePlaceholder[] = [
     {
       "id": "product-5-3",
       "description": "Texture of The Modernist Wool Sweater.",
-      "imageUrl": "https://images.unsplash.com/photo-1595026525047-dfa997df8a4a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3b29sJTIwdGV4dHVyZXxlbnwwfHx8fDE3NTkwMTEyOTh8MA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1595026525047-dfa997df8a4a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3b29sJTIwdGV4dHVyZXxlbnwwfHx8fDE3NTkwMTEyOTh8MA&ixlib.rb-4.1.0&q=80&w=1080",
       "imageHint": "wool texture"
     },
     {
@@ -221,7 +227,7 @@ export const placeholderImages: ImagePlaceholder[] = [
     {
       "id": "blog-3",
       "description": "Desk with a laptop showing a fashion website, a cup of coffee and a plant.",
-      "imageUrl": "https://images.unsplash.com/photo-1546952859-6e63fac20b90?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxmYXNoaW9uJTIwYmxvZ3xlbnwwfHx8fDE3NTkwNTg3ODd8MA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1546952859-6e63fac20b90?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxmYXNoaW9uJTIwYmxvZ3xlbnwwfHx8fDE3NTkwNTg3ODd8MA&ixlib.rb-4.1.0&q=80&w=1080",
       "imageHint": "fashion blog"
     },
     {
