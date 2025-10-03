@@ -75,7 +75,6 @@ export function Footer() {
     { href: "/affiliate-disclosure", label: "Affiliate Disclosure" },
     { href: "/business-portfolio", label: "Business Portfolio" },
     { href: "/privacy-policy", label: "Privacy Policy" },
-    { href: "/account", label: "Login / Signup" },
   ];
 
   return (
@@ -107,6 +106,7 @@ export function Footer() {
                 <li><Link href="/shop?category=Mens" className="text-muted-foreground hover:text-primary">Men</Link></li>
                 <li><Link href="/shop?category=Essentials" className="text-muted-foreground hover:text-primary">Essentials</Link></li>
                 <li><Link href="/shop" className="text-muted-foreground hover:text-primary">All Products</Link></li>
+                <li><Link href="/account" className="text-muted-foreground hover:text-primary">Login / Signup</Link></li>
               </ul>
             </div>
             <div>
