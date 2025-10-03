@@ -8,7 +8,7 @@ export function middleware(request: NextRequest) {
   // If the site is in pre-launch mode, only allow access to the homepage
   // and redirect all other requests to the homepage.
   // We exclude API routes, static files, and image optimization routes.
-  const isPrelaunch = process.env.NEXT_PUBLIC_PRELAUNCH_MODE === 'true';
+  const isPrelaunch = process.env.NEXT_PUBLIC_PRELAUNCH_MODE === 'false'; // Set to false to allow navigation
 
   if (isPrelaunch && pathname !== '/') {
      if (
