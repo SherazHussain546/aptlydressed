@@ -66,6 +66,17 @@ export function Footer() {
     }
   }, [state, toast, firestore]);
   
+  const companyLinks = [
+    { href: "/about", label: "About Us" },
+    { href: "/news-and-events", label: "News & Events" },
+    { href: "/sustainability", label: "Sustainability" },
+    { href: "/collaborate", label: "Collaborate" },
+    { href: "/contact", label: "Contact" },
+    { href: "/affiliate-disclosure", label: "Affiliate Disclosure" },
+    { href: "/business-portfolio", label: "Business Portfolio" },
+    { href: "/account", label: "Login / Signup" },
+  ];
+
   return (
     <footer className="bg-muted">
       <div className="container mx-auto px-4 py-12">
@@ -100,14 +111,13 @@ export function Footer() {
             <div>
               <h3 className="font-semibold text-foreground">Company</h3>
               <ul className="mt-4 space-y-2">
-                <li><Link href="/about" className="text-muted-foreground hover:text-primary">About Us</Link></li>
-                <li><Link href="/news-and-events" className="text-muted-foreground hover:text-primary">News & Events</Link></li>
-                <li><Link href="/sustainability" className="text-muted-foreground hover:text-primary">Sustainability</Link></li>
-                <li><Link href="/collaborate" className="text-muted-foreground hover:text-primary">Collaborate</Link></li>
-                <li><Link href="/contact" className="text-muted-foreground hover:text-primary">Contact</Link></li>
-                <li><Link href="/affiliate-disclosure" className="text-muted-foreground hover:text-primary">Affiliate Disclosure</Link></li>
-                <li><Link href="/business-portfolio" className="text-muted-foreground hover:text-primary">Business Portfolio</Link></li>
-                <li><Link href="/account" className="text-muted-foreground hover:text-primary">Login / Signup</Link></li>
+                {companyLinks.map(link => (
+                  <li key={link.href}>
+                    <Link href={link.href} className="text-muted-foreground hover:text-primary">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
