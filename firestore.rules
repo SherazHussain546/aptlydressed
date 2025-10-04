@@ -1,100 +1,69 @@
-/**
- * @fileoverview Firestore Security Rules for Aptly Dressed eBoutique.
- *
- * Core Philosophy:
- * This ruleset prioritizes security by enforcing strict user-ownership for personal data
- * and providing public read access for product information. Writes are carefully controlled
- * to prevent unauthorized data modification. The design avoids complex queries in rules,
- * opting for data denormalization to simplify authorization checks.
- *
- * Data Structure:
- * - /products/{productId}: Publicly readable product information.
- * - /users/{userId}: User account information, accessible only to the user.
- * - /users/{userId}/orders/{orderId}: Orders associated with a specific user, accessible only to the user.
- * - /orders_items/{orderItemId}: Publicly readable Order Item information.
- * - /products/{productId}/reviews/{reviewId}: Reviews for a specific product; publicly readable, writable by authenticated users.
- * - /subscribers/{subscriberId}: Subscriber information, only writable by authenticated users via rate-limited callable functions.
- * - /notify-me/{notificationId}: Emails from the 'Coming Soon' page for launch notifications, only writable by authenticated users via rate-limited callable functions.
- *
- * Key Security Decisions:
- * - User listing is disallowed for privacy.
- * - Public read access is granted for product information to facilitate browsing.
- * - Subscriber creation is restricted to prevent spam and unauthorized subscriptions.
- * - All write operations are strictly validated against the authenticated user's identity.
- *
- * Denormalization for Authorization:
- * - The design avoids `get()` calls by denormalizing ownership data directly onto documents.
- *   For example, reviews store the `userId` to avoid needing to query the `/users/{userId}` document.
- *
- * Structural Segregation:
- * - Private user data (orders) is stored under the `/users/{userId}` collection,
- *   while public product data is stored in the top-level `/products` collection.
- *   This separation simplifies read operations and authorization rules.
- */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Allows anyone to read product information, but restricts writes.
+     * @description Allows public read access to product information. Write access is restricted.
      * @path /products/{productId}
      * @allow get, list: if true;
-     * @deny create, update, delete: if false;
-     * @principle Allows public read access to product information.
+     * @deny create: if false;
+     * @deny update: if false;
+     * @deny delete: if false;
+     * @principle Public read, restricted writes (TODO: Implement authorization function).
      */
     match /products/{productId} {
       allow get: if true;
       allow list: if true;
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
+      allow create: if false; // TODO: Add authorization logic for creating products
+      allow update: if false; // TODO: Add authorization logic for updating products
+      allow delete: if false; // TODO: Add authorization logic for deleting products
     }
 
     /**
-     * @description Restricts access to user documents to the owner only.
+     * @description Restricts access to user profiles to the owning user.
      * @path /users/{userId}
+     * @allow get: if isSignedIn() && isOwner(userId);
      * @allow create: if isSignedIn() && isOwner(userId);
-     * @allow get, list: if isSignedIn() && isOwner(userId);
-     * @allow update, delete: if isSignedIn() && isExistingOwner(userId);
-     * @deny create: if !isSignedIn() || !isOwner(userId);
-     * @deny get, list: if !isSignedIn() || !isOwner(userId);
-     * @deny update, delete: if !isSignedIn() || !isExistingOwner(userId);
+     * @allow update: if isSignedIn() && isOwner(userId) && resource != null;
+     * @allow delete: if isSignedIn() && isOwner(userId) && resource != null;
+     * @deny list: if true;
      * @principle Enforces document ownership for all operations.
      */
     match /users/{userId} {
       allow get: if isSignedIn() && isOwner(userId);
       allow list: if false;
       allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isSignedIn() && isExistingOwner(userId);
-      allow delete: if isSignedIn() && isExistingOwner(userId);
+      allow update: if isSignedIn() && isOwner(userId);
+      allow delete: if isSignedIn() && isOwner(userId);
     }
 
     /**
-     * @description Restricts access to order documents to the owner only.
+     * @description Restricts access to a user's orders to the owning user.
      * @path /users/{userId}/orders/{orderId}
-     * @allow create: if isSignedIn() && isOwner(userId);
-     * @allow get, list: if isSignedIn() && isOwner(userId);
-     * @allow update, delete: if isSignedIn() && isExistingOwner(userId);
-     * @deny create: if !isSignedIn() || !isOwner(userId);
-     * @deny get, list: if !isSignedIn() || !isOwner(userId);
-     * @deny update, delete: if !isSignedIn() || !isExistingOwner(userId);
+     * @allow get: if isSignedIn() && isOwner(userId);
+     * @allow create: if isSignedIn() && isOwner(userId) && request.resource.data.userId == userId;
+     * @allow update: if isSignedIn() && isOwner(userId) && resource != null && request.resource.data.userId == userId;
+     * @allow delete: if isSignedIn() && isOwner(userId) && resource != null;
+     * @allow list: if isSignedIn() && isOwner(userId);
      * @principle Enforces document ownership for all operations.
      */
     match /users/{userId}/orders/{orderId} {
       allow get: if isSignedIn() && isOwner(userId);
       allow list: if isSignedIn() && isOwner(userId);
-      allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isSignedIn() && isExistingOwner(userId);
-      allow delete: if isSignedIn() && isExistingOwner(userId);
+      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isSignedIn() && isOwner(userId) && request.resource.data.userId == userId;
+      allow delete: if isSignedIn() && isOwner(userId);
     }
 
-     /**
-      * @description Allows anyone to read order item information, but restricts writes.
-      * @path /orders_items/{orderItemId}
-      * @allow get, list: if true;
-      * @deny create, update, delete: if false;
-      * @principle Allows public read access to order item information.
-      */
+    /**
+     * @description Allows public read access to order items. Write access is denied.
+     * @path /orders_items/{orderItemId}
+     * @allow get, list: if true;
+     * @deny create: if false;
+     * @deny update: if false;
+     * @deny delete: if false;
+     * @principle Public read, no writes.
+     */
     match /orders_items/{orderItemId} {
       allow get: if true;
       allow list: if true;
@@ -104,69 +73,72 @@ service cloud.firestore {
     }
 
     /**
-     * @description Allows anyone to read reviews, but restricts writes to authenticated users.
+     * @description Allows users to create and manage their own reviews for products.
      * @path /products/{productId}/reviews/{reviewId}
-     * @allow get, list: if true;
-     * @allow create: if isSignedIn();
-     * @allow update: if isSignedIn() && resource.data.userId == request.auth.uid && resource != null;
-     * @allow delete: if isSignedIn() && resource.data.userId == request.auth.uid && resource != null;
-     * @principle Allows public read access and user-owned write access to reviews.
+     * @allow get: if true;
+     * @allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+     * @allow update: if isSignedIn() && resource != null && request.resource.data.userId == resource.data.userId;
+     * @allow delete: if isSignedIn() && resource != null && resource.data.userId == request.auth.uid;
+     * @allow list: if true;
+     * @principle Users can only manage their own reviews.
      */
     match /products/{productId}/reviews/{reviewId} {
       allow get: if true;
       allow list: if true;
-      allow create: if isSignedIn();
-      allow update: if isSignedIn() && resource.data.userId == request.auth.uid && resource != null;
-      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid && resource != null;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if isSignedIn() && request.resource.data.userId == resource.data.userId;
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
     }
 
     /**
-     * @description Restricts access to subscriber documents to authenticated users only.
+     * @description Restricts creation of subscribers to authenticated users with authorization (TODO), and manages via callable function with rate-limiting.
      * @path /subscribers/{subscriberId}
-     * @allow get, list: if false;
-     * @allow create: if isSignedIn(); // TODO: Add additional role/rate-limiting via callable functions
-     * @allow update: if false;
-     * @allow delete: if false;
-     * @principle Restricts access to subscriber information.
+     * @allow get: if false;
+     * @allow list: if false;
+     * @deny create: if false;
+     * @deny update: if false;
+     * @deny delete: if false;
+     * @principle Restricts write access to authorized clients only (TODO: Implement authorization function or callable function).
      */
     match /subscribers/{subscriberId} {
       allow get: if false;
       allow list: if false;
-      allow create: if isSignedIn(); // TODO: Add additional role/rate-limiting via callable functions
-      allow update: if false;
-      allow delete: if false;
+      allow create: if false; // TODO: Implement authorization logic for creating subscribers. Could be a callable function.
+      allow update: if false; // No updates allowed
+      allow delete: if false; // No deletes allowed.
     }
 
     /**
-     * @description Restricts access to "notify me" signup documents to authenticated users only.
+     * @description Restricts creation of subscribers via the 'Notify Me' form to authenticated users with authorization (TODO), and manages via callable function with rate-limiting.
      * @path /notify-me/{notificationId}
-     * @allow get, list: if false;
-     * @allow create: if isSignedIn();  // TODO: Add additional role/rate-limiting via callable functions
-     * @allow update: if false;
-     * @allow delete: if false;
-     * @principle Restricts access to "notify me" information.
+     * @allow get: if false;
+     * @allow list: if false;
+     * @deny create: if false;
+     * @deny update: if false;
+     * @deny delete: if false;
+     * @principle Restricts write access to authorized clients only (TODO: Implement authorization function or callable function).
      */
     match /notify-me/{notificationId} {
       allow get: if false;
       allow list: if false;
-      allow create: if isSignedIn(); // TODO: Add additional role/rate-limiting via callable functions
-      allow update: if false;
-      allow delete: if false;
+      allow create: if false; // TODO: Implement authorization logic for creating subscribers via the notify me page.  Could be a callable function.
+      allow update: if false; // No updates allowed
+      allow delete: if false; // No deletes allowed
     }
   }
 
-  // Helper function to determine if the user is signed in.
+  // Helper function to determine if the user is signed in
   function isSignedIn() {
     return request.auth != null;
   }
 
-  // Helper function to determine if the user is the owner of the document.
+  // Helper function to determine if the user is the owner of the document
   function isOwner(userId) {
     return request.auth.uid == userId;
   }
 
-    // Helper function to determine if the user is the owner of the document and the document exists.
+  // Helper function to determine if the existing user is the owner of the document and the document exists
   function isExistingOwner(userId) {
-    return isSignedIn() && isOwner(userId) && resource != null;
+    return isOwner(userId) && resource != null;
   }
 }
