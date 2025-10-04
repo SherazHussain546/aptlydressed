@@ -126,6 +126,48 @@ export default function AboutPage() {
             </div>
         </section>
 
+        {/* Meet the Founders Section */}
+        <section>
+          <div className="text-center max-w-4xl mx-auto">
+            <h2 className="text-3xl font-headline mb-4">Meet the Founders</h2>
+            <p className="text-lg text-muted-foreground mb-12">
+              APTLY DRESSED was founded by brothers Shaharyar and Sheraz Hussain, who combined their passion for technology and timeless fashion to create a platform that redefines style discovery.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              <Card className="text-center">
+                  <CardContent className="pt-6">
+                      <Image
+                          src="https://picsum.photos/seed/founder1/400/400"
+                          alt="Shaharyar Hussain"
+                          width={150}
+                          height={150}
+                          className="rounded-full mx-auto mb-4"
+                          data-ai-hint="portrait man"
+                      />
+                      <h3 className="text-xl font-headline">Shaharyar Hussain</h3>
+                      <p className="text-primary">Co-Founder & Creative Director</p>
+                      <p className="text-muted-foreground mt-2">With a keen eye for aesthetics and a deep understanding of fashion trends, Shaharyar leads the creative vision and curation for APTLY DRESSED.</p>
+                  </CardContent>
+              </Card>
+               <Card className="text-center">
+                  <CardContent className="pt-6">
+                      <Image
+                          src="https://picsum.photos/seed/founder2/400/400"
+                          alt="Sheraz Hussain"
+                          width={150}
+                          height={150}
+                          className="rounded-full mx-auto mb-4"
+                          data-ai-hint="man portrait"
+                      />
+                      <h3 className="text-xl font-headline">Sheraz Hussain</h3>
+                      <p className="text-primary">Co-Founder & Technology Lead</p>
+                      <p className="text-muted-foreground mt-2">Sheraz drives the technical strategy, ensuring the platform is fast, secure, and seamless. He leverages technology to make fashion discovery an effortless experience.</p>
+                  </CardContent>
+              </Card>
+          </div>
+        </section>
+
         {/* Call to Action */}
         <section className="text-center">
           <h2 className="text-3xl font-headline">Ready to Transform Your Style?</h2>
