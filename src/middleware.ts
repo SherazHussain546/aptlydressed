@@ -5,12 +5,10 @@ import type { NextRequest } from 'next/server'
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // If the site is in pre-launch mode, only allow access to the homepage
-  // and redirect all other requests to the homepage.
-  // We exclude API routes, static files, and image optimization routes.
-  const isPrelaunch = process.env.NEXT_PUBLIC_PRELAUNCH_MODE === 'false'; // Set to false to allow navigation
+  // If the site is in pre-launch mode, route traffic to the coming-soon page
+  const isPrelaunch = process.env.NEXT_PUBLIC_PRELAUNCH_MODE === 'true';
 
-  if (isPrelaunch && pathname !== '/') {
+  if (isPrelaunch && !pathname.startsWith('/coming-soon')) {
      if (
       pathname.startsWith('/api/') ||
       pathname.startsWith('/_next/') ||
@@ -18,7 +16,7 @@ export function middleware(request: NextRequest) {
     ) {
       // Allow these paths to pass through
     } else {
-      return NextResponse.redirect(new URL('/', request.url));
+      return NextResponse.rewrite(new URL('/coming-soon', request.url));
     }
   }
 

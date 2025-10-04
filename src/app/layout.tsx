@@ -26,6 +26,27 @@ export default function RootLayout({
   const headersList = headers();
   const pathname = headersList.get('x-pathname') || '';
 
+  // The coming soon page is a full-screen experience and doesn't need the standard layout
+  if (pathname === '/coming-soon') {
+    return (
+       <html lang="en" className="h-full">
+         <head>
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Arial:wght@400;700&display=swap" rel="stylesheet" />
+        </head>
+        <body className="font-body antialiased h-full">
+            <FirebaseClientProvider>
+              {children}
+              <Toaster />
+            </FirebaseClientProvider>
+        </body>
+      </html>
+    )
+  }
+
+  const isMainSite = pathname === '/main-site';
+
   return (
     <html lang="en" className="h-full">
       <head>
@@ -36,8 +57,8 @@ export default function RootLayout({
       <body className="font-body antialiased h-full">
         <FirebaseClientProvider>
           <div className="flex min-h-screen flex-col">
-            {pathname !== '/' && <Header />}
-            {pathname !== '/' && <Breadcrumbs />}
+            <Header />
+            {!isMainSite && <Breadcrumbs />}
             <main className="flex-grow">{children}</main>
             <Footer />
           </div>
