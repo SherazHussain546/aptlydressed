@@ -4,7 +4,7 @@ import { placeholderImages } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Lightbulb, Check, Sparkles, Handshake } from 'lucide-react';
+import { Lightbulb, Check, Sparkles, Handshake, Linkedin } from 'lucide-react';
 
 const aboutHeroImage = placeholderImages.find(p => p.id === 'about-hero');
 const whyImage = placeholderImages.find(p => p.id === 'about-why');
@@ -140,6 +140,12 @@ export default function AboutPage() {
                       <h3 className="text-xl font-headline">Shaharyar Hussain</h3>
                       <p className="text-primary">Co-Founder & Creative Director</p>
                       <p className="text-muted-foreground mt-2">With a keen eye for aesthetics and a deep understanding of fashion trends, Shaharyar leads the creative vision and curation for APTLY DRESSED.</p>
+                      <div className="mt-4">
+                        <a href="https://www.linkedin.com/in/shaharyar-hussain-480207204/" target="_blank" rel="noopener noreferrer" className="inline-block text-muted-foreground hover:text-primary">
+                          <Linkedin className="h-6 w-6" />
+                          <span className="sr-only">LinkedIn</span>
+                        </a>
+                      </div>
                   </CardContent>
               </Card>
                <Card className="text-center">
@@ -147,6 +153,12 @@ export default function AboutPage() {
                       <h3 className="text-xl font-headline">Sheraz Hussain</h3>
                       <p className="text-primary">Co-Founder & Technology Lead</p>
                       <p className="text-muted-foreground mt-2">Sheraz drives the technical strategy, ensuring the platform is fast, secure, and seamless. He leverages technology to make fashion discovery an effortless experience.</p>
+                      <div className="mt-4">
+                        <a href="https://www.linkedin.com/in/sherazhussain546/" target="_blank" rel="noopener noreferrer" className="inline-block text-muted-foreground hover:text-primary">
+                          <Linkedin className="h-6 w-6" />
+                          <span className="sr-only">LinkedIn</span>
+                        </a>
+                      </div>
                   </CardContent>
               </Card>
           </div>
