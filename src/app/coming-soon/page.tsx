@@ -5,8 +5,9 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Linkedin, Instagram, Facebook, Loader2, Handshake } from "lucide-react";
-import { useFirestore, errorEmitter, FirestorePermissionError } from "@/firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { useFirestore } from "@/firebase";
+import { collection } from "firebase/firestore";
+import { addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 
 import { placeholderImages } from "@/lib/data";
 import { Logo } from "@/components/icons/Logo";
@@ -40,28 +41,19 @@ export default function ComingSoonPage() {
       return;
     }
 
-    try {
-      const notifyMeRef = collection(firestore, "notifyme");
-      const data = { email: email, subscribedAt: new Date(), source: 'coming-soon' };
-      
-      await addDoc(notifyMeRef, data);
-      
-      toast({
-        title: 'Success!',
-        description: 'Thank you for subscribing! We will notify you when we launch.',
-      });
-      formRef.current?.reset();
+    const notifyMeRef = collection(firestore, "notifyme");
+    const data = { email: email, subscribedAt: new Date(), source: 'coming-soon' };
+    
+    // Use non-blocking write which handles permission errors automatically
+    addDocumentNonBlocking(notifyMeRef, data);
 
-    } catch (serverError) {
-       const permissionError = new FirestorePermissionError({
-          path: 'notifyme',
-          operation: 'create',
-          requestResourceData: { email, source: 'coming-soon' },
-        });
-        errorEmitter.emit('permission-error', permissionError);
-    } finally {
-        setLoading(false);
-    }
+    // Assume success on the UI and let the error boundary catch any issues
+    toast({
+      title: 'Success!',
+      description: 'Thank you for subscribing! We will notify you when we launch.',
+    });
+    formRef.current?.reset();
+    setLoading(false);
   };
 
   return (
