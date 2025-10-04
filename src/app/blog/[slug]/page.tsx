@@ -11,8 +11,8 @@ type Props = {
   params: { slug: string }
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const post = blogPosts.find(p => p.slug === params.slug);
+export async function generateMetadata({ params: { slug } }: Props): Promise<Metadata> {
+  const post = blogPosts.find(p => p.slug === slug);
 
   if (!post) {
     return {
@@ -40,8 +40,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = blogPosts.find(p => p.slug === params.slug);
+export default function BlogPostPage({ params: { slug } }: { params: { slug: string } }) {
+  const post = blogPosts.find(p => p.slug === slug);
 
   if (!post) {
     notFound();
