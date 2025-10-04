@@ -40,24 +40,24 @@ interface ShopProps {
 }
 
 export function Shop({ allProducts, searchParams }: ShopProps) {
-  const getSearchParam = (key: string) => {
-    const value = searchParams?.[key];
-    return typeof value === 'string' ? value : undefined;
-  }
-
-  const initialCategory = getSearchParam('category') || 'All';
-  const initialTags = getSearchParam('tags')?.split(',') || [];
-
   const maxPrice = Math.max(...allProducts.map(p => p.price), 300);
-  
-  const [filters, setFilters] = useState({
-    category: initialCategory,
-    sizes: [] as string[],
-    colors: [] as string[],
-    priceRange: [0, maxPrice] as [number, number],
-    sortBy: 'newest',
-    tags: initialTags as string[],
+
+  const [filters, setFilters] = useState(() => {
+      const categoryParam = searchParams?.['category'];
+      const tagsParam = searchParams?.['tags'];
+      const initialCategory = typeof categoryParam === 'string' ? categoryParam : 'All';
+      const initialTags = typeof tagsParam === 'string' ? tagsParam.split(',') : [];
+
+      return {
+        category: initialCategory,
+        sizes: [] as string[],
+        colors: [] as string[],
+        priceRange: [0, maxPrice] as [number, number],
+        sortBy: 'newest',
+        tags: initialTags,
+      };
   });
+  
   const [currentPage, setCurrentPage] = useState(1);
   const [mounted, setMounted] = useState(false);
 
@@ -91,7 +91,13 @@ export function Shop({ allProducts, searchParams }: ShopProps) {
     } else if (filters.sortBy === 'price-desc') {
       filtered.sort((a, b) => (b.salePrice || b.price) - (a.salePrice || a.price));
     } else if (filters.sortBy === 'newest') {
-      filtered.sort((a, b) => (b.id > a.id ? 1 : -1));
+      // Assuming a numeric or sortable ID. If not, created_at timestamp is better.
+      const sortedById = [...filtered].sort((a, b) => {
+        if (a.id > b.id) return -1;
+        if (a.id < b.id) return 1;
+        return 0;
+      });
+      filtered = sortedById;
     }
 
 
