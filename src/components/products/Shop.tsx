@@ -36,25 +36,21 @@ function ProductGridSkeleton() {
 
 interface ShopProps {
   allProducts: Product[];
-  searchParams?: { [key: string]: string | string[] | undefined };
+  initialCategory?: string;
+  initialTags?: string;
 }
 
-export function Shop({ allProducts, searchParams }: ShopProps) {
+export function Shop({ allProducts, initialCategory, initialTags }: ShopProps) {
   const maxPrice = Math.max(...allProducts.map(p => p.price), 300);
 
   const [filters, setFilters] = useState(() => {
-      const categoryParam = searchParams?.['category'];
-      const tagsParam = searchParams?.['tags'];
-      const initialCategory = typeof categoryParam === 'string' ? categoryParam : 'All';
-      const initialTags = typeof tagsParam === 'string' ? tagsParam.split(',') : [];
-
       return {
-        category: initialCategory,
+        category: initialCategory || 'All',
         sizes: [] as string[],
         colors: [] as string[],
         priceRange: [0, maxPrice] as [number, number],
         sortBy: 'newest',
-        tags: initialTags,
+        tags: initialTags ? initialTags.split(',') : [],
       };
   });
   
