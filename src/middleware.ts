@@ -14,6 +14,7 @@ const allowedPaths = [
   '/business-portfolio',
   '/news-and-events', // Also allowing blog/news if needed
   '/account',
+  '/faq',
 ];
 
 export function middleware(request: NextRequest) {
