@@ -1,4 +1,27 @@
-# [APTLY DRESSED eBoutique](https://aptlydressed.com)
+# Project Showcase: APTLY DRESSED
+
+### Project Overview
+
+Developed and launched **APTLY DRESSED**, a sophisticated, content-driven fashion affiliate aggregator. This platform solves the fragmented online shopping experience by offering expertly curated, complete outfit solutions from a variety of partner brands. It provides a seamless, high-end user journey, moving from style inspiration on our platform to purchase on trusted brand websites. The site is built to be exceptionally fast, secure, and powered by AI for personalized recommendations.
+
+### Key Results
+
+*   Successfully launched a premier online destination for curated, sustainable, and modern fashion, establishing a strong brand identity and a new affiliate revenue stream.
+*   Engineered a "zero-inventory" business model, eliminating overhead and logistics complexity by focusing purely on high-quality curation and user experience.
+*   Integrated cutting-edge AI (using Google's Genkit) to provide "Complete the Look" recommendations, significantly enhancing user engagement and affiliate click-through potential.
+
+### Tech Stack & Features
+
+*   **Frontend**: Next.js, React, TypeScript
+*   **Styling**: Tailwind CSS, ShadCN UI Components
+*   **Backend & Database**: Firebase (for User Authentication & Firestore Database)
+*   **Generative AI**: Google Genkit (for AI-powered outfit and product recommendations)
+*   **Deployment**: Netlify (with continuous integration)
+*   **Business Model**: Affiliate Marketing E-commerce
+
+---
+
+# [APTLY DRESSED](https://aptlydressed.com)
 
 ## Redefining Style Through Intentional Curation
 
