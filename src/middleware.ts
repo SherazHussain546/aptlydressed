@@ -6,7 +6,7 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // If the site is in pre-launch mode, route traffic to the coming-soon page
-  const isPrelaunch = process.env.NEXT_PUBLIC_PRELAUNCH_MODE === 'true';
+  const isPrelaunch = process.env.NEXT_PUBLIC_PRELAUNCH_MODE === 'false';
 
   if (isPrelaunch && !pathname.startsWith('/coming-soon')) {
      if (
@@ -43,5 +43,3 @@ export const config = {
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 }
-
-    
