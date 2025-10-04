@@ -28,6 +28,7 @@ const companyLinks = [
     { href: "/sustainability", label: "Sustainability" },
     { href: "/collaborate", label: "Become a Partner" },
     { href: "/contact", label: "Contact" },
+    { href: "/faq", label: "FAQ" },
     { href: "/affiliate-disclosure", label: "Affiliate Disclosure" },
     { href: "/business-portfolio", label: "Business Portfolio" },
     { href: "/privacy-policy", label: "Privacy Policy" },
@@ -118,7 +119,7 @@ export function Footer() {
             <div>
               <h3 className="font-semibold text-foreground">Company</h3>
               <ul className="mt-4 space-y-2">
-                {companyLinks.map(link => (
+                {companyLinks.sort((a, b) => a.label.localeCompare(b.label)).map(link => (
                   <li key={link.href}>
                     <Link href={link.href} className="text-muted-foreground hover:text-primary">
                       {link.label}
