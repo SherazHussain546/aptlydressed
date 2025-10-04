@@ -33,16 +33,21 @@ export async function initiateEmailSignUp(
   });
   
   // Get firestore instance from the user's app
-  const firestore = getFirestore(user.apps[0] || authInstance.app);
+  const firestore = getFirestore(authInstance.app);
 
   // Create a user document in Firestore
   const userDocRef = doc(firestore, 'users', user.uid);
-  await setDoc(userDocRef, {
+  // This operation is intentionally not awaited in the same way as auth,
+  // but its errors should be handled.
+  setDoc(userDocRef, {
     id: user.uid,
     firstName: profileData.firstName,
     lastName: profileData.lastName,
     email: user.email,
     createdAt: serverTimestamp(),
+  }).catch(error => {
+    // This could be enhanced to use a global error emitter
+    console.error("Error creating user profile in Firestore:", error);
   });
 }
 
