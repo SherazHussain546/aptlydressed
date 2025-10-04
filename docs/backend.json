@@ -259,112 +259,43 @@
     ]
   },
   "firestore": {
-    "structure": [
-      {
-        "path": "/products/{productId}",
-        "definition": {
-          "entityName": "Product",
-          "schema": {
-            "$ref": "#/backend/entities/Product"
-          },
-          "description": "Stores product information.  'productId' is the unique identifier for each product.",
-          "params": [
-            {
-              "name": "productId",
-              "description": "Unique identifier for the product."
-            }
-          ]
-        }
+    "/products/{productId}": {
+      "schema": {
+        "$ref": "#/entities/Product"
       },
-      {
-        "path": "/consumers/{consumerId}",
-        "definition": {
-          "entityName": "Consumer",
-          "schema": {
-            "$ref": "#/backend/entities/Consumer"
-          },
-          "description": "Stores consumer account information. 'consumerId' is the unique identifier for each consumer, matching their Firebase Auth UID.",
-          "params": [
-            {
-              "name": "consumerId",
-              "description": "Unique identifier for the consumer."
-            }
-          ]
-        }
+      "description": "Stores product information. 'productId' is the unique identifier for each product."
+    },
+    "/consumers/{consumerId}": {
+      "schema": {
+        "$ref": "#/entities/Consumer"
       },
-      {
-        "path": "/consumers/{consumerId}/orders/{orderId}",
-        "definition": {
-          "entityName": "Order",
-          "schema": {
-            "$ref": "#/backend/entities/Order"
-          },
-          "description": "Stores order information for each consumer. 'consumerId' is the consumer's ID, and 'orderId' is the unique identifier for each order.",
-          "params": [
-            {
-              "name": "consumerId",
-              "description": "Unique identifier for the consumer."
-            },
-            {
-              "name": "orderId",
-              "description": "Unique identifier for the order."
-            }
-          ]
-        }
+      "description": "Stores consumer account information. 'consumerId' is the unique identifier for each consumer, matching their Firebase Auth UID."
+    },
+    "/consumers/{consumerId}/orders/{orderId}": {
+      "schema": {
+        "$ref": "#/entities/Order"
       },
-      {
-        "path": "/orders_items/{orderItemId}",
-        "definition": {
-          "entityName": "OrderItem",
-          "schema": {
-            "$ref": "#/backend/entities/OrderItem"
-          },
-          "description": "Stores order item information, separate from orders. 'orderItemId' is the unique identifier for each order item.",
-          "params": [
-            {
-              "name": "orderItemId",
-              "description": "Unique identifier for the order item."
-            }
-          ]
-        }
+      "description": "Stores order information for each consumer. 'consumerId' is the consumer's ID, and 'orderId' is the unique identifier for each order."
+    },
+    "/orders_items/{orderItemId}": {
+      "schema": {
+        "$ref": "#/entities/OrderItem"
       },
-      {
-        "path": "/products/{productId}/reviews/{reviewId}",
-        "definition": {
-          "entityName": "Review",
-          "schema": {
-            "$ref": "#/backend/entities/Review"
-          },
-          "description": "Stores product reviews. 'productId' is the product ID, and 'reviewId' is the unique identifier for each review.",
-          "params": [
-            {
-              "name": "productId",
-              "description": "Unique identifier for the product."
-            },
-            {
-              "name": "reviewId",
-              "description": "Unique identifier for the review."
-            }
-          ]
-        }
+      "description": "Stores order item information, separate from orders. 'orderItemId' is the unique identifier for each order item."
+    },
+    "/products/{productId}/reviews/{reviewId}": {
+      "schema": {
+        "$ref": "#/entities/Review"
       },
-      {
-        "path": "/subscribers/{subscriberId}",
-        "definition": {
-          "entityName": "Subscriber",
-          "schema": {
-            "$ref": "#/backend/entities/Subscriber"
-          },
-          "description": "Stores subscriber information from the 'Coming Soon' page and newsletter footer.",
-          "params": [
-            {
-              "name": "subscriberId",
-              "description": "Unique identifier for the subscriber entry."
-            }
-          ]
-        }
-      }
-    ],
-    "reasoning": "The structure prioritizes security and scalability for the Aptly Dressed eBoutique. The core design focuses on authorization independence to ensure robust security rules and atomic operations. The error reported indicates that unauthenticated users are attempting to create subscriber documents. The design ensures that all subscriber data is stored under the `/subscribers` collection and that only authenticated users with a specific role (e.g., admin) or via a callable function with rate-limiting, can create documents. The `/subscribers` collection stores the email, subscription timestamp, and source. This structure allows for easy querying and management of subscribers.  The structure is designed to support QAPs by segregating the subscriber data into a single collection with uniform security requirements. This prevents the need for complex filtering in rules.  The design includes paths for products, user data (including orders and reviews), to logically separate concerns and ensure scalability as the platform grows."
+      "description": "Stores product reviews. 'productId' is the product ID, and 'reviewId' is the unique identifier for each review."
+    },
+    "/subscribers/{subscriberId}": {
+      "schema": {
+        "$ref": "#/entities/Subscriber"
+      },
+      "description": "Stores subscriber information from the 'Coming Soon' page and newsletter footer."
+    }
   }
 }
+
+    
