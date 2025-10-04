@@ -131,7 +131,7 @@ export default function AboutPage() {
           <div className="text-center max-w-4xl mx-auto">
             <h2 className="text-3xl font-headline mb-4">Meet the Founders</h2>
             <p className="text-lg text-muted-foreground mb-12">
-              APTLY DRESSED was founded by brothers Shaharyar and Sheraz Hussain, who combined their passion for technology and timeless fashion to create a platform that redefines style discovery.
+              APTLY DRESSED was founded by the Hussain Brothers, Shaharyar and Sheraz, who combined their passion for technology and timeless fashion to create a platform that redefines style discovery.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
