@@ -49,13 +49,25 @@ export function AuthForm() {
     } catch (err: any) {
        if (err instanceof FirebaseError) {
         switch (err.code) {
-          case 'auth/email-already-in-use':
-            setError('This email address is already in use. Please sign in or use a different email.');
-            break;
           case 'auth/user-not-found':
+            // If user doesn't exist during login, switch to sign up form
+            setIsLogin(false);
+            setError("Account not found. Please create an account to continue.");
+            break;
           case 'auth/wrong-password':
           case 'auth/invalid-credential':
-            setError('Invalid email or password. Please try again.');
+             if (isLogin) {
+              // On login, this could mean wrong password OR user not found.
+              // To guide the user, we switch to sign-up if we suspect the account doesn't exist.
+              setIsLogin(false);
+              setError("Account not found. Please create an account, or sign in if you already have one.");
+            } else {
+              // On sign up, this error is less likely, treat as generic.
+              setError('Invalid email or password. Please try again.');
+            }
+            break;
+          case 'auth/email-already-in-use':
+            setError('This email address is already in use. Please sign in or use a different email.');
             break;
           case 'auth/weak-password':
             setError('The password is too weak. Please use at least 6 characters.');
