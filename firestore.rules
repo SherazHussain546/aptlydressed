@@ -1,68 +1,75 @@
 /**
- * @fileOverview Firestore Security Rules for Aptly Dressed eBoutique.
+ * @fileoverview Firestore Security Rules for Aptly Dressed eBoutique.
  *
  * Core Philosophy:
- * This ruleset enforces a strict user-ownership model for consumer data and
- * public read access for product information. All write operations on user-owned
- * data require authentication and authorization checks to ensure data privacy.
+ * This ruleset prioritizes strong authorization and clear ownership.
+ * It uses path-based access control and enforces the principle of least privilege.
+ * The rules are designed to prevent unauthorized data access or modification.
  *
  * Data Structure:
- * - /products/{productId}: Publicly readable product information.
- * - /consumers/{consumerId}: User account information, accessible only to the
- *   authenticated user with matching UID.
- * - /consumers/{consumerId}/orders/{orderId}: Order information for a specific
- *   user, accessible only to the authenticated user with matching UID.
- * - /orders_items/{orderItemId}: Order items.
- * - /products/{productId}/reviews/{reviewId}: Reviews for products.
+ * - /products/{productId}: Public product catalog.
+ * - /consumers/{consumerId}: Private user profiles.
+ * - /consumers/{consumerId}/orders/{orderId}: User-specific order history.
+ * - /orders_items/{orderItemId}: Order items, not directly linked to users for simplicity.
+ * - /products/{productId}/reviews/{reviewId}: User reviews for products.
  * - /subscribers/{subscriberId}: Newsletter subscribers.
- * - /notify-me/{notificationId}: "Coming Soon" notification sign-ups.
+ * - /notify-me/{notificationId}: "Coming Soon" notification requests.
  *
  * Key Security Decisions:
- * - Consumers can only access their own data (orders, profile).
- * - Products are publicly readable but not writable via client SDKs.
- * - Listing of consumers is disallowed.
- * - Subscribers can be created by unauthenticated users via callable functions.
+ * - Users can only access their own profile data.
+ * - Only authenticated users can create reviews.
+ * - Listing of user profiles is disallowed.
+ * - The `subscribers` collection is write-protected and can only be written by a service account.
+ * - The `notify-me` collection is write-protected and can only be written by a service account.
  *
  * Denormalization for Authorization:
- *  - The data model follows a strict containment model. The User ID is reflected on all child documents of the User (eg: Orders).
- *  - Where public read is allowed, ownership is enforced through a dedicated 'ownerId' field on the document.
+ * - User-specific data (orders, reviews) is nested under the /consumers/{consumerId} path, allowing
+ *   for simple ownership checks using `isOwner(consumerId)`.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Checks if the request is authenticated.
-     * @returns {boolean} True if the request is authenticated, false otherwise.
+     * @description Checks if the request is made by a signed-in user.
+     * @path N/A
+     * @allow N/A
+     * @deny N/A
+     * @principle Requires a verified user.
      */
     function isSignedIn() {
       return request.auth != null;
     }
 
     /**
-     * @description Checks if the authenticated user is the owner of the resource.
-     * @param {string} userId - The user ID to compare against the authenticated user's UID.
-     * @returns {boolean} True if the authenticated user is the owner, false otherwise.
+     * @description Checks if the authenticated user's UID matches the provided userId.
+     * @path N/A
+     * @allow N/A
+     * @deny N/A
+     * @principle Enforces user-based ownership.
      */
     function isOwner(userId) {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    /**
-     * @description Checks if the authenticated user is the owner of the existing resource.
-     * @param {string} userId - The user ID to compare against the authenticated user's UID.
-     * @returns {boolean} True if the authenticated user is the owner and the resource exists, false otherwise.
+        /**
+     * @description Checks if the authenticated user's UID matches the provided userId and resource exists.
+     * @path N/A
+     * @allow N/A
+     * @deny N/A
+     * @principle Enforces user-based ownership and checks for the existence of resource.
      */
     function isExistingOwner(userId) {
       return isOwner(userId) && resource != null;
     }
 
+
     /**
-     * @description Rules for the /products collection.
+     * @description Rules for the /products collection. Allows public read access to product information.
      * @path /products/{productId}
      * @allow (get, list): Any user can read product information.
-     * @deny (create, update, delete): No client-side writes allowed; products managed via backend.
-     * @principle Public read, backend-managed writes.
+     * @deny (create, update, delete): No user can create, update, or delete product information directly.
+     * @principle Allows public read access, while preventing unauthorized modifications.
      */
     match /products/{productId} {
       allow get, list: if true;
@@ -70,45 +77,41 @@ service cloud.firestore {
     }
 
     /**
-     * @description Rules for the /consumers collection.
+     * @description Rules for the /consumers collection. Enforces user-based ownership for profile data.
      * @path /consumers/{consumerId}
-     * @allow (get): Only the authenticated user with matching UID can read their own profile.
-     * @allow (create): Only the authenticated user can create their own profile (UID must match).
-     * @allow (update, delete): Only the authenticated user with matching UID can update/delete their own profile.
+     * @allow (get, update, delete): Only the owner can read, update, or delete their profile.
+     * @allow (create): Only the user matching {consumerId} can create their profile.
      * @deny (list): Listing consumers is not allowed.
-     * @deny (create): Creating a consumer with an ID that does not match the authenticated user's UID is prohibited.
-     * @principle Enforces document ownership for reads and writes.
+     * @principle Enforces strict user-based ownership for profile management.
      */
     match /consumers/{consumerId} {
       allow get: if isOwner(consumerId);
       allow list: if false;
-      allow create: if isOwner(consumerId) && request.resource.data.id == consumerId;
-      allow update: if isExistingOwner(consumerId) && request.resource.data.id == resource.data.id;
+      allow create: if isOwner(consumerId);
+      allow update: if isExistingOwner(consumerId);
       allow delete: if isExistingOwner(consumerId);
     }
 
     /**
-     * @description Rules for the /consumers/{consumerId}/orders collection.
+     * @description Rules for the /consumers/{consumerId}/orders collection. Enforces user-based ownership for order data.
      * @path /consumers/{consumerId}/orders/{orderId}
-     * @allow (get, list): Only the authenticated user with matching UID can read their own orders.
-     * @allow (create): Only the authenticated user with matching UID can create orders under their profile.
-     * @allow (update, delete): Only the authenticated user with matching UID can update/delete their own orders.
-     * @deny (create): Creating an order with a userId that does not match the authenticated user's UID is prohibited.
-     * @principle Enforces document ownership for reads and writes.
+     * @allow (get, list, create): Only the owner can read, list, and create orders.
+     * @allow (update, delete): Only the owner can update or delete their orders.
+     * @principle Enforces strict user-based ownership for order management.
      */
     match /consumers/{consumerId}/orders/{orderId} {
       allow get, list: if isOwner(consumerId);
-      allow create: if isOwner(consumerId) && request.resource.data.userId == consumerId;
-      allow update: if isExistingOwner(consumerId) && request.resource.data.userId == resource.data.userId;
+      allow create: if isOwner(consumerId);
+      allow update: if isExistingOwner(consumerId);
       allow delete: if isExistingOwner(consumerId);
     }
 
     /**
-     * @description Rules for the /orders_items collection.
+     * @description Rules for the /orders_items collection. Allows read access to order item information.
      * @path /orders_items/{orderItemId}
-     * @allow (get, list): Public read access for order items.
-     * @allow (create, update, delete): No client-side writes allowed; order items managed via backend.
-     * @principle Public read, backend-managed writes.
+     * @allow (get, list): Any user can read order item information.
+     * @deny (create, update, delete): No user can create, update, or delete order item information directly.
+     * @principle Allows public read access, while preventing unauthorized modifications.
      */
     match /orders_items/{orderItemId} {
       allow get, list: if true;
@@ -116,41 +119,41 @@ service cloud.firestore {
     }
 
     /**
-     * @description Rules for the /products/{productId}/reviews collection.
+     * @description Rules for the /products/{productId}/reviews collection. Only authenticated users can create reviews.
      * @path /products/{productId}/reviews/{reviewId}
-     * @allow (get, list): Public read access for reviews.
-     * @allow (create): Any authenticated user can create a review.
-     * @allow (update, delete): Only the owner (creator) of the review can update/delete it.
-     * @principle Public read, owner-only writes.
+     * @allow (get, list): Any user can read reviews.
+     * @allow (create): Only signed-in users can create reviews.
+     * @deny (update, delete): Reviews cannot be updated or deleted.
+     * @principle Allows public read access, restricts review creation to authenticated users.
      */
     match /products/{productId}/reviews/{reviewId} {
       allow get, list: if true;
-      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
-      allow update: if isExistingOwner(resource.data.userId);
-      allow delete: if isExistingOwner(resource.data.userId);
+      allow create: if isSignedIn();
+      allow update, delete: if false;
     }
 
-    /**
-     * @description Rules for the /subscribers collection.
+     /**
+     * @description Rules for the /subscribers collection. Only allows create operation.
      * @path /subscribers/{subscriberId}
-     * @allow (create): Allows anyone to create a subscriber.
-     * @deny (get, list, update, delete): No client-side read, update, or delete access for subscribers.
-     * @principle: Public creation via callable functions, backend management only.
+     * @allow create: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
+     * @deny get, list, update, delete
+     * @principle Prevents public writes to the subscriber list.
      */
     match /subscribers/{subscriberId} {
       allow get, list, update, delete: if false;
-      allow create: if true;
+      allow create: if false; // TODO: secure with callable function and rate limiting
     }
 
     /**
-     * @description Rules for the /notify-me collection (for "Coming Soon" page sign-ups).
+     * @description Rules for the /notify-me collection. Only allows create operation.
      * @path /notify-me/{notificationId}
-     * @allow (create): Allows anyone to create a notification request.
-     * @deny (get, list, update, delete): No client-side read, update, or delete access.
+     * @allow create: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
+     * @deny get, list, update, delete
+     * @principle Prevents public writes to the notify-me list.
      */
     match /notify-me/{notificationId} {
       allow get, list, update, delete: if false;
-      allow create: if true;
+      allow create: if false;  // TODO: secure with callable function and rate limiting
     }
   }
 }
