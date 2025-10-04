@@ -2,17 +2,31 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
+// Add the paths you want to be accessible during pre-launch mode.
+const allowedPaths = [
+  '/coming-soon',
+  '/collaborate',
+  '/contact',
+  '/about',
+  '/sustainability',
+  '/affiliate-disclosure',
+  '/privacy-policy',
+  '/business-portfolio',
+  '/news-and-events', // Also allowing blog/news if needed
+];
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // If the site is in pre-launch mode, route traffic to the coming-soon page
   const isPrelaunch = process.env.NEXT_PUBLIC_PRELAUNCH_MODE === 'true';
 
-  if (isPrelaunch && !pathname.startsWith('/coming-soon')) {
+  if (isPrelaunch) {
      if (
+      allowedPaths.some(path => pathname.startsWith(path)) ||
       pathname.startsWith('/api/') ||
       pathname.startsWith('/_next/') ||
-      pathname.includes('.')
+      pathname.includes('.') // Allows serving static files like images
     ) {
       // Allow these paths to pass through
     } else {
