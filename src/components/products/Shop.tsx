@@ -2,7 +2,6 @@
 "use client";
 
 import { useState, useMemo, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
 
 import { ProductCard } from '@/components/products/ProductCard';
 import { ProductFilters } from '@/components/products/ProductFilters';
@@ -37,12 +36,18 @@ function ProductGridSkeleton() {
 
 interface ShopProps {
   allProducts: Product[];
+  searchParams?: { [key: string]: string | string[] | undefined };
 }
 
-export function Shop({ allProducts }: ShopProps) {
-  const searchParams = useSearchParams();
-  const initialCategory = searchParams.get('category') || 'All';
-  const initialTags = searchParams.get('tags')?.split(',') || [];
+export function Shop({ allProducts, searchParams }: ShopProps) {
+  const getSearchParam = (key: string) => {
+    const value = searchParams?.[key];
+    return typeof value === 'string' ? value : undefined;
+  }
+
+  const initialCategory = getSearchParam('category') || 'All';
+  const initialTags = getSearchParam('tags')?.split(',') || [];
+
   const maxPrice = Math.max(...allProducts.map(p => p.price), 300);
   
   const [filters, setFilters] = useState({
