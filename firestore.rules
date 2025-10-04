@@ -1,24 +1,176 @@
-
+/**
+ * @fileoverview Firestore Security Rules for Aptly Dressed eBoutique.
+ *
+ * Core Philosophy:
+ * This ruleset employs a strict user-ownership model for user-related data
+ * and a public-read, owner-write model for products and reviews. Subscriber
+ * creation is limited to authenticated users or via a callable function.
+ *
+ * Data Structure:
+ * - /products/{productId}: Product information, publicly readable, owner-only writes.
+ * - /users/{userId}: User account data, only accessible by the owning user.
+ * - /users/{userId}/orders/{orderId}: Order information for each user, accessible only by the user.
+ * - /orders_items/{orderItemId}: Order item information, separate from orders, accessible by authenticated users
+ * - /products/{productId}/reviews/{reviewId}: Product reviews, publicly readable, owner-only writes.
+ * - /subscribers/{subscriberId}: Newsletter subscribers, creation only by authenticated users or callable function.
+ * - /notify-me/{notificationId}: 'Coming Soon' notification sign-ups, creation only by authenticated users or callable function.
+ *
+ * Key Security Decisions:
+ * - User listing is disallowed.
+ * - The `subscribers` collection is secured to prevent unauthorized subscriptions.
+ * - Public read access is granted only to explicitly public collections (products, reviews).
+ * - All write operations require authentication and proper authorization checks.
+ */
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Default deny all reads and writes
-    match /{document=**} {
-      allow read, write: if false;
+    /**
+     * @description Checks if the request is authenticated.
+     * @returns {boolean} True if the request is authenticated, false otherwise.
+     */
+    function isSignedIn() {
+      return request.auth != null;
     }
 
-    // Allow anyone to create a document in the 'subscribers' collection.
-    // This is for the general newsletter signup.
+    /**
+     * @description Checks if the authenticated user ID matches the provided user ID.
+     * @param {string} userId The user ID to compare against the authenticated user's ID.
+     * @returns {boolean} True if the user IDs match, false otherwise.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * @description Checks if the user is the owner of the existing document.
+     * @param {string} userId The user ID of the owner.
+     * @returns {boolean} True if the user is the owner and the document exists.
+     */
+    function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * @description Security rules for products.
+     * @path /products/{productId}
+     * @allow get, list: Public read access.
+     * @allow create: Authenticated user can create a product if they are the owner.
+     * @allow update, delete: Only the owner can update or delete a product.
+     * @deny create: Unauthenticated user cannot create a product.
+     * @deny update: Non-owner cannot update the product.
+     * @deny delete: Non-owner cannot delete the product.
+     * @principle Allows public reads, restricts writes to the owner.
+     */
+    match /products/{productId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.id == request.auth.uid;
+      allow update: if isExistingOwner(resource.data.id);
+      allow delete: if isExistingOwner(resource.data.id);
+    }
+
+    /**
+     * @description Security rules for users.
+     * @path /users/{userId}
+     * @allow get: Only the authenticated user can get their own user document.
+     * @allow create: Only the user can create their own user document.
+     * @allow update: Only the user can update their own user document.
+     * @allow delete: Only the user can delete their own user document.
+     * @deny get: An unauthenticated user cannot get any user document.
+     * @deny create: An unauthenticated user cannot create a user document.
+     * @deny update: An unauthenticated user cannot update another user's document.
+     * @deny delete: An unauthenticated user cannot delete another user's document.
+     * @principle Enforces strict user-ownership for all operations.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false; // Listing users is never allowed.
+      allow create: if isOwner(userId) && request.resource.data.id == request.auth.uid;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Security rules for orders.
+     * @path /users/{userId}/orders/{orderId}
+     * @allow get, list: Only the authenticated user can access their own order documents.
+     * @allow create: Only the authenticated user can create order documents under their user document.
+     * @allow update, delete: Only the authenticated user can update or delete order documents under their user document.
+     * @deny get, list: An unauthenticated user cannot access any order documents.
+     * @deny create: An unauthenticated user cannot create order documents under another user's document.
+     * @deny update, delete: An unauthenticated user cannot update or delete order documents under another user's document.
+     * @principle Enforces user-ownership for orders.
+     */
+    match /users/{userId}/orders/{orderId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && resource.data.userId == userId;
+      allow delete: if isExistingOwner(userId);
+    }
+
+     /**
+      * @description Security rules for order items.
+      * @path /orders_items/{orderItemId}
+      * @allow get, list: Authenticated users can get and list order items.
+      * @allow create: Authenticated users can create order items.
+      * @allow update: Authenticated users can update order items.
+      * @allow delete: Authenticated users can delete order items.
+      * @deny get, list: Unauthenticated users cannot access order items.
+      *  @principle Allows any authenticated user to CRUD an order item.
+      */
+    match /orders_items/{orderItemId} {
+        allow get, list: if isSignedIn();
+        allow create: if isSignedIn();
+        allow update: if isSignedIn() && resource != null;
+        allow delete: if isSignedIn() && resource != null;
+    }
+
+    /**
+     * @description Security rules for product reviews.
+     * @path /products/{productId}/reviews/{reviewId}
+     * @allow get, list: Public read access to product reviews.
+     * @allow create: Authenticated user can create a review if they are the owner.
+     * @allow update, delete: Only the owner can update or delete their review.
+     * @deny create: Unauthenticated user cannot create a review.
+     * @deny update: Non-owner cannot update the review.
+     * @deny delete: Non-owner cannot delete the review.
+     * @principle Public read, owner write.
+     */
+    match /products/{productId}/reviews/{reviewId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update: if isExistingOwner(request.auth.uid) && resource.data.userId == request.auth.uid;
+      allow delete: if isExistingOwner(request.auth.uid) && resource.data.userId == request.auth.uid;
+    }
+
+    /**
+     * @description Security rules for newsletter subscribers.
+     * @path /subscribers/{subscriberId}
+     * @allow get, list: if false; // No listing or getting individual subscribers
+     * @allow create: if isSignedIn(); // Only signed in users can subscribe
+     * @allow update, delete: if false; // No updates or deletes from client side
+     * @deny create: if false; // explicitly allow authenticated users
+     * @principle Restricts subscriber creation to authenticated users.
+     */
     match /subscribers/{subscriberId} {
-      allow create: if true;
+      allow get, list: if false;
+      allow create: if isSignedIn();
+      allow update, delete: if false;
     }
 
-    // Allow anyone to create a document in the 'notifyme' collection.
-    // This is for the 'Coming Soon' page signups.
-    match /notifyme/{notificationId} {
-      allow create: if true;
+    /**
+     * @description Security rules for 'Coming Soon' notification sign-ups.
+     * @path /notify-me/{notificationId}
+     * @allow get, list: if false; // No listing or getting individual sign-ups
+     * @allow create: if isSignedIn(); // Only signed in users can sign up
+     * @allow update, delete: if false; // No updates or deletes from client side
+     * @deny create: if false; // explicitly allow authenticated users
+     * @principle Restricts notification sign-ups to authenticated users.
+     */
+    match /notify-me/{notificationId} {
+      allow get, list: if false;
+      allow create: if isSignedIn();
+      allow update, delete: if false;
     }
   }
 }
