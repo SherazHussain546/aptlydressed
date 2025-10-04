@@ -29,7 +29,7 @@ export default function NewsAndEventsPage() {
                             <p className="font-semibold">APTLY DRESSED</p>
                             <p className="text-sm text-muted-foreground">{new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                         </div>
-                        <NewsPostShareButtons post={post} />
+                        <NewsPostShareButtons slug={post.slug} title={post.title} />
                     </div>
                 </CardHeader>
                 {image && (
@@ -57,7 +57,7 @@ export default function NewsAndEventsPage() {
                 />
               </CardContent>
               <CardFooter>
-                <NewsPostShareButtons post={post} isFullPage={true} />
+                <NewsPostShareButtons slug={post.slug} title={post.title} isFullPage={true} />
               </CardFooter>
             </Card>
           );

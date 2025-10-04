@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation';
 import { Twitter, Facebook, Linkedin, Copy, MoreHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import type { NewsPost } from '@/lib/types';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,16 +12,23 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-export function NewsPostShareButtons({ post, isFullPage = false }: { post: NewsPost, isFullPage?: boolean }) {
+// Updated props to accept primitive types
+type NewsPostShareButtonsProps = {
+    slug: string;
+    title: string;
+    isFullPage?: boolean;
+}
+
+export function NewsPostShareButtons({ slug, title, isFullPage = false }: NewsPostShareButtonsProps) {
   const pathname = usePathname();
   const { toast } = useToast();
   const [shareUrl, setShareUrl] = useState('');
 
   useEffect(() => {
     // For the feed page, we construct the full URL. For the post page, we use the current URL.
-    const url = isFullPage ? window.location.href : `${window.location.origin}/news-and-events/${post.slug}`;
+    const url = isFullPage ? window.location.href : `${window.location.origin}/news-and-events/${slug}`;
     setShareUrl(url);
-  }, [pathname, post.slug, isFullPage]);
+  }, [pathname, slug, isFullPage]);
 
   const copyLink = () => {
     if (!shareUrl) return;
@@ -48,7 +54,7 @@ export function NewsPostShareButtons({ post, isFullPage = false }: { post: NewsP
                     <span>Copy link</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                    <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(post.title)}`} target="_blank" rel="noopener noreferrer">
+                    <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(title)}`} target="_blank" rel="noopener noreferrer">
                         <Twitter className="mr-2 h-4 w-4" />
                         <span>Share on Twitter</span>
                     </a>
@@ -60,7 +66,7 @@ export function NewsPostShareButtons({ post, isFullPage = false }: { post: NewsP
                     </a>
                 </DropdownMenuItem>
                  <DropdownMenuItem asChild>
-                    <a href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(post.title)}`} target="_blank" rel="noopener noreferrer">
+                    <a href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(title)}`} target="_blank" rel="noopener noreferrer">
                         <Linkedin className="mr-2 h-4 w-4" />
                         <span>Share on LinkedIn</span>
                     </a>
@@ -75,7 +81,7 @@ export function NewsPostShareButtons({ post, isFullPage = false }: { post: NewsP
         <p className="font-semibold text-sm">Share:</p>
         <div className="flex gap-2">
             <Button variant="outline" size="icon" asChild>
-                <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(post.title)}`} target="_blank" rel="noopener noreferrer">
+                <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(title)}`} target="_blank" rel="noopener noreferrer">
                     <Twitter className="h-4 w-4" />
                 </a>
             </Button>
@@ -85,7 +91,7 @@ export function NewsPostShareButtons({ post, isFullPage = false }: { post: NewsP
                 </a>
             </Button>
             <Button variant="outline" size="icon" asChild>
-                <a href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(post.title)}`} target="_blank" rel="noopener noreferrer">
+                <a href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(shareUrl)}&title=${encodeURIComponent(title)}`} target="_blank" rel="noopener noreferrer">
                     <Linkedin className="h-4 w-4" />
                 </a>
             </Button>

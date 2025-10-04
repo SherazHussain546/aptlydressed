@@ -23,15 +23,6 @@ export function NewsPostPageClient({
   slug,
   image,
 }: NewsPostPageClientProps) {
-  // Re-create a partial post object for the share buttons
-  const postForSharing = {
-    title,
-    slug,
-    date,
-    imageId: image?.id || '',
-    content,
-    hashtags,
-  };
 
   return (
     <article className="container mx-auto px-4 py-8 md:py-16">
@@ -82,7 +73,7 @@ export function NewsPostPageClient({
             </div>
           )}
 
-          <NewsPostShareButtons post={postForSharing} isFullPage={true} />
+          <NewsPostShareButtons slug={slug} title={title} isFullPage={true} />
         </div>
       </div>
     </article>

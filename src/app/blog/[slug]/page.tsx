@@ -6,7 +6,6 @@ import { blogPosts, placeholderImages } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { NewsPostShareButtons } from '@/components/news/NewsPostShareButtons';
-import type { NewsPost } from '@/lib/types';
 
 type Props = {
   params: { slug: string }
@@ -50,17 +49,6 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
 
   const image = placeholderImages.find(p => p.id === post.imageId);
 
-  // The share button component expects a NewsPost type.
-  // We can create a partial object that satisfies its needs.
-  const postForSharing: NewsPost = {
-    slug: post.slug,
-    title: post.title,
-    date: post.date,
-    imageId: post.imageId,
-    content: post.content,
-    hashtags: [],
-  };
-
   return (
     <article>
       <header className="relative h-[40vh] md:h-[50vh] w-full">
@@ -94,7 +82,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
                     </Link>
                 </Button>
             </div>
-            <NewsPostShareButtons post={postForSharing} isFullPage={true} />
+            <NewsPostShareButtons slug={post.slug} title={post.title} isFullPage={true} />
         </div>
       </div>
     </article>
