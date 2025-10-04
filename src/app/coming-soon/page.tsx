@@ -41,7 +41,7 @@ export default function ComingSoonPage() {
     }
 
     try {
-      const notifyMeRef = collection(firestore, "notify-me");
+      const notifyMeRef = collection(firestore, "notifyme");
       const data = { email: email, subscribedAt: new Date(), source: 'coming-soon' };
       
       await addDoc(notifyMeRef, data);
@@ -54,7 +54,7 @@ export default function ComingSoonPage() {
 
     } catch (serverError) {
        const permissionError = new FirestorePermissionError({
-          path: 'notify-me',
+          path: 'notifyme',
           operation: 'create',
           requestResourceData: { email, source: 'coming-soon' },
         });
