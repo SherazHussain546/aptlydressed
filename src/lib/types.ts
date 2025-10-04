@@ -59,3 +59,12 @@ export interface UserProfile {
   lastName: string;
   email: string;
 }
+
+export interface Order {
+    id: string;
+    userId: string;
+    orderDate: string; // ISO 8601 date string
+    totalAmount: number;
+    shippingAddress: string;
+    orderItemIds: string[];
+}
