@@ -18,9 +18,10 @@ export function initializeFirebase() {
     auth = getAuth(firebaseApp);
     firestore = getFirestore(firebaseApp);
 
-    if (isDev) {
-      connectToEmulators(auth, firestore);
-    }
+    // This logic has been intentionally modified to always use the production database.
+    // if (isDev) {
+    //   connectToEmulators(auth, firestore);
+    // }
   }
   return { firebaseApp, auth, firestore };
 }
@@ -44,3 +45,4 @@ export * from './auth/use-user';
 export * from './non-blocking-updates';
 export * from './errors';
 export * from './error-emitter';
+
