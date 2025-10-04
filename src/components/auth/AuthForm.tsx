@@ -2,11 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  initiateEmailSignIn,
-  initiateEmailSignUp,
-} from "@/firebase/non-blocking-login";
-import { useAuth, useUser } from "@/firebase";
+import { useAuth } from "@/firebase";
 import {
   Card,
   CardContent,
@@ -21,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { FirebaseError } from 'firebase/app';
+import { initiateEmailSignIn, initiateEmailSignUp } from "@/firebase/non-blocking-login";
 
 export function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
@@ -29,31 +26,49 @@ export function AuthForm() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const auth = useAuth();
-  const { isUserLoading } = useUser();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setLoading(true);
+
     try {
       if (isLogin) {
         await initiateEmailSignIn(auth, email, password);
       } else {
+        if (!firstName || !lastName) {
+          setError("Please enter your first and last name.");
+          setLoading(false);
+          return;
+        }
         await initiateEmailSignUp(auth, email, password, { firstName, lastName });
       }
+      // On success, the useUser hook will redirect.
     } catch (err: any) {
        if (err instanceof FirebaseError) {
-        if (err.code === 'auth/email-already-in-use') {
-          setError('This email address is already in use. Please sign in or use a different email.');
-        } else if (err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
-          setError('Invalid email or password. Please try again.');
-        }
-        else {
-          setError(err.message);
+        switch (err.code) {
+          case 'auth/email-already-in-use':
+            setError('This email address is already in use. Please sign in or use a different email.');
+            break;
+          case 'auth/user-not-found':
+          case 'auth/wrong-password':
+          case 'auth/invalid-credential':
+            setError('Invalid email or password. Please try again.');
+            break;
+          case 'auth/weak-password':
+            setError('The password is too weak. Please use at least 6 characters.');
+            break;
+          default:
+            setError("An unexpected error occurred. Please try again.");
+            break;
         }
       } else {
         setError("An unexpected error occurred. Please try again.");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -126,8 +141,8 @@ export function AuthForm() {
               minLength={6}
             />
           </div>
-          <Button type="submit" className="w-full" disabled={isUserLoading}>
-            {isUserLoading
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading
               ? "Processing..."
               : isLogin
               ? "Sign In"
