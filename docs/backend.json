@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "Product": {
@@ -227,12 +228,8 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Subscriber",
       "type": "object",
-      "description": "Represents a subscriber to the newsletter.",
+      "description": "Represents a subscriber to the newsletter or a pre-launch notification list.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the subscriber."
-        },
         "email": {
           "type": "string",
           "description": "Email address of the subscriber.",
@@ -245,11 +242,10 @@
         },
         "source": {
           "type": "string",
-          "description": "Source of the subscription (e.g., footer, signup form)."
+          "description": "Source of the subscription (e.g., 'footer', 'coming-soon')."
         }
       },
       "required": [
-        "id",
         "email",
         "subscribedAt",
         "source"
@@ -359,11 +355,27 @@
           "schema": {
             "$ref": "#/backend/entities/Subscriber"
           },
-          "description": "Stores newsletter subscriber information. 'subscriberId' is the unique identifier for each subscriber.",
+          "description": "Stores general newsletter subscriber information, typically from the site footer.",
           "params": [
             {
               "name": "subscriberId",
               "description": "Unique identifier for the subscriber."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/notify-me/{notificationId}",
+        "definition": {
+          "entityName": "Subscriber",
+          "schema": {
+            "$ref": "#/backend/entities/Subscriber"
+          },
+          "description": "Stores emails from the 'Coming Soon' page for launch notifications.",
+          "params": [
+            {
+              "name": "notificationId",
+              "description": "Unique identifier for the notification signup."
             }
           ]
         }

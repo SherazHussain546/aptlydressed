@@ -1,48 +1,68 @@
 
 "use client";
 
-import { useEffect, useRef, useActionState } from "react";
-import { useFormStatus } from "react-dom";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Linkedin, Instagram, Facebook, Loader2, Handshake } from "lucide-react";
+import { useFirestore, errorEmitter, FirestorePermissionError } from "@/firebase";
+import { collection, addDoc } from "firebase/firestore";
 
 import { placeholderImages } from "@/lib/data";
 import { Logo } from "@/components/icons/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { subscribeToNewsletter } from "@/app/actions/newsletter";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
 
 const heroImage = placeholderImages.find(p => p.id === 'hero-1');
 
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" size="lg" className="w-full md:w-auto bg-primary hover:bg-primary/90" disabled={pending}>
-      {pending ? <Loader2 className="animate-spin" /> : 'Notify Me'}
-    </Button>
-  );
-}
 
 export default function ComingSoonPage() {
-  const [state, formAction] = useActionState(subscribeToNewsletter, { message: '' });
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
+  const firestore = useFirestore();
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (state?.message) {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+    const formData = new FormData(event.currentTarget);
+    const email = formData.get('email') as string;
+
+    if (!email) {
       toast({
-        title: state.message.includes('Thank you') ? 'Success' : 'Heads up!',
-        description: state.message,
-        variant: state.message.includes('Thank you') ? 'default' : 'destructive',
+        title: 'Heads up!',
+        description: 'Please enter a valid email address.',
+        variant: 'destructive',
       });
-      if (state.message.includes('Thank you')) {
-        formRef.current?.reset();
-      }
+      setLoading(false);
+      return;
     }
-  }, [state, toast]);
+
+    try {
+      const notifyMeRef = collection(firestore, "notify-me");
+      const data = { email: email, subscribedAt: new Date(), source: 'coming-soon' };
+      
+      await addDoc(notifyMeRef, data);
+      
+      toast({
+        title: 'Success!',
+        description: 'Thank you for subscribing! We will notify you when we launch.',
+      });
+      formRef.current?.reset();
+
+    } catch (serverError) {
+       const permissionError = new FirestorePermissionError({
+          path: 'notify-me',
+          operation: 'create',
+          requestResourceData: { email, source: 'coming-soon' },
+        });
+        errorEmitter.emit('permission-error', permissionError);
+    } finally {
+        setLoading(false);
+    }
+  };
 
   return (
     <div className="relative min-h-screen w-full">
@@ -68,15 +88,18 @@ export default function ComingSoonPage() {
                 Welcome to Aptly Dressed, your new destination for curated collections of high-quality, sustainable fashion. We're putting the final touches on a modern shopping experience designed to elevate your style. Be the first to know when we launch.
             </p>
 
-            <form ref={formRef} action={formAction} className="w-full max-w-md mx-auto flex flex-col md:flex-row gap-2">
+            <form ref={formRef} onSubmit={handleSubmit} className="w-full max-w-md mx-auto flex flex-col md:flex-row gap-2">
               <Input
                 type="email"
                 name="email"
                 placeholder="Enter your email address"
                 className="bg-white/90 text-foreground flex-grow text-center md:text-left"
                 required
+                disabled={loading}
               />
-              <SubmitButton />
+              <Button type="submit" size="lg" className="w-full md:w-auto bg-primary hover:bg-primary/90" disabled={loading}>
+                {loading ? <Loader2 className="animate-spin" /> : 'Notify Me'}
+              </Button>
             </form>
             
             <div className="mt-12">
@@ -111,3 +134,4 @@ export default function ComingSoonPage() {
     </div>
   );
 }
+
