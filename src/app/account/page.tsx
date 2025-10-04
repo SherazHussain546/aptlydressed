@@ -24,7 +24,7 @@ function OrderHistory({ userId }: { userId: string }) {
 
     const ordersQuery = useMemoFirebase(() => {
         if (!firestore || !userId) return null;
-        return query(collection(firestore, 'users', userId, 'orders'), orderBy('orderDate', 'desc'));
+        return query(collection(firestore, 'consumers', userId, 'orders'), orderBy('orderDate', 'desc'));
     }, [firestore, userId]);
     
     const { data: orders, isLoading } = useCollection<Order>(ordersQuery);
@@ -92,7 +92,7 @@ function AccountDetails({ user, userProfile, isLoading }: { user: User, userProf
     }
   };
   
-  const displayName = userProfile?.firstName || user.displayName?.split(' ')[0] || user.email;
+  const displayName = userProfile?.firstname || user.displayName?.split(' ')[0] || user.email;
 
   if (isLoading) {
     return (
@@ -145,10 +145,10 @@ function AccountDetails({ user, userProfile, isLoading }: { user: User, userProf
                     {userProfile ? (
                     <>
                         <p>
-                        <strong>First Name:</strong> {userProfile.firstName}
+                        <strong>First Name:</strong> {userProfile.firstname}
                         </p>
                         <p>
-                        <strong>Last Name:</strong> {userProfile.lastName}
+                        <strong>Last Name:</strong> {userProfile.lastname}
                         </p>
                     </>
                     ) : (
@@ -181,7 +181,7 @@ export default function AccountPage() {
 
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
-    return doc(firestore, 'users', user.uid);
+    return doc(firestore, 'consumers', user.uid);
   }, [firestore, user?.uid]);
   
   const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserProfile>(userDocRef);
@@ -219,3 +219,5 @@ export default function AccountPage() {
     </div>
   );
 }
+
+    

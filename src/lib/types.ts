@@ -55,8 +55,8 @@ export type ImagePlaceholder = {
 
 export interface UserProfile {
   id: string;
-  firstName: string;
-  lastName: string;
+  firstname: string;
+  lastname: string;
   email: string;
 }
 
@@ -68,3 +68,5 @@ export interface Order {
     shippingAddress: string;
     orderItemIds: string[];
 }
+
+    

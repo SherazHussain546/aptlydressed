@@ -36,13 +36,13 @@ export async function initiateEmailSignUp(
   const firestore = getFirestore(authInstance.app);
 
   // Create a user document in Firestore
-  const userDocRef = doc(firestore, 'users', user.uid);
+  const userDocRef = doc(firestore, 'consumers', user.uid);
   // This operation is intentionally not awaited in the same way as auth,
   // but its errors should be handled.
   setDoc(userDocRef, {
     id: user.uid,
-    firstName: profileData.firstName,
-    lastName: profileData.lastName,
+    firstname: profileData.firstName,
+    lastname: profileData.lastName,
     email: user.email,
     createdAt: serverTimestamp(),
   }).catch(error => {
@@ -67,3 +67,5 @@ export async function initiateEmailSignIn(
     // No try/catch here; let the calling component handle errors.
     await signInWithEmailAndPassword(authInstance, email, password);
 }
+
+    

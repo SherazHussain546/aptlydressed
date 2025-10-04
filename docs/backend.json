@@ -60,27 +60,27 @@
         "category"
       ]
     },
-    "User": {
+    "Consumer": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "User",
+      "title": "Consumer",
       "type": "object",
-      "description": "Represents a user account.",
+      "description": "Represents a user account in the consumers collection.",
       "properties": {
         "id": {
           "type": "string",
-          "description": "Unique identifier for the user."
+          "description": "Unique identifier for the consumer, matches Firebase Auth UID."
         },
-        "firstName": {
+        "firstname": {
           "type": "string",
-          "description": "First name of the user."
+          "description": "First name of the consumer."
         },
-        "lastName": {
+        "lastname": {
           "type": "string",
-          "description": "Last name of the user."
+          "description": "Last name of the consumer."
         },
         "email": {
           "type": "string",
-          "description": "Email address of the user.",
+          "description": "Email address of the consumer.",
           "format": "email"
         },
         "shippingAddresses": {
@@ -100,8 +100,8 @@
       },
       "required": [
         "id",
-        "firstName",
-        "lastName",
+        "firstname",
+        "lastname",
         "email"
       ]
     },
@@ -277,33 +277,33 @@
         }
       },
       {
-        "path": "/users/{userId}",
+        "path": "/consumers/{consumerId}",
         "definition": {
-          "entityName": "User",
+          "entityName": "Consumer",
           "schema": {
-            "$ref": "#/backend/entities/User"
+            "$ref": "#/backend/entities/Consumer"
           },
-          "description": "Stores user account information.  'userId' is the unique identifier for each user.",
+          "description": "Stores consumer account information. 'consumerId' is the unique identifier for each consumer, matching their Firebase Auth UID.",
           "params": [
             {
-              "name": "userId",
-              "description": "Unique identifier for the user."
+              "name": "consumerId",
+              "description": "Unique identifier for the consumer."
             }
           ]
         }
       },
       {
-        "path": "/users/{userId}/orders/{orderId}",
+        "path": "/consumers/{consumerId}/orders/{orderId}",
         "definition": {
           "entityName": "Order",
           "schema": {
             "$ref": "#/backend/entities/Order"
           },
-          "description": "Stores order information for each user. 'userId' is the user's ID, and 'orderId' is the unique identifier for each order.",
+          "description": "Stores order information for each consumer. 'consumerId' is the consumer's ID, and 'orderId' is the unique identifier for each order.",
           "params": [
             {
-              "name": "userId",
-              "description": "Unique identifier for the user."
+              "name": "consumerId",
+              "description": "Unique identifier for the consumer."
             },
             {
               "name": "orderId",
