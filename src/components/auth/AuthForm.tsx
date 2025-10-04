@@ -50,10 +50,6 @@ export function AuthForm() {
        if (err instanceof FirebaseError) {
         switch (err.code) {
           case 'auth/user-not-found':
-            // If user doesn't exist during login, switch to sign up form
-            setIsLogin(false);
-            setError("Account not found. Please create an account to continue.");
-            break;
           case 'auth/wrong-password':
           case 'auth/invalid-credential':
              if (isLogin) {
