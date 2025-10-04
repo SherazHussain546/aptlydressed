@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -76,6 +77,9 @@ export function Search() {
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>Search Products</DialogTitle>
+          <DialogDescription>
+            Search for products, brands, or keywords. Results will appear below.
+          </DialogDescription>
         </DialogHeader>
         <div className="relative">
           <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
