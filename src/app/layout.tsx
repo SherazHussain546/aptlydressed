@@ -16,6 +16,9 @@ export const metadata: Metadata = {
   },
   description: 'Discover timeless elegance with a modern edge. APTLY DRESSED offers curated collections of high-quality, sustainable fashion for the style-conscious individual.',
   keywords: ['sustainable fashion', 'modern style', 'capsule wardrobe', 'minimalist fashion', 'APTLY DRESSED'],
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({
