@@ -6,7 +6,7 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // If the site is in pre-launch mode, route traffic to the coming-soon page
-  const isPrelaunch = process.env.NEXT_PUBLIC_PRELAUNCH_MODE === 'false';
+  const isPrelaunch = process.env.NEXT_PUBLIC_PRELAUNCH_MODE === 'true';
 
   if (isPrelaunch && !pathname.startsWith('/coming-soon')) {
      if (
