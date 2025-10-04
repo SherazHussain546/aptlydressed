@@ -11,8 +11,7 @@ type Props = {
   params: { slug: string }
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = params;
+export async function generateMetadata({ params: { slug } }: Props): Promise<Metadata> {
   const post = blogPosts.find(p => p.slug === slug);
 
   if (!post) {
