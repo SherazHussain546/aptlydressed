@@ -138,7 +138,7 @@ export default function AboutPage() {
               <Card className="text-center">
                   <CardContent className="pt-6">
                       <h3 className="text-xl font-headline">Shaharyar Hussain</h3>
-                      <p className="text-primary">Co-Founder & Creative Director</p>
+                      <p className="text-primary">Founder & Creative Director</p>
                       <p className="text-muted-foreground mt-2">With a keen eye for aesthetics and a deep understanding of fashion trends, Shaharyar leads the creative vision and curation for APTLY DRESSED.</p>
                       <div className="mt-4">
                         <a href="https://www.linkedin.com/in/shaharyar-hussain-480207204/" target="_blank" rel="noopener noreferrer" className="inline-block text-muted-foreground hover:text-primary">
