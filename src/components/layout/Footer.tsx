@@ -10,8 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { subscribeToNewsletter, type NewsletterSubscribeState } from "@/app/actions/newsletter";
 import { useToast } from "@/hooks/use-toast";
-import { useFirestore, errorEmitter, FirestorePermissionError } from "@/firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { useFirestore, addDocumentNonBlocking } from "@/firebase";
+import { collection } from "firebase/firestore";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -60,22 +60,16 @@ export function Footer() {
       const subscribersRef = collection(firestore, "subscribers");
       
       const data = { email: email, subscribedAt: new Date(), source: 'footer' };
-      addDoc(subscribersRef, data)
-        .then(() => {
-          toast({
-            title: 'Success',
-            description: 'Thank you for subscribing!',
-          });
-          formRef.current?.reset();
-        })
-        .catch(async (serverError) => {
-          const permissionError = new FirestorePermissionError({
-            path: subscribersRef.path,
-            operation: 'create',
-            requestResourceData: data,
-          });
-          errorEmitter.emit('permission-error', permissionError);
-        });
+      
+      // Use non-blocking write which handles permission errors automatically
+      addDocumentNonBlocking(subscribersRef, data);
+      
+      // Assume success on the UI and let the error boundary catch any issues
+      toast({
+        title: 'Success!',
+        description: 'Thank you for subscribing!',
+      });
+      formRef.current?.reset();
 
     } else if (state.message && !state.success) {
       toast({
