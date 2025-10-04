@@ -2,32 +2,61 @@
 'use client';
 
 import Image from 'next/image';
-import { placeholderImages } from '@/lib/data';
+import type { ImagePlaceholder } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
-import type { NewsPost } from '@/lib/types';
 import { NewsPostShareButtons } from './NewsPostShareButtons';
 
-export function NewsPostPageClient({ post }: { post: NewsPost }) {
-  const image = placeholderImages.find(p => p.id === post.imageId);
+type NewsPostPageClientProps = {
+  title: string;
+  date: string;
+  content: string;
+  hashtags: string[];
+  slug: string;
+  image: ImagePlaceholder | undefined;
+};
+
+export function NewsPostPageClient({
+  title,
+  date,
+  content,
+  hashtags,
+  slug,
+  image,
+}: NewsPostPageClientProps) {
+  // Re-create a partial post object for the share buttons
+  const postForSharing = {
+    title,
+    slug,
+    date,
+    imageId: image?.id || '',
+    content,
+    hashtags,
+  };
 
   return (
     <article className="container mx-auto px-4 py-8 md:py-16">
       <div className="max-w-3xl mx-auto">
         <header className="mb-8">
-            <div className="flex items-center gap-4 mb-4">
-                <div>
-                    <p className="font-semibold">APTLY DRESSED</p>
-                    <p className="text-sm text-muted-foreground">{new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                </div>
+          <div className="flex items-center gap-4 mb-4">
+            <div>
+              <p className="font-semibold">APTLY DRESSED</p>
+              <p className="text-sm text-muted-foreground">
+                {new Date(date).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </p>
             </div>
-          <h1 className="text-4xl md:text-5xl font-headline mt-4">{post.title}</h1>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-headline mt-4">{title}</h1>
         </header>
-        
+
         {image && (
           <div className="relative aspect-video rounded-lg overflow-hidden mb-8">
             <Image
               src={image.imageUrl}
-              alt={post.title}
+              alt={title}
               fill
               className="object-cover"
               priority
@@ -38,20 +67,22 @@ export function NewsPostPageClient({ post }: { post: NewsPost }) {
 
         <div
           className="prose lg:prose-lg max-w-none prose-h2:font-headline prose-p:text-foreground/80"
-          dangerouslySetInnerHTML={{ __html: post.content }}
+          dangerouslySetInnerHTML={{ __html: content }}
         />
 
         <div className="mt-8 pt-8 border-t space-y-6">
-            {post.hashtags && post.hashtags.length > 0 && (
-                <div className="flex flex-wrap items-center gap-2">
-                    <p className="font-semibold text-sm">Tags:</p>
-                    {post.hashtags.map(tag => (
-                        <Badge key={tag} variant="secondary">{tag}</Badge>
-                    ))}
-                </div>
-            )}
-            
-            <NewsPostShareButtons post={post} isFullPage={true} />
+          {hashtags && hashtags.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="font-semibold text-sm">Tags:</p>
+              {hashtags.map((tag) => (
+                <Badge key={tag} variant="secondary">
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+          )}
+
+          <NewsPostShareButtons post={postForSharing} isFullPage={true} />
         </div>
       </div>
     </article>
