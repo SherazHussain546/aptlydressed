@@ -24,7 +24,8 @@ type Props = {
   params: { slug: string }
 }
 
-export async function generateMetadata({ params: { slug } }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = params;
   const products = await productsPromise;
   const product = products.find(p => p.slug === slug);
 
@@ -90,7 +91,8 @@ async function CompleteTheLook({ product, allProducts }: { product: any, allProd
   }
 }
 
-export default async function ProductPage({ params: { slug } }: { params: { slug: string } }) {
+export default async function ProductPage({ params }: { params: { slug: string } }) {
+  const { slug } = params;
   const products = await productsPromise;
   const product = products.find(p => p.slug === slug);
 

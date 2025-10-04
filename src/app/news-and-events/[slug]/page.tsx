@@ -3,7 +3,8 @@ import { notFound } from 'next/navigation';
 import { newsPosts } from '@/lib/news-data';
 import { NewsPostPageClient } from '@/components/news/NewsPostPageClient';
 
-export default function NewsPostPage({ params: { slug } }: { params: { slug: string } }) {
+export default function NewsPostPage({ params }: { params: { slug: string } }) {
+  const { slug } = params;
   const post = newsPosts.find(p => p.slug === slug);
 
   if (!post) {
