@@ -41,11 +41,11 @@ export default function ComingSoonPage() {
       return;
     }
 
-    const notifyMeRef = collection(firestore, "notifyme");
+    const subscribersRef = collection(firestore, "subscribers");
     const data = { email: email, subscribedAt: new Date(), source: 'coming-soon' };
     
     // Use non-blocking write which handles permission errors automatically
-    addDocumentNonBlocking(notifyMeRef, data);
+    addDocumentNonBlocking(subscribersRef, data);
 
     // Assume success on the UI and let the error boundary catch any issues
     toast({
