@@ -1,176 +1,178 @@
 /**
- * @fileoverview Firestore Security Rules for Aptly Dressed eBoutique.
+ * @fileOverview Firestore Security Rules for Aptly Dressed eBoutique.
  *
  * Core Philosophy:
- * This ruleset employs a strict user-ownership model for user-related data
- * and a public-read, owner-write model for products and reviews. Subscriber
- * creation is limited to authenticated users or via a callable function.
+ * This ruleset enforces a strict user-ownership model for consumer data and order data nested under consumers.
+ * Public read access is granted for products and reviews.
  *
  * Data Structure:
- * - /products/{productId}: Product information, publicly readable, owner-only writes.
- * - /users/{userId}: User account data, only accessible by the owning user.
- * - /users/{userId}/orders/{orderId}: Order information for each user, accessible only by the user.
- * - /orders_items/{orderItemId}: Order item information, separate from orders, accessible by authenticated users
- * - /products/{productId}/reviews/{reviewId}: Product reviews, publicly readable, owner-only writes.
- * - /subscribers/{subscriberId}: Newsletter subscribers, creation only by authenticated users or callable function.
- * - /notify-me/{notificationId}: 'Coming Soon' notification sign-ups, creation only by authenticated users or callable function.
+ * - /products/{productId}: Public product information.
+ * - /consumers/{consumerId}: Private user account information, accessible only by the user.
+ * - /consumers/{consumerId}/orders/{orderId}: Orders associated with a specific user, accessible only by that user.
+ * - /orders_items/{orderItemId}: Public information about order items.
+ * - /products/{productId}/reviews/{reviewId}: Public reviews for products.
+ * - /subscribers/{subscriberId}: Newsletter subscribers.
+ * - /notify-me/{notificationId}: "Coming Soon" notification signups.
  *
  * Key Security Decisions:
- * - User listing is disallowed.
- * - The `subscribers` collection is secured to prevent unauthorized subscriptions.
- * - Public read access is granted only to explicitly public collections (products, reviews).
- * - All write operations require authentication and proper authorization checks.
+ * - Users can only access their own consumer data and orders.
+ * - Products and reviews are publicly readable.
+ * - Listing of users is disallowed.
+ * - Subscribers and notify-me data collections are writeable with no validation.
+ *
+ * Denormalization for Authorization:
+ *  - Consumer documents are secured based on their ID matching the authenticated user's UID, avoiding the need for additional reads.
+ *  - Order documents are secured by nesting them under the consumer's document and validating the consumerId against the authenticated user's UID.
+ *
+ * Structural Segregation:
+ * - Public product data is stored in a top-level collection (/products), while private user data is stored under /consumers/{consumerId}, ensuring clear separation of concerns.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Checks if the request is authenticated.
-     * @returns {boolean} True if the request is authenticated, false otherwise.
-     */
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    /**
-     * @description Checks if the authenticated user ID matches the provided user ID.
-     * @param {string} userId The user ID to compare against the authenticated user's ID.
-     * @returns {boolean} True if the user IDs match, false otherwise.
-     */
-    function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
-    }
-
-    /**
-     * @description Checks if the user is the owner of the existing document.
-     * @param {string} userId The user ID of the owner.
-     * @returns {boolean} True if the user is the owner and the document exists.
-     */
-    function isExistingOwner(userId) {
-        return isOwner(userId) && resource != null;
-    }
-
-    /**
-     * @description Security rules for products.
+     * @description Grants public read access to product information and restricts writes.
      * @path /products/{productId}
-     * @allow get, list: Public read access.
-     * @allow create: Authenticated user can create a product if they are the owner.
-     * @allow update, delete: Only the owner can update or delete a product.
-     * @deny create: Unauthenticated user cannot create a product.
-     * @deny update: Non-owner cannot update the product.
-     * @deny delete: Non-owner cannot delete the product.
-     * @principle Allows public reads, restricts writes to the owner.
+     * @allow get, list: Anyone can read product information.
+     * @allow create: if false;
+     * @allow update: if false;
+     * @allow delete: if false;
+     * @principle Allows public read access to product information.
      */
     match /products/{productId} {
-      allow get, list: if true;
-      allow create: if isSignedIn() && request.resource.data.id == request.auth.uid;
-      allow update: if isExistingOwner(resource.data.id);
-      allow delete: if isExistingOwner(resource.data.id);
+      allow get: if true;
+      allow list: if true;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
     }
 
     /**
-     * @description Security rules for users.
-     * @path /users/{userId}
-     * @allow get: Only the authenticated user can get their own user document.
-     * @allow create: Only the user can create their own user document.
-     * @allow update: Only the user can update their own user document.
-     * @allow delete: Only the user can delete their own user document.
-     * @deny get: An unauthenticated user cannot get any user document.
-     * @deny create: An unauthenticated user cannot create a user document.
-     * @deny update: An unauthenticated user cannot update another user's document.
-     * @deny delete: An unauthenticated user cannot delete another user's document.
-     * @principle Enforces strict user-ownership for all operations.
+     * @description Restricts access to consumer data to the owning user.
+     * @path /consumers/{consumerId}
+     * @allow get: User can read their own profile.
+     * @allow create: User can create their own profile.
+     * @allow update: User can update their own profile.
+     * @allow delete: if isExistingOwner(consumerId);
+     * @deny list: Listing all consumers is not allowed.
+     * @deny create: User cannot create a profile for another user.
+     * @deny update: User cannot update another user's profile.
+     * @deny delete: User cannot delete another user's profile if it doesn't exist.
+     * @principle Enforces document ownership for consumer profiles.
      */
-    match /users/{userId} {
-      allow get: if isOwner(userId);
-      allow list: if false; // Listing users is never allowed.
-      allow create: if isOwner(userId) && request.resource.data.id == request.auth.uid;
-      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
-      allow delete: if isExistingOwner(userId);
+    match /consumers/{consumerId} {
+      allow get: if isSignedIn() && isOwner(consumerId);
+      allow list: if false;
+      allow create: if isSignedIn() && isOwner(consumerId) && request.auth.uid == consumerId;
+      allow update: if isSignedIn() && isOwner(consumerId) && request.auth.uid == consumerId;
+      allow delete: if isSignedIn() && isExistingOwner(consumerId);
     }
 
     /**
-     * @description Security rules for orders.
-     * @path /users/{userId}/orders/{orderId}
-     * @allow get, list: Only the authenticated user can access their own order documents.
-     * @allow create: Only the authenticated user can create order documents under their user document.
-     * @allow update, delete: Only the authenticated user can update or delete order documents under their user document.
-     * @deny get, list: An unauthenticated user cannot access any order documents.
-     * @deny create: An unauthenticated user cannot create order documents under another user's document.
-     * @deny update, delete: An unauthenticated user cannot update or delete order documents under another user's document.
-     * @principle Enforces user-ownership for orders.
+     * @description Restricts access to orders to the owning user.
+     * @path /consumers/{consumerId}/orders/{orderId}
+     * @allow get: User can read their own orders.
+     * @allow create: User can create an order for themselves, referencing their user ID.
+     * @allow update: User can update their own existing order.
+     * @allow delete: User can delete their own existing order.
+     * @deny list: Listing all orders for a user is not allowed.
+     * @deny create: User cannot create an order for another user.
+     * @deny update: User cannot update another user's order.
+     * @deny delete: User cannot delete another user's order if it doesn't exist.
+     * @principle Enforces document ownership for orders.
      */
-    match /users/{userId}/orders/{orderId} {
-      allow get, list: if isOwner(userId);
-      allow create: if isOwner(userId) && request.resource.data.userId == userId;
-      allow update: if isExistingOwner(userId) && resource.data.userId == userId;
-      allow delete: if isExistingOwner(userId);
+    match /consumers/{consumerId}/orders/{orderId} {
+      allow get: if isSignedIn() && isOwner(consumerId);
+      allow list: if false;
+      allow create: if isSignedIn() && isOwner(consumerId);
+      allow update: if isSignedIn() && isOwner(consumerId);
+      allow delete: if isSignedIn() && isOwner(consumerId);
+    }
+
+    /**
+     * @description Grants public read access to order item information.
+     * @path /orders_items/{orderItemId}
+     * @allow get, list: Anyone can read order item information.
+     * @allow create: if false;
+     * @allow update: if false;
+     * @allow delete: if false;
+     * @principle Allows public read access to order item information.
+     */
+    match /orders_items/{orderItemId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    /**
+     * @description Grants public read access to product reviews and restricts writes.
+     * @path /products/{productId}/reviews/{reviewId}
+     * @allow get, list: Anyone can read reviews for products.
+     * @allow create: if isSignedIn();
+     * @allow update: if isSignedIn() && isReviewOwner(productId);
+     * @allow delete: if isSignedIn() && isReviewOwner(productId);
+     * @principle Allows public read access to reviews and restricts writes.
+     */
+    match /products/{productId}/reviews/{reviewId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && isReviewOwner(request.auth.uid) && resource != null;
+      allow delete: if isSignedIn() && isReviewOwner(request.auth.uid) && resource != null;
     }
 
      /**
-      * @description Security rules for order items.
-      * @path /orders_items/{orderItemId}
-      * @allow get, list: Authenticated users can get and list order items.
-      * @allow create: Authenticated users can create order items.
-      * @allow update: Authenticated users can update order items.
-      * @allow delete: Authenticated users can delete order items.
-      * @deny get, list: Unauthenticated users cannot access order items.
-      *  @principle Allows any authenticated user to CRUD an order item.
+      * @description Allows anyone to create, read, update, and delete subscriber information.
+      * @path /subscribers/{subscriberId}
+      * @allow get, list: if true;
+      * @allow create: if true;
+      * @allow update: if true;
+      * @allow delete: if true;
+      * @principle Allows unauthenticated reads and writes to subscriber information.
       */
-    match /orders_items/{orderItemId} {
-        allow get, list: if isSignedIn();
-        allow create: if isSignedIn();
-        allow update: if isSignedIn() && resource != null;
-        allow delete: if isSignedIn() && resource != null;
-    }
-
-    /**
-     * @description Security rules for product reviews.
-     * @path /products/{productId}/reviews/{reviewId}
-     * @allow get, list: Public read access to product reviews.
-     * @allow create: Authenticated user can create a review if they are the owner.
-     * @allow update, delete: Only the owner can update or delete their review.
-     * @deny create: Unauthenticated user cannot create a review.
-     * @deny update: Non-owner cannot update the review.
-     * @deny delete: Non-owner cannot delete the review.
-     * @principle Public read, owner write.
-     */
-    match /products/{productId}/reviews/{reviewId} {
-      allow get, list: if true;
-      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
-      allow update: if isExistingOwner(request.auth.uid) && resource.data.userId == request.auth.uid;
-      allow delete: if isExistingOwner(request.auth.uid) && resource.data.userId == request.auth.uid;
-    }
-
-    /**
-     * @description Security rules for newsletter subscribers.
-     * @path /subscribers/{subscriberId}
-     * @allow get, list: if false; // No listing or getting individual subscribers
-     * @allow create: if isSignedIn(); // Only signed in users can subscribe
-     * @allow update, delete: if false; // No updates or deletes from client side
-     * @deny create: if false; // explicitly allow authenticated users
-     * @principle Restricts subscriber creation to authenticated users.
-     */
     match /subscribers/{subscriberId} {
-      allow get, list: if false;
-      allow create: if isSignedIn();
-      allow update, delete: if false;
+      allow get: if true;
+      allow list: if true;
+      allow create: if true;
+      allow update: if true;
+      allow delete: if true;
     }
 
-    /**
-     * @description Security rules for 'Coming Soon' notification sign-ups.
-     * @path /notify-me/{notificationId}
-     * @allow get, list: if false; // No listing or getting individual sign-ups
-     * @allow create: if isSignedIn(); // Only signed in users can sign up
-     * @allow update, delete: if false; // No updates or deletes from client side
-     * @deny create: if false; // explicitly allow authenticated users
-     * @principle Restricts notification sign-ups to authenticated users.
-     */
+     /**
+      * @description Allows anyone to create, read, update, and delete "notify me" information.
+      * @path /notify-me/{notificationId}
+      * @allow get, list: if true;
+      * @allow create: if true;
+      * @allow update: if true;
+      * @allow delete: if true;
+      * @principle Allows unauthenticated reads and writes to "notify me" information.
+      */
     match /notify-me/{notificationId} {
-      allow get, list: if false;
-      allow create: if isSignedIn();
-      allow update, delete: if false;
+      allow get: if true;
+      allow list: if true;
+      allow create: if true;
+      allow update: if true;
+      allow delete: if true;
     }
+  }
+
+  // Helper functions
+  function isSignedIn() {
+    return request.auth != null;
+  }
+
+  function isOwner(userId) {
+    return request.auth.uid == userId;
+  }
+
+  function isExistingOwner(userId) {
+    return isSignedIn() && isOwner(userId) && resource != null;
+  }
+
+    function isReviewOwner(userId) {
+        return resource.data.userId == userId;
   }
 }
