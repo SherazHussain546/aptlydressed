@@ -22,6 +22,26 @@ function SubmitButton() {
   );
 }
 
+const companyLinks = [
+    { href: "/about", label: "About Us" },
+    { href: "/news-and-events", label: "News & Events" },
+    { href: "/sustainability", label: "Sustainability" },
+    { href: "/collaborate", label: "Become a Partner" },
+    { href: "/contact", label: "Contact" },
+    { href: "/affiliate-disclosure", label: "Affiliate Disclosure" },
+    { href: "/business-portfolio", label: "Business Portfolio" },
+    { href: "/privacy-policy", label: "Privacy Policy" },
+];
+
+const shopLinks = [
+    { href: "/shop?category=Womens", label: "Women" },
+    { href: "/shop?category=Mens", label: "Men" },
+    { href: "/shop?category=Essentials", label: "Essentials" },
+    { href: "/shop", label: "All Products" },
+    { href: "/account", label: "Login / Signup" },
+];
+
+
 export function Footer() {
   const initialState: NewsletterSubscribeState = { message: '', success: false };
   const [state, formAction] = useActionState(subscribeToNewsletter, initialState);
@@ -66,16 +86,6 @@ export function Footer() {
     }
   }, [state, toast, firestore]);
   
-  const companyLinks = [
-    { href: "/about", label: "About Us" },
-    { href: "/news-and-events", label: "News & Events" },
-    { href: "/sustainability", label: "Sustainability" },
-    { href: "/collaborate", label: "Become a Partner" },
-    { href: "/contact", label: "Contact" },
-    { href: "/affiliate-disclosure", label: "Affiliate Disclosure" },
-    { href: "/business-portfolio", label: "Business Portfolio" },
-    { href: "/privacy-policy", label: "Privacy Policy" },
-  ];
 
   return (
     <footer className="bg-muted">
@@ -102,11 +112,13 @@ export function Footer() {
             <div>
               <h3 className="font-semibold text-foreground">Shop</h3>
               <ul className="mt-4 space-y-2">
-                <li><Link href="/shop?category=Womens" className="text-muted-foreground hover:text-primary">Women</Link></li>
-                <li><Link href="/shop?category=Mens" className="text-muted-foreground hover:text-primary">Men</Link></li>
-                <li><Link href="/shop?category=Essentials" className="text-muted-foreground hover:text-primary">Essentials</Link></li>
-                <li><Link href="/shop" className="text-muted-foreground hover:text-primary">All Products</Link></li>
-                <li><Link href="/account" className="text-muted-foreground hover:text-primary">Login / Signup</Link></li>
+                {shopLinks.map(link => (
+                  <li key={link.href}>
+                    <Link href={link.href} className="text-muted-foreground hover:text-primary">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
             <div>
