@@ -137,14 +137,6 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               <Card className="text-center">
                   <CardContent className="pt-6">
-                      <Image
-                          src="https://picsum.photos/seed/founder1/400/400"
-                          alt="Shaharyar Hussain"
-                          width={150}
-                          height={150}
-                          className="rounded-full mx-auto mb-4"
-                          data-ai-hint="portrait man"
-                      />
                       <h3 className="text-xl font-headline">Shaharyar Hussain</h3>
                       <p className="text-primary">Co-Founder & Creative Director</p>
                       <p className="text-muted-foreground mt-2">With a keen eye for aesthetics and a deep understanding of fashion trends, Shaharyar leads the creative vision and curation for APTLY DRESSED.</p>
@@ -152,14 +144,6 @@ export default function AboutPage() {
               </Card>
                <Card className="text-center">
                   <CardContent className="pt-6">
-                      <Image
-                          src="https://picsum.photos/seed/founder2/400/400"
-                          alt="Sheraz Hussain"
-                          width={150}
-                          height={150}
-                          className="rounded-full mx-auto mb-4"
-                          data-ai-hint="man portrait"
-                      />
                       <h3 className="text-xl font-headline">Sheraz Hussain</h3>
                       <p className="text-primary">Co-Founder & Technology Lead</p>
                       <p className="text-muted-foreground mt-2">Sheraz drives the technical strategy, ensuring the platform is fast, secure, and seamless. He leverages technology to make fashion discovery an effortless experience.</p>
