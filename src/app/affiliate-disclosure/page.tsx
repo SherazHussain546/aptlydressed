@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
 export const metadata: Metadata = {
-    title: 'Affiliate Disclosure | Aptly Dressed',
+    title: 'Affiliate Disclosure | APTLY DRESSED',
     description: "Learn about our commitment to transparency and our affiliate partnership model. We connect you with the best in modern fashion, powered by SYNC TECH.",
 };
 
@@ -39,7 +39,7 @@ export default function AffiliateDisclosurePage() {
             <div className="prose lg:prose-lg max-w-none prose-h2:font-headline">
                 <h2>Our Affiliate Marketing Model</h2>
                 <p>
-                At Aptly Dressed, our mission is to bring you the best in modern, sustainable, and timeless fashion. To do this, we partner with a curated selection of high-quality brands and retailers. When you click on a link from our site and make a purchase, we may earn a small commission from that retailer, at absolutely no extra cost to you.
+                At APTLY DRESSED, our mission is to bring you the best in modern, sustainable, and timeless fashion. To do this, we partner with a curated selection of high-quality brands and retailers. When you click on a link from our site and make a purchase, we may earn a small commission from that retailer, at absolutely no extra cost to you.
                 </p>
                 <p>
                 This affiliate model is the backbone of our business. It allows us to dedicate our time and expertise to discovering, vetting, and showcasing products that we genuinely believe are the best fit for you. We are not just a passive directory; we are your expert curators in the vast world of fashion.

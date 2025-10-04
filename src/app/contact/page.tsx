@@ -7,9 +7,9 @@ import { placeholderImages } from '@/lib/data';
 const contactHeroImage = placeholderImages.find(p => p.id === 'contact-hero');
 
 export const metadata: Metadata = {
-    title: 'Contact Us | Aptly Dressed',
-    description: "Get in touch with Aptly Dressed for style advice, partnership inquiries, or any questions. We're here to help you on your fashion journey.",
-    keywords: ['contact aptly dressed', 'fashion support', 'style advice', 'partnership inquiries', 'customer service'],
+    title: 'Contact Us | APTLY DRESSED',
+    description: "Get in touch with APTLY DRESSED for style advice, partnership inquiries, or any questions. We're here to help you on your fashion journey.",
+    keywords: ['contact APTLY DRESSED', 'fashion support', 'style advice', 'partnership inquiries', 'customer service'],
 };
 
 

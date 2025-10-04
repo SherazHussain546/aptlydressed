@@ -1,8 +1,8 @@
-# [Aptly Dressed eBoutique](https://aptlydressed.com)
+# [APTLY DRESSED eBoutique](https://aptlydressed.com)
 
 ## Redefining Style Through Intentional Curation
 
-In a world saturated with fleeting trends and endless choices, Aptly Dressed emerges as a trusted voice for the modern, style-conscious individual. We are not just another fashion affiliate website; we are your expert curators, dedicated to the philosophy that true style is timeless, sustainable, and intentional. Our mission is to simplify the art of dressing well, empowering you to build a wardrobe that is both beautiful and mindful.
+In a world saturated with fleeting trends and endless choices, APTLY DRESSED emerges as a trusted voice for the modern, style-conscious individual. We are not just another fashion affiliate website; we are your expert curators, dedicated to the philosophy that true style is timeless, sustainable, and intentional. Our mission is to simplify the art of dressing well, empowering you to build a wardrobe that is both beautiful and mindful.
 
 ### Our Philosophy: Three Pillars of Excellence
 
@@ -16,4 +16,4 @@ Every piece we recommend is measured against our three core principles, ensuring
 
 ### A Commitment to Sustainable and Ethical Fashion
 
-At Aptly Dressed, our love for fashion is matched by our deep respect for the planet and its people. We actively seek out and partner with brands that are transparent about their supply chains, use eco-friendly materials, and ensure fair, safe working conditions for their artisans. By shopping with us, you are not just refining your style—you are supporting a movement towards a more responsible and beautiful fashion industry.
+At APTLY DRESSED, our love for fashion is matched by our deep respect for the planet and its people. We actively seek out and partner with brands that are transparent about their supply chains, use eco-friendly materials, and ensure fair, safe working conditions for their artisans. By shopping with us, you are not just refining your style—you are supporting a movement towards a more responsible and beautiful fashion industry.

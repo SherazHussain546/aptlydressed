@@ -11,11 +11,11 @@ import { CookieBanner } from '@/components/layout/CookieBanner';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Aptly Dressed | Modern & Sustainable Fashion',
-    template: '%s | Aptly Dressed',
+    default: 'APTLY DRESSED | Modern & Sustainable Fashion',
+    template: '%s | APTLY DRESSED',
   },
-  description: 'Discover timeless elegance with a modern edge. Aptly Dressed offers curated collections of high-quality, sustainable fashion for the style-conscious individual.',
-  keywords: ['sustainable fashion', 'modern style', 'capsule wardrobe', 'minimalist fashion', 'Aptly Dressed'],
+  description: 'Discover timeless elegance with a modern edge. APTLY DRESSED offers curated collections of high-quality, sustainable fashion for the style-conscious individual.',
+  keywords: ['sustainable fashion', 'modern style', 'capsule wardrobe', 'minimalist fashion', 'APTLY DRESSED'],
 };
 
 export default function RootLayout({

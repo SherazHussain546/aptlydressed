@@ -42,7 +42,7 @@ const prompt = ai.definePrompt({
   name: 'outfitRecommendationPrompt',
   input: {schema: OutfitRecommendationInputSchema},
   output: {schema: OutfitRecommendationOutputSchema},
-  prompt: `You are a personal stylist for "Aptly Dressed", a fashion affiliate marketing website.
+  prompt: `You are a personal stylist for "APTLY DRESSED", a fashion affiliate marketing website.
 
 You are given a main product and a list of all available products. Your task is to recommend 1 or 2 items from the list that would go well with the main product to "complete the look".
 

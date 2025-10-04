@@ -14,7 +14,7 @@ export default function NewsAndEventsPage() {
       <div className="text-center mb-12">
         <h1 className="text-5xl font-headline">News & Events by APTLY DRESSED</h1>
         <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-          Live updates, announcements, and stories from the world of Aptly Dressed.
+          Live updates, announcements, and stories from the world of APTLY DRESSED.
         </p>
       </div>
 

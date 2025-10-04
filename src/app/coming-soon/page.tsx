@@ -77,7 +77,7 @@ export default function ComingSoonPage() {
 
             <h1 className="text-4xl md:text-6xl font-headline mb-4">Timeless Style is Coming Soon</h1>
             <p className="max-w-xl mx-auto mb-8 text-lg text-primary-foreground/90">
-                Welcome to Aptly Dressed, your new destination for curated collections of high-quality, sustainable fashion. We're putting the final touches on a modern shopping experience designed to elevate your style. Be the first to know when we launch.
+                Welcome to APTLY DRESSED, your new destination for curated collections of high-quality, sustainable fashion. We're putting the final touches on a modern shopping experience designed to elevate your style. Be the first to know when we launch.
             </p>
 
             <form ref={formRef} onSubmit={handleSubmit} className="w-full max-w-md mx-auto flex flex-col md:flex-row gap-2">
@@ -126,5 +126,3 @@ export default function ComingSoonPage() {
     </div>
   );
 }
-
-    

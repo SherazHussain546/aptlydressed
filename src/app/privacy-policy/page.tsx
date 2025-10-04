@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
 export const metadata: Metadata = {
-    title: 'Privacy Policy | Aptly Dressed',
-    description: "Understand how Aptly Dressed collects, uses, and protects your personal data. Your privacy is important to us.",
+    title: 'Privacy Policy | APTLY DRESSED',
+    description: "Understand how APTLY DRESSED collects, uses, and protects your personal data. Your privacy is important to us.",
     robots: 'noindex, nofollow',
 };
 
@@ -20,7 +20,7 @@ export default function PrivacyPolicyPage() {
 
         <div className="prose lg:prose-lg max-w-none prose-h2:font-headline">
             <p>
-            Welcome to Aptly Dressed. Your privacy is critically important to us. This Privacy Policy outlines the types of information we may collect from you or that you may provide when you visit our website and our practices for collecting, using, maintaining, protecting, and disclosing that information.
+            Welcome to APTLY DRESSED. Your privacy is critically important to us. This Privacy Policy outlines the types of information we may collect from you or that you may provide when you visit our website and our practices for collecting, using, maintaining, protecting, and disclosing that information.
             </p>
 
             <h2>1. Information We Collect</h2>

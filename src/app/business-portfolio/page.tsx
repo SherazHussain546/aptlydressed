@@ -60,7 +60,7 @@ function TimeSavedChart() {
             </div>
             <div className="flex flex-col items-center">
                 <div className="bg-primary/20 rounded-t-lg p-4 text-center w-32" style={{ height: '100px' }}>
-                    <p className="text-sm font-bold">Aptly Dressed</p>
+                    <p className="text-sm font-bold">APTLY DRESSED</p>
                      <p className="text-xs text-muted-foreground">One Platform</p>
                      <CheckCircle className="h-10 w-10 mx-auto text-primary mt-2"/>
                 </div>
@@ -259,7 +259,7 @@ export default function BusinessPortfolioPage() {
             <div className="relative h-[600px] rounded-lg overflow-hidden border p-2 bg-muted">
               <Image
                 src="https://images.unsplash.com/photo-1619785292559-a15caa28bde6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxmYXNoaW9uJTIwbW9kZWx8ZW58MHx8fHwxNzU5MDQ0NTU4fDA&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="Screenshot of the Aptly Dressed platform"
+                alt="Screenshot of the APTLY DRESSED platform"
                 fill
                 className="object-cover rounded-md"
                 data-ai-hint="fashion model"

@@ -10,8 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 const collaborateHeroImage = placeholderImages.find(p => p.id === 'collaborate-hero');
 
 export const metadata: Metadata = {
-    title: 'Collaborate With Us | Aptly Dressed',
-    description: "Partner with Aptly Dressed, a leading fashion affiliate destination. We connect discerning brands with a style-conscious audience passionate about quality, sustainability, and modern design. Let's collaborate.",
+    title: 'Collaborate With Us | APTLY DRESSED',
+    description: "Partner with APTLY DRESSED, a leading fashion affiliate destination. We connect discerning brands with a style-conscious audience passionate about quality, sustainability, and modern design. Let's collaborate.",
     keywords: ['fashion affiliate partnership', 'brand collaboration', 'influencer marketing', 'fashion marketing', 'partner with us', 'sustainable fashion brands'],
 };
 
@@ -31,7 +31,7 @@ export default function CollaboratePage() {
         )}
         <div className="absolute inset-0 bg-black/50" />
         <div className="relative h-full flex flex-col items-center justify-center text-center text-white px-4">
-          <h1 className="text-4xl md:text-6xl font-headline max-w-4xl">Partner with Aptly Dressed</h1>
+          <h1 className="text-4xl md:text-6xl font-headline max-w-4xl">Partner with APTLY DRESSED</h1>
           <p className="mt-4 text-lg max-w-2xl">Align your brand with a trusted voice in sustainable and modern fashion. Let's create something beautiful together.</p>
         </div>
       </header>
@@ -42,7 +42,7 @@ export default function CollaboratePage() {
             <h2 className="text-3xl font-headline">Why Partner With Us?</h2>
             <div className="prose prose-lg max-w-none mx-auto mt-4">
                 <p>
-                Aptly Dressed is more than a fashion affiliate site; we are a destination for style-conscious millennials who seek quality, timeless design, and ethical production. We offer a unique platform for brands that share our ethos to connect with a highly engaged and targeted audience.
+                APTLY DRESSED is more than a fashion affiliate site; we are a destination for style-conscious millennials who seek quality, timeless design, and ethical production. We offer a unique platform for brands that share our ethos to connect with a highly engaged and targeted audience.
                 </p>
             </div>
         </section>
@@ -97,7 +97,7 @@ export default function CollaboratePage() {
         <section className="text-center max-w-3xl mx-auto">
             <h2 className="text-3xl font-headline">Let's Collaborate</h2>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-                If you believe your brand is a perfect fit for the Aptly Dressed audience, we would love to hear from you. We offer a range of partnership opportunities, from featured product placements to dedicated brand spotlights.
+                If you believe your brand is a perfect fit for the APTLY DRESSED audience, we would love to hear from you. We offer a range of partnership opportunities, from featured product placements to dedicated brand spotlights.
             </p>
             <div className="mt-8">
                 <Button asChild size="lg">

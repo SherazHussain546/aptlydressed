@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-    title: 'Sustainability | Aptly Dressed',
+    title: 'Sustainability | APTLY DRESSED',
     description: 'Learn about our commitment to sustainable fashion, from the materials we choose to the ethical production we demand from our partners.',
     keywords: ['sustainable fashion', 'ethical clothing', 'eco-friendly style', 'conscious consumerism'],
 };

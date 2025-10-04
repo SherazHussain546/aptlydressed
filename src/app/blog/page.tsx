@@ -11,7 +11,7 @@ export default function BlogPage() {
       <div className="text-center mb-12">
         <h1 className="text-5xl font-headline">The Journal</h1>
         <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-          Style guides, inspiration, and stories from the world of Aptly Dressed.
+          Style guides, inspiration, and stories from the world of APTLY DRESSED.
         </p>
       </div>
 
