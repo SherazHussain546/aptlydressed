@@ -70,7 +70,7 @@ export function Footer() {
     { href: "/about", label: "About Us" },
     { href: "/news-and-events", label: "News & Events" },
     { href: "/sustainability", label: "Sustainability" },
-    { href: "/collaborate", label: "Collaborate" },
+    { href: "/collaborate", label: "Become a Partner" },
     { href: "/contact", label: "Contact" },
     { href: "/affiliate-disclosure", label: "Affiliate Disclosure" },
     { href: "/business-portfolio", label: "Business Portfolio" },
