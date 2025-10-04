@@ -21,15 +21,23 @@ function AccountDetails({ user, userProfile, isLoading }: { user: User, userProf
   const auth = useAuth();
   const { toast } = useToast();
 
-  const handleSignOut = () => {
-    signOut(auth).then(() => {
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
       toast({
         title: "Signed Out",
         description: "You have been successfully signed out.",
       });
-    });
+    } catch (error) {
+      console.error("Sign out error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to sign out. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
-
+  
   const displayName = userProfile?.firstName || user.displayName?.split(' ')[0] || user.email;
 
   if (isLoading) {
@@ -41,7 +49,7 @@ function AccountDetails({ user, userProfile, isLoading }: { user: User, userProf
             <Skeleton className="h-8 w-1/2 mb-2" />
             <Skeleton className="h-4 w-3/4" />
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-4 pt-6">
              <Skeleton className="h-6 w-full" />
              <Skeleton className="h-6 w-full" />
              <Skeleton className="h-10 w-24" />
@@ -62,7 +70,7 @@ function AccountDetails({ user, userProfile, isLoading }: { user: User, userProf
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {userProfile && (
+            {userProfile ? (
               <>
                 <p>
                   <strong>First Name:</strong> {userProfile.firstName}
@@ -71,6 +79,8 @@ function AccountDetails({ user, userProfile, isLoading }: { user: User, userProf
                   <strong>Last Name:</strong> {userProfile.lastName}
                 </p>
               </>
+            ) : (
+              <p>Loading profile...</p>
             )}
             <p>
               <strong>Email:</strong> {user.email}
@@ -92,25 +102,27 @@ export default function AccountPage() {
   const userDocRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
     return doc(firestore, 'users', user.uid);
-  }, [firestore, user]);
+  }, [firestore, user?.uid]);
   
   const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserProfile>(userDocRef);
 
   if (isUserLoading) {
     return (
       <div className="container mx-auto px-4 py-8 md:py-16">
-        <h1 className="text-4xl font-headline mb-8">My Account</h1>
-        <Card className="max-w-md mx-auto">
-          <CardHeader>
-            <Skeleton className="h-8 w-3/4" />
-            <Skeleton className="h-4 w-1/2" />
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-10 w-full" />
-          </CardContent>
-        </Card>
+        <div className="max-w-md mx-auto">
+            <h1 className="text-4xl font-headline mb-8 text-center">My Account</h1>
+            <Card>
+            <CardHeader>
+                <Skeleton className="h-8 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+            </CardHeader>
+            <CardContent className="space-y-4 pt-6">
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+            </CardContent>
+            </Card>
+        </div>
       </div>
     );
   }
@@ -118,11 +130,10 @@ export default function AccountPage() {
   return (
     <div className="container mx-auto px-4 py-8 md:py-16">
       {user ? (
-        <AccountDetails user={user} userProfile={userProfile} isLoading={isProfileLoading} />
+        <AccountDetails user={user} userProfile={userProfile} isLoading={isUserLoading || isProfileLoading} />
       ) : (
         <AuthForm />
       )}
     </div>
   );
 }
-

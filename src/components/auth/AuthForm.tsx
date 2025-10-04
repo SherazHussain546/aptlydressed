@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { FirebaseError } from 'firebase/app';
 import { initiateEmailSignIn, initiateEmailSignUp } from "@/firebase/non-blocking-login";
 
@@ -45,7 +45,7 @@ export function AuthForm() {
         }
         await initiateEmailSignUp(auth, email, password, { firstName, lastName });
       }
-      // On success, the useUser hook will redirect.
+      // On success, the useUser hook in the layout will handle the redirect/UI change.
     } catch (err: any) {
        if (err instanceof FirebaseError) {
         switch (err.code) {
@@ -61,11 +61,13 @@ export function AuthForm() {
             setError('The password is too weak. Please use at least 6 characters.');
             break;
           default:
-            setError("An unexpected error occurred. Please try again.");
+            setError("An unexpected error occurred during authentication. Please try again.");
+            console.error("Authentication error:", err.code, err.message);
             break;
         }
       } else {
         setError("An unexpected error occurred. Please try again.");
+        console.error("Non-Firebase error during authentication:", err);
       }
     } finally {
       setLoading(false);
@@ -104,6 +106,7 @@ export function AuthForm() {
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   required
+                  disabled={loading}
                 />
               </div>
               <div className="space-y-2 flex-1">
@@ -115,6 +118,7 @@ export function AuthForm() {
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   required
+                  disabled={loading}
                 />
               </div>
             </div>
@@ -128,6 +132,7 @@ export function AuthForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              disabled={loading}
             />
           </div>
           <div className="space-y-2">
@@ -139,9 +144,11 @@ export function AuthForm() {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
+              disabled={loading}
             />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? <Loader2 className="animate-spin mr-2" /> : null}
             {loading
               ? "Processing..."
               : isLogin
@@ -160,6 +167,7 @@ export function AuthForm() {
               setIsLogin(!isLogin);
               setError(null);
             }}
+            disabled={loading}
           >
             {isLogin ? "Sign Up" : "Sign In"}
           </Button>

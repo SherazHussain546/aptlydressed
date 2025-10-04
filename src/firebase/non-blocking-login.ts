@@ -1,19 +1,16 @@
+
 'use client';
-import { setDoc, doc, serverTimestamp } from 'firebase/firestore';
+import { getFirestore, setDoc, doc, serverTimestamp } from 'firebase/firestore';
 import {
   Auth,
-  signInAnonymously,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   updateProfile,
 } from 'firebase/auth';
-import { firestore } from '@/lib/firebase-admin'; // Assuming this is your admin-initialized firestore instance for server-side
-import { initiateEmailSignIn, initiateEmailSignUp } from '@/firebase/non-blocking-login';
-import { useAuth, useUser } from '@/firebase';
 
 /**
  * Initiates an email/password sign-up and creates a user profile document.
- * This is a non-blocking operation.
+ * This is an async operation that should be awaited.
  *
  * @param authInstance The Firebase Auth instance.
  * @param email The user's email.
@@ -26,35 +23,32 @@ export async function initiateEmailSignUp(
   password: string,
   profileData: { firstName: string; lastName: string }
 ): Promise<void> {
-  try {
-    const userCredential = await createUserWithEmailAndPassword(authInstance, email, password);
-    const user = userCredential.user;
+  // No try/catch here; let the calling component handle errors to display them in the UI.
+  const userCredential = await createUserWithEmailAndPassword(authInstance, email, password);
+  const user = userCredential.user;
 
-    // Update Firebase Auth profile
-    await updateProfile(user, {
-      displayName: `${profileData.firstName} ${profileData.lastName}`,
-    });
+  // Update Firebase Auth profile
+  await updateProfile(user, {
+    displayName: `${profileData.firstName} ${profileData.lastName}`,
+  });
+  
+  // Get firestore instance from the user's app
+  const firestore = getFirestore(user.apps[0] || authInstance.app);
 
-    // Create a user document in Firestore
-    const userDocRef = doc(firestore, 'users', user.uid);
-    await setDoc(userDocRef, {
-      id: user.uid,
-      firstName: profileData.firstName,
-      lastName: profileData.lastName,
-      email: user.email,
-      createdAt: serverTimestamp(),
-    });
-
-  } catch (error) {
-    console.error("Error during sign-up:", error);
-    // Let the UI handle displaying the error based on the Auth state listener
-    throw error;
-  }
+  // Create a user document in Firestore
+  const userDocRef = doc(firestore, 'users', user.uid);
+  await setDoc(userDocRef, {
+    id: user.uid,
+    firstName: profileData.firstName,
+    lastName: profileData.lastName,
+    email: user.email,
+    createdAt: serverTimestamp(),
+  });
 }
 
 /**
  * Initiates an email/password sign-in.
- * This is a non-blocking operation.
+ * This is an async operation that should be awaited.
  *
  * @param authInstance The Firebase Auth instance.
  * @param email The user's email.
@@ -65,10 +59,6 @@ export async function initiateEmailSignIn(
   email: string,
   password: string
 ): Promise<void> {
-    try {
-        await signInWithEmailAndPassword(authInstance, email, password);
-    } catch (error) {
-        console.error("Error during sign-in:", error);
-        throw error;
-    }
+    // No try/catch here; let the calling component handle errors.
+    await signInWithEmailAndPassword(authInstance, email, password);
 }
