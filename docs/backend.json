@@ -355,34 +355,16 @@
           "schema": {
             "$ref": "#/backend/entities/Subscriber"
           },
-          "description": "Stores general newsletter subscriber information, typically from the site footer.",
+          "description": "Stores subscriber information from the 'Coming Soon' page and newsletter footer.",
           "params": [
             {
               "name": "subscriberId",
-              "description": "Unique identifier for the subscriber."
-            }
-          ]
-        }
-      },
-      {
-        "path": "/notify-me/{notificationId}",
-        "definition": {
-          "entityName": "Subscriber",
-          "schema": {
-            "$ref": "#/backend/entities/Subscriber"
-          },
-          "description": "Stores emails from the 'Coming Soon' page for launch notifications.",
-          "params": [
-            {
-              "name": "notificationId",
-              "description": "Unique identifier for the notification signup."
+              "description": "Unique identifier for the subscriber entry."
             }
           ]
         }
       }
     ],
-    "reasoning": "The structure prioritizes security and scalability for the Aptly Dressed eBoutique. The core design focuses on authorization independence to ensure robust security rules and atomic operations.  The error reported indicates that unauthenticated users are attempting to create subscriber documents. The design ensures that all subscriber data is stored under the `/subscribers` collection and that only authenticated users with a specific role (e.g., admin) or via a callable function with rate-limiting, can create documents. The `/subscribers` collection stores the email, subscription timestamp, and source. This structure allows for easy querying and management of subscribers.  The structure is designed to support QAPs by segregating the subscriber data into a single collection with uniform security requirements. This prevents the need for complex filtering in rules.  The design includes paths for products, user data (including orders and reviews), to logically separate concerns and ensure scalability as the platform grows."
+    "reasoning": "The structure prioritizes security and scalability for the Aptly Dressed eBoutique. The core design focuses on authorization independence to ensure robust security rules and atomic operations. The error reported indicates that unauthenticated users are attempting to create subscriber documents. The design ensures that all subscriber data is stored under the `/subscribers` collection and that only authenticated users with a specific role (e.g., admin) or via a callable function with rate-limiting, can create documents. The `/subscribers` collection stores the email, subscription timestamp, and source. This structure allows for easy querying and management of subscribers.  The structure is designed to support QAPs by segregating the subscriber data into a single collection with uniform security requirements. This prevents the need for complex filtering in rules.  The design includes paths for products, user data (including orders and reviews), to logically separate concerns and ensure scalability as the platform grows."
   }
 }
-
-    
