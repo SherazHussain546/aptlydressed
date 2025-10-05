@@ -234,7 +234,7 @@ export default function BusinessPortfolioPage() {
         </section>
 
 
-        {/* IV. Product / Platform Showcase */}
+        {/* IV. Platform / Product Showcase */}
         <section id="platform-showcase">
           <h2 className="text-3xl font-headline text-center mb-8">
             IV. Platform Showcase
@@ -343,5 +343,6 @@ export default function BusinessPortfolioPage() {
       </main>
     </div>
   );
+}
 
     
