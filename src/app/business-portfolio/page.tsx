@@ -87,16 +87,22 @@ export default function BusinessPortfolioPage() {
             data-ai-hint={portfolioHeroImage.imageHint}
           />
         )}
-        <div className="absolute inset-0 bg-black/50" />
-        <div className="relative h-full flex flex-col items-center justify-center text-center text-white p-4 md:p-8">
-          <div className="bg-black/20 backdrop-blur-sm rounded-xl p-8 max-w-4xl">
-            <div className="mb-4">
-              <Logo />
-            </div>
-            <h1 className="text-4xl md:text-6xl font-headline">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        <div className="relative h-full flex flex-col items-start justify-end text-white p-8 md:p-12">
+            <h1 className="text-4xl md:text-6xl font-headline max-w-3xl">
               Stop Searching. Start Styling.
             </h1>
-            <div className="prose prose-invert prose-lg mt-6 text-left space-y-4">
+        </div>
+      </header>
+
+      <main className="container mx-auto px-4 py-16 md:py-24 space-y-20">
+
+        <section id="brand-identity" className="max-w-4xl mx-auto">
+             <div className="text-center mb-12">
+                 <Logo />
+                <h2 className="text-3xl font-headline mt-4">I. Brand Identity & Overview</h2>
+            </div>
+            <div className="prose prose-lg max-w-none space-y-4">
               <p>
                 <strong>1.2 Executive Summary / Mission Statement:</strong>{' '}
                 APTLY DRESSED is the premier fashion affiliate aggregator, created
@@ -115,14 +121,12 @@ export default function BusinessPortfolioPage() {
                 that are both beautiful and intentional.
               </p>
             </div>
-          </div>
-        </div>
-      </header>
+        </section>
 
-      <main className="container mx-auto px-4 py-16 md:py-24 space-y-20">
+
         {/* II. The Market & Opportunity */}
         <section id="market-opportunity" className="text-center max-w-4xl mx-auto">
-          <h2 className="text-3xl font-headline mb-4">
+          <h2 className="text-3xl font-headline mb-8">
             II. The Market & Opportunity
           </h2>
           <Card>
@@ -344,5 +348,3 @@ export default function BusinessPortfolioPage() {
     </div>
   );
 }
-
-    
