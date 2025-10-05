@@ -135,14 +135,24 @@ export function Shop({ allProducts, initialCategory, initialTags }: ShopProps) {
 
 
   const pageTitle = filters.category !== 'All' ? filters.category : 'All Products';
-  const pageDescription = filters.tags.includes('New Arrival') ? 'The latest additions to our curated collection.' : 'Discover our collection of timeless pieces.';
+  const pageDescriptions: { [key: string]: string } = {
+    'All': 'Discover the complete collection from APTLY DRESSED. From timeless essentials to modern statement pieces, explore our full range of curated apparel for men and women.',
+    'Womens': 'Explore our curated collection of women\'s fashion. Discover timeless dresses, elegant blouses, and sophisticated outerwear designed for the modern woman who values style and sustainability.',
+    'Mens': 'Browse our selection of modern menswear. From classic Oxford shirts to versatile denim and tailored trousers, find high-quality pieces that blend timeless design with contemporary style.',
+    'Essentials': 'Build the foundation of your wardrobe with our core essentials. This collection features high-quality, versatile basics designed for everyday comfort and effortless style.',
+    'default': 'Discover our collection of timeless pieces curated for the modern individual.'
+  };
+
+  const pageDescription = filters.tags.includes('New Arrival') 
+    ? 'The latest additions to our curated collection.' 
+    : pageDescriptions[filters.category] || pageDescriptions.default;
 
   if (!mounted) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-8">
             <h1 className="text-3xl md:text-4xl font-headline">Shop {pageTitle}</h1>
-            <p className="mt-2 text-muted-foreground">{pageDescription}</p>
+            <p className="mt-2 text-muted-foreground max-w-3xl mx-auto">{pageDescription}</p>
         </div>
         <div className="flex flex-col gap-8">
             <aside><Skeleton className="h-10 w-full" /></aside>
@@ -156,7 +166,7 @@ export function Shop({ allProducts, initialCategory, initialTags }: ShopProps) {
     <div className="container mx-auto px-4 py-8">
       <div className="text-center mb-8">
         <h1 className="text-3xl md:text-4xl font-headline">Shop {pageTitle}</h1>
-        <p className="mt-2 text-muted-foreground">{pageDescription}</p>
+        <p className="mt-2 text-muted-foreground max-w-3xl mx-auto">{pageDescription}</p>
       </div>
         <ProductFilters filters={filters} setFilters={setFilters} allProducts={allProducts} />
         <main className="w-full mt-8">
