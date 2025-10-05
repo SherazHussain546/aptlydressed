@@ -24,6 +24,7 @@ function SubmitButton() {
 
 const companyLinks = [
     { href: "/about", label: "About Us" },
+    { href: "/blog", label: "The Journal" },
     { href: "/news-and-events", label: "News & Events" },
     { href: "/sustainability", label: "Sustainability" },
     { href: "/collaborate", label: "Become a Partner" },
