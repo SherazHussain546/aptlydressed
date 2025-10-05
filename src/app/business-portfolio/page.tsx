@@ -76,7 +76,7 @@ export default function BusinessPortfolioPage() {
   return (
     <div>
       {/* I. Brand Identity & Overview */}
-      <header className="relative h-[50vh] md:h-[60vh] w-full">
+      <header className="relative h-[60vh] md:h-[70vh] w-full">
         {portfolioHeroImage && (
           <Image
             src={portfolioHeroImage.imageUrl}
@@ -88,31 +88,33 @@ export default function BusinessPortfolioPage() {
           />
         )}
         <div className="absolute inset-0 bg-black/50" />
-        <div className="relative h-full flex flex-col items-center justify-center text-center text-white px-4">
-          <div className="mb-4">
-            <Logo />
-          </div>
-          <h1 className="text-4xl md:text-6xl font-headline max-w-4xl">
-            Stop Searching. Start Styling.
-          </h1>
-          <div className="prose prose-invert prose-lg mt-6 max-w-3xl">
-            <p className="font-semibold">
-              <strong>1.2 Executive Summary / Mission Statement:</strong>{' '}
-              APTLY DRESSED is the premier fashion affiliate aggregator, created
-              to solve the fragmented and overwhelming online shopping
-              experience. Our mission is to simplify fashion discovery,
-              empowering consumers to dress confidently and appropriately for
-              any occasion by providing expertly curated, complete outfit
-              solutions.
-            </p>
-            <p>
-              <strong>1.3 The "Why" (Vision):</strong> We are driven by a passion
-              to revolutionize outfit discovery. We believe that finding the
-              perfect look should be an inspiring and seamless experience, not a
-              chore. Our vision is to become the world's most trusted
-              destination for curated style, helping people build wardrobes
-              that are both beautiful and intentional.
-            </p>
+        <div className="relative h-full flex flex-col items-center justify-center text-center text-white p-4 md:p-8">
+          <div className="bg-black/20 backdrop-blur-sm rounded-xl p-8 max-w-4xl">
+            <div className="mb-4">
+              <Logo />
+            </div>
+            <h1 className="text-4xl md:text-6xl font-headline">
+              Stop Searching. Start Styling.
+            </h1>
+            <div className="prose prose-invert prose-lg mt-6 text-left space-y-4">
+              <p>
+                <strong>1.2 Executive Summary / Mission Statement:</strong>{' '}
+                APTLY DRESSED is the premier fashion affiliate aggregator, created
+                to solve the fragmented and overwhelming online shopping
+                experience. Our mission is to simplify fashion discovery,
+                empowering consumers to dress confidently and appropriately for
+                any occasion by providing expertly curated, complete outfit
+                solutions.
+              </p>
+              <p>
+                <strong>1.3 The "Why" (Vision):</strong> We are driven by a passion
+                to revolutionize outfit discovery. We believe that finding the
+                perfect look should be an inspiring and seamless experience, not a
+                chore. Our vision is to become the world's most trusted
+                destination for curated style, helping people build wardrobes
+                that are both beautiful and intentional.
+              </p>
+            </div>
           </div>
         </div>
       </header>
@@ -341,4 +343,5 @@ export default function BusinessPortfolioPage() {
       </main>
     </div>
   );
-}
+
+    
