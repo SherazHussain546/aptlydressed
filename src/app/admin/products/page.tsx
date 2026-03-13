@@ -15,6 +15,8 @@ import Image from "next/image";
 import type { Product } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 
+const ADMIN_EMAIL = "aptlydressed@synctech.ie";
+
 export default function AdminProductsPage() {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
@@ -22,8 +24,10 @@ export default function AdminProductsPage() {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (!isUserLoading && !user) {
-      router.push("/account");
+    if (!isUserLoading) {
+      if (!user || user.email !== ADMIN_EMAIL) {
+        router.push("/account");
+      }
     }
   }, [user, isUserLoading, router]);
 
@@ -35,7 +39,7 @@ export default function AdminProductsPage() {
   const { data: products, isLoading } = useCollection<Product>(productsQuery);
 
   if (isUserLoading) return <div className="flex justify-center p-20"><Loader2 className="animate-spin" /></div>;
-  if (!user) return null;
+  if (!user || user.email !== ADMIN_EMAIL) return null;
 
   const handleDelete = async (productId: string, productName: string) => {
     if (!confirm(`Are you sure you want to delete "${productName}"?`)) return;

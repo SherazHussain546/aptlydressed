@@ -7,6 +7,10 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.email == 'aptlydressed@synctech.ie';
+    }
+
     function isOwner(userId) {
       return isSignedIn() && request.auth.uid == userId;
     }
@@ -15,11 +19,10 @@ service cloud.firestore {
       return isOwner(userId) && resource != null;
     }
 
-    // Products: Anyone can read, but authenticated users (admins) can manage for now.
-    // In a production app, we would restrict this to a specific list of UIDs or an admin role.
+    // Products: Anyone can read, but only admin can manage.
     match /products/{productId} {
       allow get, list: if true;
-      allow create, update, delete: if isSignedIn();
+      allow create, update, delete: if isAdmin();
     }
 
     match /consumers/{consumerId} {

@@ -14,6 +14,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Plus, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
+const ADMIN_EMAIL = "aptlydressed@synctech.ie";
+
 export default function AddProductPage() {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
@@ -22,8 +24,10 @@ export default function AddProductPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!isUserLoading && !user) {
-      router.push("/account");
+    if (!isUserLoading) {
+      if (!user || user.email !== ADMIN_EMAIL) {
+        router.push("/account");
+      }
     }
   }, [user, isUserLoading, router]);
 
@@ -44,7 +48,7 @@ export default function AddProductPage() {
   });
 
   if (isUserLoading) return <div className="flex justify-center p-20"><Loader2 className="animate-spin" /></div>;
-  if (!user) return null;
+  if (!user || user.email !== ADMIN_EMAIL) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
