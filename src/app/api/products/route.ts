@@ -1,10 +1,10 @@
 
 import { NextResponse } from 'next/server';
-import { productsPromise } from '@/lib/server-data';
+import { getProducts } from '@/lib/server-data';
 
 export async function GET() {
   try {
-    const products = await productsPromise;
+    const products = await getProducts();
     return NextResponse.json(products);
   } catch (error) {
     console.error("Error fetching products for API:", error);

@@ -3,7 +3,7 @@ import 'server-only';
 import type { Product, Collection } from './types';
 import { firestore } from '@/lib/firebase-admin';
 
-async function loadProductsFromFirestore(): Promise<Product[]> {
+export async function getProducts(): Promise<Product[]> {
   try {
     const snapshot = await firestore.collection('products').orderBy('createdAt', 'desc').get();
     if (snapshot.empty) {
@@ -20,11 +20,9 @@ async function loadProductsFromFirestore(): Promise<Product[]> {
   }
 }
 
-export const productsPromise: Promise<Product[]> = loadProductsFromFirestore();
-
 export async function getCollections(): Promise<Collection[]> {
     // For an affiliate aggregator, collections are often just categories
-    const products = await productsPromise;
+    const products = await getProducts();
     const categories = Array.from(new Set(products.map(p => p.category)));
     
     const collectionImageMapping: Record<string, string> = {

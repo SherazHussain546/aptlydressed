@@ -68,26 +68,27 @@ export function Shop({ allProducts, initialCategory, initialTags }: ShopProps) {
       filtered = filtered.filter(p => p.category === filters.category);
     }
     
-    if (filters.tags.length > 0) {
+    if (filters.tags && filters.tags.length > 0) {
       filtered = filtered.filter(p => filters.tags.every(tag => p.tags.includes(tag)));
     }
     
-    if (filters.sizes.length > 0) {
+    if (filters.sizes && filters.sizes.length > 0) {
       filtered = filtered.filter(p => p.sizes.some(s => filters.sizes.includes(s)));
     }
     
-    if (filters.colors.length > 0) {
+    if (filters.colors && filters.colors.length > 0) {
       filtered = filtered.filter(p => p.colors.some(c => filters.colors.includes(c.name)));
     }
 
-    filtered = filtered.filter(p => p.price >= filters.priceRange[0] && p.price <= filters.priceRange[1]);
+    if (filters.priceRange) {
+      filtered = filtered.filter(p => p.price >= filters.priceRange[0] && p.price <= filters.priceRange[1]);
+    }
 
     if (filters.sortBy === 'price-asc') {
       filtered.sort((a, b) => (a.salePrice || a.price) - (b.salePrice || b.price));
     } else if (filters.sortBy === 'price-desc') {
       filtered.sort((a, b) => (b.salePrice || b.price) - (a.salePrice || a.price));
     } else if (filters.sortBy === 'newest') {
-      // Assuming a numeric or sortable ID. If not, created_at timestamp is better.
       const sortedById = [...filtered].sort((a, b) => {
         if (a.id > b.id) return -1;
         if (a.id < b.id) return 1;
@@ -143,7 +144,7 @@ export function Shop({ allProducts, initialCategory, initialTags }: ShopProps) {
     'default': 'Discover our collection of timeless pieces curated for the modern individual.'
   };
 
-  const pageDescription = filters.tags.includes('New Arrival') 
+  const pageDescription = (filters.tags && filters.tags.includes('New Arrival'))
     ? 'The latest additions to our curated collection.' 
     : pageDescriptions[filters.category] || pageDescriptions.default;
 

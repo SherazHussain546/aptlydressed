@@ -4,14 +4,14 @@ import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/products/ProductCard';
-import { productsPromise, getCollections } from '@/lib/server-data';
+import { getProducts, getCollections } from '@/lib/server-data';
 import { blogPosts, placeholderImages } from '@/lib/data';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
 const heroImage = placeholderImages.find(p => p.id === 'hero-1');
 
 export default async function Home() {
-  const products = await productsPromise;
+  const products = await getProducts();
   const collections = await getCollections();
   
   const newArrivals = products.filter(p => p.tags.includes('New Arrival')).slice(0, 4);

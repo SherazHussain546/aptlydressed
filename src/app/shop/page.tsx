@@ -1,5 +1,5 @@
 
-import { productsPromise } from '@/lib/server-data';
+import { getProducts } from '@/lib/server-data';
 import { Shop } from '@/components/products/Shop';
 import type { Product } from '@/lib/types';
 
@@ -9,7 +9,7 @@ type ShopPageProps = {
 
 // This is a Server Component, so it can receive searchParams as a prop
 export default async function ShopPage({ searchParams }: ShopPageProps) {
-  const products: Product[] = await productsPromise;
+  const products: Product[] = await getProducts();
   
   // Extract specific search params on the server to avoid passing the searchParams object to the client.
   const categoryParam = searchParams?.category as string | undefined;

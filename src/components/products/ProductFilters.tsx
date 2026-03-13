@@ -76,13 +76,14 @@ export function ProductFilters({ filters, setFilters, allProducts }: ProductFilt
             colors: [],
             priceRange: [0, maxPrice],
             sortBy: filters.sortBy,
+            tags: [],
         });
     }
 
     const activeFilterCount =
         (filters.category !== 'All' ? 1 : 0) +
-        filters.sizes.length +
-        filters.colors.length +
+        (filters.sizes?.length || 0) +
+        (filters.colors?.length || 0) +
         (filters.priceRange[0] !== 0 || filters.priceRange[1] !== maxPrice ? 1 : 0);
 
     return (
@@ -118,7 +119,7 @@ export function ProductFilters({ filters, setFilters, allProducts }: ProductFilt
                             {allSizes.map(size => (
                                 <Button
                                     key={size}
-                                    variant={filters.sizes.includes(size) ? 'default' : 'outline'}
+                                    variant={filters.sizes?.includes(size) ? 'default' : 'outline'}
                                     size="sm"
                                     onClick={() => handleSizeChange(size)}
                                     className="font-normal"
@@ -139,14 +140,14 @@ export function ProductFilters({ filters, setFilters, allProducts }: ProductFilt
                                     onClick={() => handleColorChange(color.name)}
                                     className={cn(
                                         "h-8 w-8 rounded-full border-2 transition-all",
-                                        filters.colors.includes(color.name) ? 'border-primary scale-110' : 'border-transparent'
+                                        filters.colors?.includes(color.name) ? 'border-primary scale-110' : 'border-transparent'
                                     )}
                                 >
                                     <div
                                         className="h-full w-full rounded-full border border-border/20 flex items-center justify-center"
                                         style={{ backgroundColor: color.hex }}
                                     >
-                                    {filters.colors.includes(color.name) && <Check className="h-4 w-4 text-white mix-blend-difference" />}
+                                    {filters.colors?.includes(color.name) && <Check className="h-4 w-4 text-white mix-blend-difference" />}
                                     </div>
                                 </button>
                             ))}
