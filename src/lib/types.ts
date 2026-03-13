@@ -1,5 +1,4 @@
 
-
 export interface Product {
   id: string;
   slug: string;
@@ -7,9 +6,10 @@ export interface Product {
   brand: string;
   price: number;
   salePrice?: number;
-  imageIds: string[];
+  imageIds?: string[]; // IDs from placeholder-images.json
+  images?: string[];   // Direct URLs
   description: string;
-  category: 'Womens' | 'Mens' | 'Essentials' | string;
+  category: 'Womens' | 'Mens' | 'Shoes' | 'Essentials' | string;
   tags: ('New Arrival' | 'Featured' | 'Best Seller' | string)[];
   sizes: string[];
   colors: { name: string, hex: string }[];
@@ -18,6 +18,7 @@ export interface Product {
   details: string[];
   stock: number;
   affiliateUrl: string;
+  createdAt?: any;
 }
 
 export interface Collection {
@@ -68,5 +69,3 @@ export interface Order {
     shippingAddress: string;
     orderItemIds: string[];
 }
-
-    

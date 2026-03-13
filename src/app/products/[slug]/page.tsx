@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
   }
 
-  const primaryImage = product.imageIds && product.imageIds.length > 0 ? placeholderImages.find(p => p.id === product.imageIds[0]) : null;
+  const primaryImage = product.images?.[0] || (product.imageIds?.[0] ? placeholderImages.find(p => p.id === product.imageIds![0])?.imageUrl : null);
 
   return {
     title: product.name,
@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: product.description,
       images: primaryImage ? [
         {
-          url: primaryImage.imageUrl,
+          url: primaryImage,
           width: 800,
           height: 1000,
           alt: product.name,
@@ -72,10 +72,10 @@ async function CompleteTheLook({ product, allProducts }: { product: any, allProd
     }
 
     return (
-      <section className="py-16 md:py-24">
+      <section className="py-16 md:py-24 bg-muted/30">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-headline text-center mb-8">Complete the Look</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8 max-w-2xl mx-auto">
+          <h2 className="text-3xl font-headline text-center mb-12 italic">Complete the Look</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-12 max-w-3xl mx-auto">
             {recommendedProducts.map(p => (
               p && <ProductCard key={p.id} product={p} />
             ))}
@@ -100,7 +100,11 @@ export default async function ProductPage({ params }: { params: { slug: string }
   
   const onSale = product.salePrice && product.salePrice < product.price;
   const relatedProducts = products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
-  const productImages = product.imageIds ? product.imageIds.map(id => placeholderImages.find(p => p.id === id)).filter(Boolean) : [];
+  
+  // Combine direct images and placeholder images
+  const directImages = product.images || [];
+  const placeholderImgs = product.imageIds ? product.imageIds.map(id => placeholderImages.find(p => p.id === id)?.imageUrl).filter(Boolean) as string[] : [];
+  const allImages = [...directImages, ...placeholderImgs];
 
   return (
     <>
@@ -110,34 +114,32 @@ export default async function ProductPage({ params }: { params: { slug: string }
         <div className="md:sticky md:top-24 h-max">
             <Carousel>
               <CarouselContent>
-                {productImages.length > 0 ? productImages.map((image, index) => (
+                {allImages.length > 0 ? allImages.map((imageUrl, index) => (
                   <CarouselItem key={index}>
-                    <Card className="overflow-hidden">
-                      <CardContent className="p-0 aspect-[4/5] relative">
-                        {image && (
-                            <Image
-                                src={image.imageUrl}
-                                alt={`${product.name} - view ${index + 1}`}
-                                fill
-                                className="object-cover"
-                                sizes="(max-width: 768px) 100vw, 50vw"
-                                data-ai-hint={image.imageHint}
-                            />
-                        )}
+                    <Card className="overflow-hidden border-none shadow-none">
+                      <CardContent className="p-0 aspect-[4/5] relative rounded-xl overflow-hidden bg-muted">
+                        <Image
+                            src={imageUrl}
+                            alt={`${product.name} - view ${index + 1}`}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, 50vw"
+                            priority={index === 0}
+                        />
                       </CardContent>
                     </Card>
                   </CarouselItem>
                 )) : (
                   <CarouselItem>
-                    <Card className="overflow-hidden">
-                      <CardContent className="p-0 aspect-[4/5] relative bg-muted flex items-center justify-center">
-                        <p className="text-muted-foreground">No Image</p>
+                    <Card className="overflow-hidden border-none shadow-none">
+                      <CardContent className="p-0 aspect-[4/5] relative bg-muted flex items-center justify-center rounded-xl">
+                        <p className="text-muted-foreground font-headline text-xl">No Image Available</p>
                       </CardContent>
                     </Card>
                   </CarouselItem>
                 )}
               </CarouselContent>
-              {productImages.length > 1 && (
+              {allImages.length > 1 && (
                 <>
                   <CarouselPrevious className="left-4"/>
                   <CarouselNext className="right-4"/>
@@ -147,56 +149,58 @@ export default async function ProductPage({ params }: { params: { slug: string }
         </div>
 
         {/* Product Details */}
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">{product.brand}</p>
-          <h1 className="text-3xl lg:text-4xl font-headline mt-1">{product.name}</h1>
+        <div className="flex flex-col">
+          <p className="text-sm font-semibold text-primary uppercase tracking-widest">{product.brand}</p>
+          <h1 className="text-4xl lg:text-5xl font-headline mt-2">{product.name}</h1>
           
-          <div className="mt-2 flex items-baseline gap-2">
+          <div className="mt-4 flex items-baseline gap-3">
             {onSale ? (
                 <>
-                    <p className="text-2xl text-destructive font-semibold">${product.salePrice?.toFixed(2)}</p>
-                    <p className="text-xl text-muted-foreground line-through">${product.price.toFixed(2)}</p>
+                    <p className="text-3xl text-destructive font-bold">${product.salePrice?.toFixed(2)}</p>
+                    <p className="text-xl text-muted-foreground line-through decoration-primary/30">${product.price.toFixed(2)}</p>
                 </>
             ) : (
-                <p className="text-2xl text-muted-foreground">${product.price.toFixed(2)}</p>
+                <p className="text-3xl text-foreground font-medium">${product.price.toFixed(2)}</p>
             )}
           </div>
 
-          <div className="flex items-center mt-4">
+          <div className="flex items-center mt-6 py-2 border-y border-border/50">
             <div className="flex items-center">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} className={`h-5 w-5 ${i < Math.round(product.rating) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} />
+                <Star key={i} className={`h-4 w-4 ${i < Math.round(product.rating) ? 'text-primary fill-primary' : 'text-gray-200'}`} />
               ))}
             </div>
-            <p className="ml-2 text-sm text-muted-foreground">({product.reviewCount} reviews)</p>
+            <p className="ml-3 text-sm text-muted-foreground font-medium">({product.reviewCount} verified reviews)</p>
           </div>
 
-          <p className="mt-6 text-lg text-foreground/80">{product.description}</p>
+          <div className="mt-8 prose prose-lg max-w-none text-foreground/80">
+            <p>{product.description}</p>
+          </div>
           
-          <Button size="lg" className="w-full mt-8" asChild>
+          <Button size="lg" className="w-full mt-10 h-14 text-lg font-headline tracking-wide" asChild>
             <Link href={product.affiliateUrl} target="_blank">
-              Buy Now <ExternalLink className="ml-2 h-4 w-4" />
+              Shop on Partner Site <ExternalLink className="ml-2 h-5 w-5" />
             </Link>
           </Button>
 
-           <div className="mt-4 text-xs text-center text-muted-foreground">
-            You will be redirected to our partner site to complete your purchase.
+           <div className="mt-4 text-xs text-center text-muted-foreground italic">
+            You will be redirected to our trusted partner brand to secure your purchase.
           </div>
 
 
-          <Accordion type="single" collapsible className="w-full mt-8">
-            <AccordionItem value="details">
-              <AccordionTrigger>Product Details</AccordionTrigger>
+          <Accordion type="single" collapsible className="w-full mt-12 border-t">
+            <AccordionItem value="details" className="border-b">
+              <AccordionTrigger className="font-headline text-xl">Product Specifications</AccordionTrigger>
               <AccordionContent>
-                <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                <ul className="list-disc pl-5 space-y-2 text-muted-foreground text-base">
                   {product.details.map((detail, i) => <li key={i}>{detail}</li>)}
                 </ul>
               </AccordionContent>
             </AccordionItem>
-            <AccordionItem value="shipping">
-              <AccordionTrigger>Affiliate Disclosure</AccordionTrigger>
-              <AccordionContent>
-               As an affiliate, we may earn a commission from qualifying purchases. This does not affect the price you pay.
+            <AccordionItem value="shipping" className="border-b">
+              <AccordionTrigger className="font-headline text-xl">Affiliate Disclosure</AccordionTrigger>
+              <AccordionContent className="text-muted-foreground text-base leading-relaxed">
+               APTLY DRESSED is a boutique affiliate platform. When you purchase through our links, we may earn a small commission from the brand. This supports our curation efforts at no additional cost to you.
               </AccordionContent>
             </AccordionItem>
           </Accordion>
@@ -208,9 +212,9 @@ export default async function ProductPage({ params }: { params: { slug: string }
     <CompleteTheLook product={product} allProducts={products} />
     
     {/* Related Products */}
-    <section className="bg-muted py-16 md:py-24">
+    <section className="bg-muted/20 py-16 md:py-24">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-headline text-center mb-8">You might also like</h2>
+        <h2 className="text-3xl font-headline text-center mb-12">More to Explore</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {relatedProducts.map(p => (
             <ProductCard key={p.id} product={p} />
