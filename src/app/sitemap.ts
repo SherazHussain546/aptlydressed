@@ -1,9 +1,13 @@
 
 import { MetadataRoute } from 'next';
-import { productsPromise } from '@/lib/server-data';
 import { blogPosts } from '@/lib/data';
 import { newsPosts } from '@/lib/news-data';
 
+/**
+ * Since we fetch product data on the client side exclusively,
+ * we provide a static sitemap for core pages. Dynamic product routes
+ * are indexed as Google crawls the shop and categories.
+ */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://aptlydressed.com';
 
@@ -28,15 +32,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route === '/' ? 1 : 0.8,
   }));
 
-  // Dynamic product pages
-  const products = await productsPromise;
-  const productRoutes = products.map((product) => ({
-    url: `${baseUrl}/products/${product.slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
-  }));
-
   // Dynamic blog pages
   const blogRoutes = blogPosts.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,
@@ -53,5 +48,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...staticRoutes, ...productRoutes, ...blogRoutes, ...newsRoutes];
+  return [...staticRoutes, ...blogRoutes, ...newsRoutes];
 }

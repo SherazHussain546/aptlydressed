@@ -1,24 +1,63 @@
 
+"use client";
+
 import Image from 'next/image';
 import Link from 'next/link';
-
+import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
+import { collection, query, orderBy } from "firebase/firestore";
 import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/products/ProductCard';
-import { getProducts, getCollections } from '@/lib/server-data';
 import { blogPosts, placeholderImages } from '@/lib/data';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import type { Product } from '@/lib/types';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const heroImage = placeholderImages.find(p => p.id === 'hero-1');
 
-export default async function Home() {
-  const products = await getProducts();
-  const collections = await getCollections();
+function ProductSectionSkeleton() {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      {[...Array(4)].map((_, i) => (
+        <div key={i} className="space-y-4">
+          <Skeleton className="aspect-[4/5] w-full rounded-lg" />
+          <Skeleton className="h-4 w-1/3" />
+          <Skeleton className="h-6 w-2/3" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default function Home() {
+  const firestore = useFirestore();
+
+  const productsQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return query(collection(firestore, "products"), orderBy("createdAt", "desc"));
+  }, [firestore]);
+
+  const { data: products, isLoading } = useCollection<Product>(productsQuery);
+
+  const newArrivals = (products || []).filter(p => p.tags.includes('New Arrival')).slice(0, 4);
+  const featuredProducts = (products || []).filter(p => p.tags.includes('Featured')).slice(0, 4);
   
-  const newArrivals = products.filter(p => p.tags.includes('New Arrival')).slice(0, 4);
-  const featuredProducts = products.filter(p => p.tags.includes('Featured')).slice(0, 4);
+  const categories = Array.from(new Set((products || []).map(p => p.category)));
+  const collectionImageMapping: Record<string, string> = {
+    "Womens": "collection-women",
+    "Mens": "collection-men",
+    "Essentials": "collection-essentials",
+    "Shoes": "collection-essentials",
+  };
+
+  const collections = categories.map((category, index) => ({
+    id: (index + 1).toString(),
+    title: `${category}`,
+    href: `/shop?category=${category}`,
+    imageId: collectionImageMapping[category] || "collection-essentials",
+  }));
+
   const latestPost = blogPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
   const latestPostImage = placeholderImages.find(p => p.id === latestPost.imageId);
-
 
   return (
     <div className="space-y-16 md:space-y-24">
@@ -47,11 +86,15 @@ export default async function Home() {
       {/* New Arrivals */}
       <section className="container mx-auto px-4">
         <h2 className="text-3xl font-headline text-center mb-8">New Arrivals</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {newArrivals.map(product => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {isLoading ? (
+          <ProductSectionSkeleton />
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {newArrivals.map(product => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
         <div className="text-center mt-8">
           <Button asChild variant="outline">
             <Link href="/shop">View All</Link>
@@ -70,10 +113,10 @@ export default async function Home() {
                 {collectionImage && (
                   <Image
                     src={collectionImage.imageUrl}
-                    alt={collectionImage.description}
+                    alt={collectionImage.title}
                     fill
                     className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
-                    data-ai-hint={collectionImage.imageHint}
+                    data-ai-hint="fashion collection"
                   />
                 )}
                 <div className="absolute inset-0 bg-black/40 rounded-lg" />
@@ -137,12 +180,16 @@ export default async function Home() {
       {/* Featured Products */}
       <section className="container mx-auto px-4">
         <h2 className="text-3xl font-headline text-center mb-8">Featured Products</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {featuredProducts.map(product => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      </section>
+        {isLoading ? (
+          <ProductSectionSkeleton />
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {featuredProducts.map(product => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
+      </section> section
     </div>
   );
 }

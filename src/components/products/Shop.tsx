@@ -41,7 +41,7 @@ interface ShopProps {
 }
 
 export function Shop({ allProducts, initialCategory, initialTags }: ShopProps) {
-  const maxPrice = Math.max(...allProducts.map(p => p.price), 300);
+  const maxPrice = allProducts.length > 0 ? Math.max(...allProducts.map(p => p.price), 300) : 300;
 
   const [filters, setFilters] = useState(() => {
       return {
@@ -69,15 +69,15 @@ export function Shop({ allProducts, initialCategory, initialTags }: ShopProps) {
     }
     
     if (filters.tags && filters.tags.length > 0) {
-      filtered = filtered.filter(p => filters.tags.every(tag => p.tags.includes(tag)));
+      filtered = filtered.filter(p => filters.tags.every(tag => p.tags?.includes(tag)));
     }
     
     if (filters.sizes && filters.sizes.length > 0) {
-      filtered = filtered.filter(p => p.sizes.some(s => filters.sizes.includes(s)));
+      filtered = filtered.filter(p => p.sizes?.some(s => filters.sizes.includes(s)));
     }
     
     if (filters.colors && filters.colors.length > 0) {
-      filtered = filtered.filter(p => p.colors.some(c => filters.colors.includes(c.name)));
+      filtered = filtered.filter(p => p.colors?.some(c => filters.colors.includes(c.name)));
     }
 
     if (filters.priceRange) {
@@ -89,14 +89,9 @@ export function Shop({ allProducts, initialCategory, initialTags }: ShopProps) {
     } else if (filters.sortBy === 'price-desc') {
       filtered.sort((a, b) => (b.salePrice || b.price) - (a.salePrice || a.price));
     } else if (filters.sortBy === 'newest') {
-      const sortedById = [...filtered].sort((a, b) => {
-        if (a.id > b.id) return -1;
-        if (a.id < b.id) return 1;
-        return 0;
-      });
-      filtered = sortedById;
+      // In a real app, we'd sort by createdAt timestamp
+      filtered.sort((a, b) => (b.id > a.id ? 1 : -1));
     }
-
 
     return filtered;
   }, [filters, allProducts]);

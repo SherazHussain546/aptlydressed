@@ -1,11 +1,12 @@
 
-import Image from 'next/image';
-import { notFound } from 'next/navigation';
-import { Star, ExternalLink } from 'lucide-react';
-import Link from 'next/link';
-import type { Metadata } from 'next';
+"use client";
 
-import { productsPromise } from '@/lib/server-data';
+import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
+import { collection, query, where, limit } from "firebase/firestore";
+import Image from 'next/image';
+import { useParams, notFound } from 'next/navigation';
+import { Star, ExternalLink, Loader2 } from 'lucide-react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { ProductCard } from '@/components/products/ProductCard';
@@ -19,89 +20,89 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import { placeholderImages } from '@/lib/data';
 import { getOutfitRecommendations } from '@/ai/flows/ai-outfit-recommendation';
+import type { Product } from '@/lib/types';
+import { useEffect, useState } from 'react';
 
-type Props = {
-  params: { slug: string }
-}
+function CompleteTheLook({ product, allProducts }: { product: Product, allProducts: Product[] }) {
+  const [recommendations, setRecommendations] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const products = await productsPromise;
-  const product = products.find(p => p.slug === params.slug);
+  useEffect(() => {
+    async function fetchRecs() {
+      try {
+        const allProductNames = allProducts.map(p => p.name);
+        const result = await getOutfitRecommendations({
+          productName: product.name,
+          productDescription: product.description,
+          allProductNames,
+        });
+        
+        const recommendedProducts = result.recommendations
+          .map(recName => allProducts.find(p => p.name === recName))
+          .filter((p): p is Product => !!p);
 
-  if (!product) {
-    return {
-      title: 'Product not found',
+        setRecommendations(recommendedProducts);
+      } catch (error) {
+        console.error("Error getting outfit recommendations:", error);
+      } finally {
+        setLoading(false);
+      }
     }
-  }
-
-  const primaryImage = product.images?.[0] || (product.imageIds?.[0] ? placeholderImages.find(p => p.id === product.imageIds![0])?.imageUrl : null);
-
-  return {
-    title: product.name,
-    description: product.description,
-    openGraph: {
-      title: product.name,
-      description: product.description,
-      images: primaryImage ? [
-        {
-          url: primaryImage,
-          width: 800,
-          height: 1000,
-          alt: product.name,
-        },
-      ] : [],
-    },
-  }
-}
-
-async function CompleteTheLook({ product, allProducts }: { product: any, allProducts: any[] }) {
-  try {
-    const allProductNames = allProducts.map(p => p.name);
-    const result = await getOutfitRecommendations({
-      productName: product.name,
-      productDescription: product.description,
-      allProductNames,
-    });
-    
-    const recommendedProducts = result.recommendations
-      .map(recName => allProducts.find(p => p.name === recName))
-      .filter(Boolean);
-
-    if (recommendedProducts.length === 0) {
-      return null;
+    if (product && allProducts.length > 0) {
+      fetchRecs();
     }
+  }, [product, allProducts]);
 
-    return (
-      <section className="py-16 md:py-24 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-headline text-center mb-12 italic">Complete the Look</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-12 max-w-3xl mx-auto">
-            {recommendedProducts.map(p => (
-              p && <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
+  if (loading || recommendations.length === 0) return null;
+
+  return (
+    <section className="py-16 md:py-24 bg-muted/30">
+      <div className="container mx-auto px-4">
+        <h2 className="text-3xl font-headline text-center mb-12 italic">Complete the Look</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-12 max-w-3xl mx-auto">
+          {recommendations.map(p => (
+            <ProductCard key={p.id} product={p} />
+          ))}
         </div>
-      </section>
-    );
-
-  } catch (error) {
-    console.error("Error getting outfit recommendations:", error);
-    return null;
-  }
+      </div>
+    </section>
+  );
 }
 
-export default async function ProductPage({ params }: { params: { slug: string } }) {
-  const products = await productsPromise;
-  const product = products.find(p => p.slug === params.slug);
+export default function ProductPage() {
+  const { slug } = useParams();
+  const firestore = useFirestore();
+
+  const productQuery = useMemoFirebase(() => {
+    if (!firestore || !slug) return null;
+    return query(collection(firestore, "products"), where("slug", "==", slug), limit(1));
+  }, [firestore, slug]);
+
+  const allProductsQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return collection(firestore, "products");
+  }, [firestore]);
+
+  const { data: productData, isLoading: productLoading } = useCollection<Product>(productQuery);
+  const { data: allProducts } = useCollection<Product>(allProductsQuery);
+
+  if (productLoading) {
+    return (
+      <div className="container mx-auto px-4 py-20 flex justify-center">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  const product = productData?.[0];
 
   if (!product) {
     notFound();
   }
   
   const onSale = product.salePrice && product.salePrice < product.price;
-  const relatedProducts = products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
+  const relatedProducts = (allProducts || []).filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
   
-  // Combine direct images and placeholder images
   const directImages = product.images || [];
   const placeholderImgs = product.imageIds ? product.imageIds.map(id => placeholderImages.find(p => p.id === id)?.imageUrl).filter(Boolean) as string[] : [];
   const allImages = [...directImages, ...placeholderImgs];
@@ -193,7 +194,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
               <AccordionTrigger className="font-headline text-xl">Product Specifications</AccordionTrigger>
               <AccordionContent>
                 <ul className="list-disc pl-5 space-y-2 text-muted-foreground text-base">
-                  {product.details.map((detail, i) => <li key={i}>{detail}</li>)}
+                  {product.details?.map((detail, i) => <li key={i}>{detail}</li>)}
                 </ul>
               </AccordionContent>
             </AccordionItem>
@@ -209,7 +210,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
     </div>
 
     {/* AI Outfit Recommendations */}
-    <CompleteTheLook product={product} allProducts={products} />
+    <CompleteTheLook product={product} allProducts={allProducts || []} />
     
     {/* Related Products */}
     <section className="bg-muted/20 py-16 md:py-24">

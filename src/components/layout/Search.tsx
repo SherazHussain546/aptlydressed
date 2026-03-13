@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { SearchIcon, Loader2 } from "lucide-react";
+import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
+import { collection } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,35 +22,21 @@ import { placeholderImages } from "@/lib/data";
 import { useDebounce } from "@/hooks/use-debounce";
 
 export function Search() {
-  const [allProducts, setAllProducts] = useState<Product[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [query, setQuery] = useState("");
-  const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
-  
   const debouncedQuery = useDebounce(query, 300);
+  
+  const firestore = useFirestore();
+  const productsQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return collection(firestore, "products");
+  }, [firestore]);
+
+  const { data: allProducts, isLoading } = useCollection<Product>(productsQuery);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    // Asynchronously load the products on the client via API route
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch('/api/products');
-        if (!response.ok) {
-          throw new Error('Failed to fetch products');
-        }
-        const products = await response.json();
-        setAllProducts(products);
-      } catch (error) {
-        console.error("Failed to load products for search", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProducts();
-  }, []);
-
-  useEffect(() => {
-    if (debouncedQuery) {
+    if (debouncedQuery && allProducts) {
       const filtered = allProducts.filter(product =>
         product.name.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
         product.brand.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
@@ -91,7 +79,7 @@ export function Search() {
             onChange={(e) => setQuery(e.target.value)}
           />
         </div>
-        {loading ? (
+        {isLoading ? (
             <div className="flex items-center justify-center p-8">
                 <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
@@ -101,7 +89,7 @@ export function Search() {
               <div className="space-y-4">
                 {filteredProducts.map(product => {
                   const onSale = product.salePrice && product.salePrice < product.price;
-                  const primaryImage = product.imageIds && product.imageIds.length > 0 ? placeholderImages.find(p => p.id === product.imageIds[0]) : null;
+                  const primaryImage = product.images?.[0] || (product.imageIds && product.imageIds.length > 0 ? placeholderImages.find(p => p.id === product.imageIds[0])?.imageUrl : null);
                   return (
                   <Link
                     key={product.id}
@@ -112,11 +100,10 @@ export function Search() {
                     <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md bg-muted">
                       {primaryImage ? (
                         <Image
-                          src={primaryImage.imageUrl}
+                          src={primaryImage}
                           alt={product.name}
                           fill
                           className="object-cover"
-                          data-ai-hint={primaryImage.imageHint}
                         />
                       ) : (
                         <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground text-xs">

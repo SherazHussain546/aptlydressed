@@ -1,20 +1,41 @@
 
-import { getProducts } from '@/lib/server-data';
+"use client";
+
+import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
+import { collection, query, orderBy } from "firebase/firestore";
 import { Shop } from '@/components/products/Shop';
 import type { Product } from '@/lib/types';
+import { useSearchParams } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
 
-type ShopPageProps = {
-  searchParams: { [key: string]: string | string[] | undefined };
-};
-
-// This is a Server Component, so it can receive searchParams as a prop
-export default async function ShopPage({ searchParams }: ShopPageProps) {
-  const products: Product[] = await getProducts();
+export default function ShopPage() {
+  const firestore = useFirestore();
+  const searchParams = useSearchParams();
   
-  // Extract specific search params on the server to avoid passing the searchParams object to the client.
-  const categoryParam = searchParams?.category as string | undefined;
-  const tagsParam = searchParams?.tags as string | undefined;
+  const productsQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return query(collection(firestore, "products"), orderBy("createdAt", "desc"));
+  }, [firestore]);
 
-  // Pass the extracted values down to the client component as simple props.
-  return <Shop allProducts={products} initialCategory={categoryParam} initialTags={tagsParam} />;
+  const { data: products, isLoading } = useCollection<Product>(productsQuery);
+
+  const categoryParam = searchParams.get('category') || undefined;
+  const tagsParam = searchParams.get('tags') || undefined;
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-20 flex flex-col items-center justify-center">
+        <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
+        <p className="text-muted-foreground font-headline text-xl">Loading Boutique...</p>
+      </div>
+    );
+  }
+
+  return (
+    <Shop 
+      allProducts={products || []} 
+      initialCategory={categoryParam} 
+      initialTags={tagsParam} 
+    />
+  );
 }
