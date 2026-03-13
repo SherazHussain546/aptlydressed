@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUser, useFirestore } from "@/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { useRouter } from "next/navigation";
@@ -21,6 +21,12 @@ export default function AddProductPage() {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (!isUserLoading && !user) {
+      router.push("/account");
+    }
+  }, [user, isUserLoading, router]);
+
   const [formData, setFormData] = useState({
     name: "",
     brand: "",
@@ -38,10 +44,7 @@ export default function AddProductPage() {
   });
 
   if (isUserLoading) return <div className="flex justify-center p-20"><Loader2 className="animate-spin" /></div>;
-  if (!user) {
-    router.push("/account");
-    return null;
-  }
+  if (!user) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,6 +1,7 @@
 
 "use client";
 
+import { useEffect } from "react";
 import { useUser, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
 import { collection, query, orderBy, doc, deleteDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
@@ -20,6 +21,12 @@ export default function AdminProductsPage() {
   const router = useRouter();
   const { toast } = useToast();
 
+  useEffect(() => {
+    if (!isUserLoading && !user) {
+      router.push("/account");
+    }
+  }, [user, isUserLoading, router]);
+
   const productsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
     return query(collection(firestore, "products"), orderBy("createdAt", "desc"));
@@ -28,10 +35,7 @@ export default function AdminProductsPage() {
   const { data: products, isLoading } = useCollection<Product>(productsQuery);
 
   if (isUserLoading) return <div className="flex justify-center p-20"><Loader2 className="animate-spin" /></div>;
-  if (!user) {
-    router.push("/account");
-    return null;
-  }
+  if (!user) return null;
 
   const handleDelete = async (productId: string, productName: string) => {
     if (!confirm(`Are you sure you want to delete "${productName}"?`)) return;
