@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Plus, Trash2, ExternalLink } from "lucide-react";
+import { Loader2, Plus, Trash2, ExternalLink, ShieldAlert } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import type { Product } from "@/lib/types";
@@ -32,14 +32,23 @@ export default function AdminProductsPage() {
   }, [user, isUserLoading, router]);
 
   const productsQuery = useMemoFirebase(() => {
-    if (!firestore) return null;
+    if (!firestore || !user || user.email !== ADMIN_EMAIL) return null;
     return query(collection(firestore, "products"), orderBy("createdAt", "desc"));
-  }, [firestore]);
+  }, [firestore, user?.email]);
 
   const { data: products, isLoading } = useCollection<Product>(productsQuery);
 
   if (isUserLoading) return <div className="flex justify-center p-20"><Loader2 className="animate-spin" /></div>;
-  if (!user || user.email !== ADMIN_EMAIL) return null;
+  if (!user || user.email !== ADMIN_EMAIL) {
+    return (
+      <div className="container mx-auto px-4 py-20 text-center">
+        <ShieldAlert className="h-16 w-16 text-destructive mx-auto mb-4" />
+        <h1 className="text-3xl font-headline mb-2">Access Denied</h1>
+        <p className="text-muted-foreground mb-6">You do not have administrative privileges to view this portal.</p>
+        <Button asChild><Link href="/account">Return to Account</Link></Button>
+      </div>
+    );
+  }
 
   const handleDelete = async (productId: string, productName: string) => {
     if (!confirm(`Are you sure you want to delete "${productName}"?`)) return;

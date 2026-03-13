@@ -18,6 +18,10 @@ import { doc, collection, query, orderBy } from "firebase/firestore";
 import type { UserProfile, Order } from "@/lib/types";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { ShieldCheck, LogOut, Package, User as UserIcon } from "lucide-react";
+import Link from "next/link";
+
+const ADMIN_EMAIL = "aptlydressed@synctech.ie";
 
 function OrderHistory({ userId }: { userId: string }) {
     const firestore = useFirestore();
@@ -32,7 +36,7 @@ function OrderHistory({ userId }: { userId: string }) {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Order History</CardTitle>
+                <CardTitle className="flex items-center gap-2"><Package className="h-5 w-5" /> Order History</CardTitle>
                 <CardDescription>View your past purchases.</CardDescription>
             </CardHeader>
             <CardContent>
@@ -93,6 +97,7 @@ function AccountDetails({ user, userProfile, isLoading }: { user: User, userProf
   };
   
   const displayName = userProfile?.firstname || user.displayName?.split(' ')[0] || user.email;
+  const isAdmin = user.email === ADMIN_EMAIL;
 
   if (isLoading) {
     return (
@@ -133,10 +138,26 @@ function AccountDetails({ user, userProfile, isLoading }: { user: User, userProf
      <div>
         <h1 className="text-4xl font-headline mb-8">Welcome, {displayName}</h1>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-1 space-y-8">
+                {isAdmin && (
+                  <Card className="border-primary/50 bg-primary/5">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <ShieldCheck className="h-5 w-5 text-primary" /> Admin Portal
+                      </CardTitle>
+                      <CardDescription>Manage the boutique inventory.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Button asChild className="w-full">
+                        <Link href="/admin/products">Go to Product Management</Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                )}
+
                 <Card>
                 <CardHeader>
-                    <CardTitle>Your Details</CardTitle>
+                    <CardTitle className="flex items-center gap-2"><UserIcon className="h-5 w-5" /> Your Details</CardTitle>
                     <CardDescription>
                     Your personal information.
                     </CardDescription>
@@ -160,8 +181,8 @@ function AccountDetails({ user, userProfile, isLoading }: { user: User, userProf
                     <p>
                     <strong>Email:</strong> {user.email}
                     </p>
-                    <Button onClick={handleSignOut} variant="destructive">
-                    Sign Out
+                    <Button onClick={handleSignOut} variant="destructive" className="w-full">
+                      <LogOut className="mr-2 h-4 w-4" /> Sign Out
                     </Button>
                 </CardContent>
                 </Card>
@@ -219,5 +240,3 @@ export default function AccountPage() {
     </div>
   );
 }
-
-    
