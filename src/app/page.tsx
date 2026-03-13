@@ -56,8 +56,8 @@ export default function Home() {
     imageId: collectionImageMapping[category] || "collection-essentials",
   }));
 
-  const latestPost = blogPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
-  const latestPostImage = placeholderImages.find(p => p.id === latestPost.imageId);
+  const latestPost = [...blogPosts].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+  const latestPostImage = latestPost ? placeholderImages.find(p => p.id === latestPost.imageId) : null;
 
   return (
     <div className="space-y-16 md:space-y-24">
@@ -189,7 +189,7 @@ export default function Home() {
             ))}
           </div>
         )}
-      </section> section
+      </section>
     </div>
   );
 }
