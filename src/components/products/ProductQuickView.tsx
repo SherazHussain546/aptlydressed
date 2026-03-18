@@ -43,9 +43,9 @@ export function ProductQuickView({ product, isOpen, onClose }: ProductQuickViewP
           <DialogTitle>{product.name}</DialogTitle>
         </DialogHeader>
         
-        {/* Left Side: Fixed Image Gallery */}
-        <div className="relative w-full md:w-1/2 h-[40vh] md:h-full bg-muted border-r border-border/50">
-          <Carousel className="w-full h-full">
+        {/* Left Side: Fixed Image Gallery Section */}
+        <div className="relative w-full md:w-1/2 h-[40vh] md:h-full bg-muted border-r border-border/50 overflow-hidden flex items-center justify-center">
+          <Carousel className="w-full h-full" opts={{ loop: true, align: 'start' }}>
             <CarouselContent className="h-full m-0">
               {allImages.length > 0 ? allImages.map((imageUrl, index) => (
                 <CarouselItem key={index} className="p-0 h-full">
@@ -61,10 +61,8 @@ export function ProductQuickView({ product, isOpen, onClose }: ProductQuickViewP
                   </div>
                 </CarouselItem>
               )) : (
-                <CarouselItem className="flex items-center justify-center bg-muted h-full">
-                  <div className="w-full h-full flex items-center justify-center">
-                      <p className="text-muted-foreground font-headline text-xl">No Image Available</p>
-                  </div>
+                <CarouselItem className="h-full flex items-center justify-center bg-muted">
+                  <p className="text-muted-foreground font-headline text-xl">No Image Available</p>
                 </CarouselItem>
               )}
             </CarouselContent>
@@ -76,7 +74,7 @@ export function ProductQuickView({ product, isOpen, onClose }: ProductQuickViewP
             )}
           </Carousel>
           
-          <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
+          <div className="absolute top-4 left-4 flex flex-col gap-2 z-10 pointer-events-none">
             {onSale && (
               <Badge variant="destructive" className="font-bold px-3 py-1 shadow-md">SALE</Badge>
             )}
@@ -88,9 +86,9 @@ export function ProductQuickView({ product, isOpen, onClose }: ProductQuickViewP
           </div>
         </div>
 
-        {/* Right Side: Scrollable Details */}
+        {/* Right Side: Scrollable Details Section */}
         <div className="w-full md:w-1/2 flex flex-col h-full overflow-hidden bg-background">
-          <div className="flex-grow overflow-y-auto p-6 md:p-12">
+          <div className="flex-grow overflow-y-auto p-6 md:p-12 scrollbar-thin scrollbar-thumb-muted">
             <div className="mb-6">
               <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">{product.brand}</p>
               <h2 className="text-3xl md:text-5xl font-headline leading-tight">{product.name}</h2>
@@ -135,7 +133,7 @@ export function ProductQuickView({ product, isOpen, onClose }: ProductQuickViewP
             )}
           </div>
 
-          {/* Action Area: Fixed at bottom */}
+          {/* Fixed Footer Action Area */}
           <div className="p-6 md:px-12 border-t border-border/50 bg-background/95 backdrop-blur-sm space-y-4">
             <Button size="lg" className="w-full h-14 text-lg font-headline tracking-wide rounded-none" asChild>
               <Link href={product.affiliateUrl} target="_blank" onClick={() => onClose()}>
