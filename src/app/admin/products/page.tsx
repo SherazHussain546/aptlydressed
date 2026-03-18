@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Plus, Trash2, ExternalLink, ShieldAlert } from "lucide-react";
+import { Loader2, Plus, Trash2, ExternalLink, ShieldAlert, Pencil } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import type { Product } from "@/lib/types";
@@ -105,6 +105,7 @@ export default function AdminProductsPage() {
                   const imageUrl = product.images?.[0] || "";
                   // Robust link using slug or ID
                   const productPath = `/products/${product.slug || product.id}`;
+                  const editPath = `/admin/products/${product.id}/edit`;
                   
                   return (
                     <TableRow key={product.id}>
@@ -131,12 +132,17 @@ export default function AdminProductsPage() {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Button variant="ghost" size="icon" asChild>
+                          <Button variant="ghost" size="icon" asChild title="View Product">
                             <Link href={productPath} target="_blank">
                               <ExternalLink className="h-4 w-4" />
                             </Link>
                           </Button>
-                          <Button variant="ghost" size="icon" onClick={() => handleDelete(product.id, product.name)} className="text-destructive">
+                          <Button variant="ghost" size="icon" asChild title="Edit Product">
+                            <Link href={editPath}>
+                              <Pencil className="h-4 w-4 text-blue-600" />
+                            </Link>
+                          </Button>
+                          <Button variant="ghost" size="icon" onClick={() => handleDelete(product.id, product.name)} className="text-destructive" title="Delete Product">
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
