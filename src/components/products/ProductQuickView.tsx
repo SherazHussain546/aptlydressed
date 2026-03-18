@@ -37,19 +37,19 @@ export function ProductQuickView({ product, isOpen, onClose }: ProductQuickViewP
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-4xl w-[95vw] h-[90vh] md:h-auto overflow-y-auto p-0 gap-0 border-none bg-background">
+      <DialogContent className="max-w-4xl w-[95vw] max-h-[90vh] overflow-y-auto p-0 gap-0 border-none bg-background scrollbar-hide">
         <DialogHeader className="sr-only">
           <DialogTitle>{product.name}</DialogTitle>
         </DialogHeader>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-0 h-full">
           {/* Image Section */}
-          <div className="relative bg-muted aspect-[4/5] md:aspect-auto">
+          <div className="relative bg-muted aspect-[4/5] md:aspect-auto flex items-center justify-center overflow-hidden">
             <Carousel className="w-full h-full">
               <CarouselContent className="h-full m-0">
                 {allImages.length > 0 ? allImages.map((imageUrl, index) => (
-                  <CarouselItem key={index} className="p-0 h-full">
-                    <div className="relative w-full h-full min-h-[400px]">
+                  <CarouselItem key={index} className="p-0 h-full flex items-center justify-center">
+                    <div className="relative w-full h-full min-h-[300px] md:min-h-[500px]">
                       <Image
                         src={imageUrl}
                         alt={`${product.name} - view ${index + 1}`}
@@ -61,25 +61,25 @@ export function ProductQuickView({ product, isOpen, onClose }: ProductQuickViewP
                     </div>
                   </CarouselItem>
                 )) : (
-                  <CarouselItem className="flex items-center justify-center bg-muted h-full">
+                  <CarouselItem className="flex items-center justify-center bg-muted h-full min-h-[300px]">
                     <p className="text-muted-foreground font-headline text-xl">No Image Available</p>
                   </CarouselItem>
                 )}
               </CarouselContent>
               {allImages.length > 1 && (
                 <>
-                  <CarouselPrevious className="left-4 opacity-70 hover:opacity-100 transition-opacity" />
-                  <CarouselNext className="right-4 opacity-70 hover:opacity-100 transition-opacity" />
+                  <CarouselPrevious className="left-4 opacity-70 hover:opacity-100 transition-opacity bg-white/80 hover:bg-white border-none shadow-sm" />
+                  <CarouselNext className="right-4 opacity-70 hover:opacity-100 transition-opacity bg-white/80 hover:bg-white border-none shadow-sm" />
                 </>
               )}
             </Carousel>
             
             <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
               {onSale && (
-                <Badge variant="destructive" className="font-bold">SALE</Badge>
+                <Badge variant="destructive" className="font-bold px-3 py-1 shadow-sm">SALE</Badge>
               )}
               {product.tags?.map(tag => (
-                <Badge key={tag} className="bg-primary text-primary-foreground border-none">
+                <Badge key={tag} className="bg-primary text-primary-foreground border-none px-3 py-1 shadow-sm">
                   {tag}
                 </Badge>
               ))}
@@ -87,41 +87,43 @@ export function ProductQuickView({ product, isOpen, onClose }: ProductQuickViewP
           </div>
 
           {/* Details Section */}
-          <div className="p-6 md:p-8 flex flex-col h-full">
+          <div className="p-6 md:p-10 flex flex-col justify-center bg-background h-full">
             <div className="flex-grow">
-              <p className="text-xs font-bold text-primary uppercase tracking-widest mb-1">{product.brand}</p>
-              <h2 className="text-3xl md:text-4xl font-headline leading-tight mb-4">{product.name}</h2>
+              <div className="mb-6">
+                <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">{product.brand}</p>
+                <h2 className="text-3xl md:text-4xl font-headline leading-tight">{product.name}</h2>
+              </div>
               
               <div className="flex items-baseline gap-3 mb-6">
                 {onSale ? (
                   <>
-                    <p className="text-2xl text-destructive font-bold">${product.salePrice?.toFixed(2)}</p>
-                    <p className="text-lg text-muted-foreground line-through decoration-primary/30">${product.price.toFixed(2)}</p>
+                    <p className="text-3xl text-destructive font-bold">${product.salePrice?.toFixed(2)}</p>
+                    <p className="text-xl text-muted-foreground line-through decoration-primary/30">${product.price.toFixed(2)}</p>
                   </>
                 ) : (
-                  <p className="text-2xl text-foreground font-medium">${product.price.toFixed(2)}</p>
+                  <p className="text-3xl text-foreground font-medium">${product.price.toFixed(2)}</p>
                 )}
               </div>
 
-              <div className="flex items-center mb-6 pb-4 border-b border-border/50">
+              <div className="flex items-center mb-8 pb-6 border-b border-border/50">
                 <div className="flex items-center">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className={`h-4 w-4 ${i < Math.round(product.rating) ? 'text-primary fill-primary' : 'text-gray-200'}`} />
                   ))}
                 </div>
-                <p className="ml-3 text-sm text-muted-foreground">({product.reviewCount} reviews)</p>
+                <p className="ml-3 text-sm text-muted-foreground font-medium">({product.reviewCount} verified reviews)</p>
               </div>
 
-              <div className="prose prose-sm max-w-none text-muted-foreground line-clamp-6 mb-8">
-                <p>{product.description}</p>
+              <div className="prose prose-sm max-w-none text-foreground/80 mb-10 leading-relaxed">
+                <p className="line-clamp-6 md:line-clamp-none">{product.description}</p>
               </div>
 
               {product.details && product.details.length > 0 && (
-                <div className="mb-8">
-                  <h4 className="text-xs font-bold uppercase tracking-wider mb-2">Specifications</h4>
-                  <ul className="grid grid-cols-1 gap-1">
-                    {product.details.slice(0, 4).map((detail, i) => (
-                      <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
+                <div className="mb-10">
+                  <h4 className="text-xs font-bold uppercase tracking-widest mb-4 text-foreground/60">Product Highlights</h4>
+                  <ul className="grid grid-cols-1 gap-3">
+                    {product.details.slice(0, 5).map((detail, i) => (
+                      <li key={i} className="text-sm text-muted-foreground flex items-start gap-3">
                         <span className="h-1.5 w-1.5 rounded-full bg-primary/40 mt-1.5 flex-shrink-0" />
                         {detail}
                       </li>
@@ -131,15 +133,15 @@ export function ProductQuickView({ product, isOpen, onClose }: ProductQuickViewP
               )}
             </div>
 
-            <div className="space-y-4">
-              <Button size="lg" className="w-full h-14 text-lg font-headline tracking-wide" asChild>
+            <div className="space-y-4 pt-6 border-t border-border/50">
+              <Button size="lg" className="w-full h-14 text-lg font-headline tracking-wide rounded-none" asChild>
                 <Link href={product.affiliateUrl} target="_blank" onClick={() => onClose()}>
                   Shop on Partner Site <ExternalLink className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
-              <p className="text-[10px] text-center text-muted-foreground italic px-4 leading-tight">
-                Clicking will redirect you to our trusted partner brand to securely complete your purchase.
-              </p>
+              <div className="text-[10px] text-center text-muted-foreground italic px-4 leading-relaxed">
+                You will be redirected to our trusted partner brand to securely complete your purchase.
+              </div>
             </div>
           </div>
         </div>
