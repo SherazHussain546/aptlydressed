@@ -37,19 +37,19 @@ export function ProductQuickView({ product, isOpen, onClose }: ProductQuickViewP
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-4xl w-[95vw] max-h-[90vh] overflow-y-auto p-0 gap-0 border-none bg-background scrollbar-hide">
+      <DialogContent className="max-w-5xl w-[95vw] max-h-[90vh] overflow-y-auto p-0 gap-0 border-none bg-background scrollbar-hide">
         <DialogHeader className="sr-only">
           <DialogTitle>{product.name}</DialogTitle>
         </DialogHeader>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-0 h-full">
-          {/* Image Section */}
-          <div className="relative bg-muted aspect-[4/5] md:aspect-auto flex items-center justify-center overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-0 min-h-full">
+          {/* Image Section - Locked to a high-quality aspect ratio */}
+          <div className="relative bg-muted overflow-hidden flex flex-col justify-center items-center h-full">
             <Carousel className="w-full h-full">
               <CarouselContent className="h-full m-0">
                 {allImages.length > 0 ? allImages.map((imageUrl, index) => (
-                  <CarouselItem key={index} className="p-0 h-full flex items-center justify-center">
-                    <div className="relative w-full h-full min-h-[300px] md:min-h-[500px]">
+                  <CarouselItem key={index} className="p-0 h-full">
+                    <div className="relative w-full h-full aspect-[4/5] md:aspect-square lg:aspect-[4/5] flex items-center justify-center">
                       <Image
                         src={imageUrl}
                         alt={`${product.name} - view ${index + 1}`}
@@ -61,15 +61,17 @@ export function ProductQuickView({ product, isOpen, onClose }: ProductQuickViewP
                     </div>
                   </CarouselItem>
                 )) : (
-                  <CarouselItem className="flex items-center justify-center bg-muted h-full min-h-[300px]">
-                    <p className="text-muted-foreground font-headline text-xl">No Image Available</p>
+                  <CarouselItem className="flex items-center justify-center bg-muted h-full">
+                    <div className="aspect-[4/5] flex items-center justify-center">
+                        <p className="text-muted-foreground font-headline text-xl">No Image Available</p>
+                    </div>
                   </CarouselItem>
                 )}
               </CarouselContent>
               {allImages.length > 1 && (
                 <>
-                  <CarouselPrevious className="left-4 opacity-70 hover:opacity-100 transition-opacity bg-white/80 hover:bg-white border-none shadow-sm" />
-                  <CarouselNext className="right-4 opacity-70 hover:opacity-100 transition-opacity bg-white/80 hover:bg-white border-none shadow-sm" />
+                  <CarouselPrevious className="left-4 opacity-70 hover:opacity-100 transition-opacity bg-white/80 hover:bg-white border-none shadow-sm h-10 w-10" />
+                  <CarouselNext className="right-4 opacity-70 hover:opacity-100 transition-opacity bg-white/80 hover:bg-white border-none shadow-sm h-10 w-10" />
                 </>
               )}
             </Carousel>
@@ -86,12 +88,12 @@ export function ProductQuickView({ product, isOpen, onClose }: ProductQuickViewP
             </div>
           </div>
 
-          {/* Details Section */}
-          <div className="p-6 md:p-10 flex flex-col justify-center bg-background h-full">
+          {/* Details Section - Scrollable content area */}
+          <div className="p-6 md:p-12 flex flex-col bg-background border-l border-border/50">
             <div className="flex-grow">
               <div className="mb-6">
                 <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">{product.brand}</p>
-                <h2 className="text-3xl md:text-4xl font-headline leading-tight">{product.name}</h2>
+                <h2 className="text-3xl md:text-5xl font-headline leading-tight">{product.name}</h2>
               </div>
               
               <div className="flex items-baseline gap-3 mb-6">
@@ -115,14 +117,14 @@ export function ProductQuickView({ product, isOpen, onClose }: ProductQuickViewP
               </div>
 
               <div className="prose prose-sm max-w-none text-foreground/80 mb-10 leading-relaxed">
-                <p className="line-clamp-6 md:line-clamp-none">{product.description}</p>
+                <p className="text-base">{product.description}</p>
               </div>
 
               {product.details && product.details.length > 0 && (
                 <div className="mb-10">
                   <h4 className="text-xs font-bold uppercase tracking-widest mb-4 text-foreground/60">Product Highlights</h4>
                   <ul className="grid grid-cols-1 gap-3">
-                    {product.details.slice(0, 5).map((detail, i) => (
+                    {product.details.map((detail, i) => (
                       <li key={i} className="text-sm text-muted-foreground flex items-start gap-3">
                         <span className="h-1.5 w-1.5 rounded-full bg-primary/40 mt-1.5 flex-shrink-0" />
                         {detail}
@@ -133,7 +135,7 @@ export function ProductQuickView({ product, isOpen, onClose }: ProductQuickViewP
               )}
             </div>
 
-            <div className="space-y-4 pt-6 border-t border-border/50">
+            <div className="space-y-4 pt-8 border-t border-border/50 sticky bottom-0 bg-background/95 backdrop-blur-sm -mx-6 px-6 md:-mx-12 md:px-12 pb-4">
               <Button size="lg" className="w-full h-14 text-lg font-headline tracking-wide rounded-none" asChild>
                 <Link href={product.affiliateUrl} target="_blank" onClick={() => onClose()}>
                   Shop on Partner Site <ExternalLink className="ml-2 h-5 w-5" />
