@@ -71,31 +71,32 @@ function CompleteTheLook({ product, allProducts }: { product: Product, allProduc
 
 export default function ProductPage() {
   const params = useParams();
-  const slug = params?.slug as string;
+  const slugOrId = params?.slug as string;
   const firestore = useFirestore();
 
-  // Try fetching by slug field
-  const productQuery = useMemoFirebase(() => {
-    if (!firestore || !slug) return null;
-    return query(collection(firestore, "products"), where("slug", "==", slug), limit(1));
-  }, [firestore, slug]);
+  // 1. Try fetching by slug field
+  const productBySlugQuery = useMemoFirebase(() => {
+    if (!firestore || !slugOrId) return null;
+    return query(collection(firestore, "products"), where("slug", "==", slugOrId), limit(1));
+  }, [firestore, slugOrId]);
 
-  // Fallback: Try fetching by Document ID
-  const productDocRef = useMemoFirebase(() => {
-    if (!firestore || !slug) return null;
-    return doc(firestore, "products", slug);
-  }, [firestore, slug]);
+  // 2. Fallback: Try fetching by Document ID directly
+  const productByIdRef = useMemoFirebase(() => {
+    if (!firestore || !slugOrId) return null;
+    return doc(firestore, "products", slugOrId);
+  }, [firestore, slugOrId]);
 
   const allProductsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
     return collection(firestore, "products");
   }, [firestore]);
 
-  const { data: productBySlug, isLoading: loadingSlug } = useCollection<Product>(productQuery);
-  const { data: productById, isLoading: loadingId } = useDoc<Product>(productDocRef);
+  const { data: slugResults, isLoading: loadingSlug } = useCollection<Product>(productBySlugQuery);
+  const { data: idResult, isLoading: loadingId } = useDoc<Product>(productByIdRef);
   const { data: allProducts } = useCollection<Product>(allProductsQuery);
 
-  if (loadingSlug && loadingId) {
+  // We must wait until both lookup methods have finished trying
+  if (loadingSlug || loadingId) {
     return (
       <div className="container mx-auto px-4 py-20 flex justify-center">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -103,8 +104,8 @@ export default function ProductPage() {
     );
   }
 
-  // Determine the product (either by slug query result or direct ID lookup)
-  const product = (productBySlug && productBySlug.length > 0) ? productBySlug[0] : productById;
+  // Determine the final product (either the slug match or the direct ID lookup)
+  const product = (slugResults && slugResults.length > 0) ? slugResults[0] : idResult;
 
   if (!product) {
     notFound();

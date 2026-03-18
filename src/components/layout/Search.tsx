@@ -90,10 +90,13 @@ export function Search() {
                 {filteredProducts.map(product => {
                   const onSale = product.salePrice && product.salePrice < product.price;
                   const primaryImage = product.images?.[0] || (product.imageIds && product.imageIds.length > 0 ? placeholderImages.find(p => p.id === product.imageIds[0])?.imageUrl : null);
+                  // Use robust slug-or-id linking
+                  const productPath = `/products/${product.slug || product.id}`;
+                  
                   return (
                   <Link
                     key={product.id}
-                    href={`/products/${product.slug}`}
+                    href={productPath}
                     className="flex items-center gap-4 p-2 -m-2 rounded-lg hover:bg-muted"
                     onClick={handleLinkClick}
                   >
