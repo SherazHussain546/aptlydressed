@@ -1,7 +1,8 @@
+
 "use client";
 
 import Image from 'next/image';
-import { Star, ExternalLink, X } from 'lucide-react';
+import { Star, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
@@ -37,19 +38,19 @@ export function ProductQuickView({ product, isOpen, onClose }: ProductQuickViewP
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-5xl w-[95vw] max-h-[90vh] overflow-y-auto p-0 gap-0 border-none bg-background scrollbar-hide">
+      <DialogContent className="max-w-6xl w-[95vw] h-[90vh] max-h-[90vh] p-0 gap-0 border-none bg-background overflow-hidden">
         <DialogHeader className="sr-only">
           <DialogTitle>{product.name}</DialogTitle>
         </DialogHeader>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-0 min-h-full">
-          {/* Image Section - Locked to a high-quality aspect ratio */}
-          <div className="relative bg-muted overflow-hidden flex flex-col justify-center items-center h-full">
+        <div className="flex flex-col md:flex-row h-full w-full">
+          {/* Image Section - Fixed and filling space */}
+          <div className="relative w-full md:w-1/2 h-[40vh] md:h-full bg-muted flex-shrink-0 border-r border-border/50">
             <Carousel className="w-full h-full">
               <CarouselContent className="h-full m-0">
                 {allImages.length > 0 ? allImages.map((imageUrl, index) => (
                   <CarouselItem key={index} className="p-0 h-full">
-                    <div className="relative w-full h-full aspect-[4/5] md:aspect-square lg:aspect-[4/5] flex items-center justify-center">
+                    <div className="relative w-full h-full">
                       <Image
                         src={imageUrl}
                         alt={`${product.name} - view ${index + 1}`}
@@ -62,7 +63,7 @@ export function ProductQuickView({ product, isOpen, onClose }: ProductQuickViewP
                   </CarouselItem>
                 )) : (
                   <CarouselItem className="flex items-center justify-center bg-muted h-full">
-                    <div className="aspect-[4/5] flex items-center justify-center">
+                    <div className="w-full h-full flex items-center justify-center">
                         <p className="text-muted-foreground font-headline text-xl">No Image Available</p>
                     </div>
                   </CarouselItem>
@@ -78,19 +79,19 @@ export function ProductQuickView({ product, isOpen, onClose }: ProductQuickViewP
             
             <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
               {onSale && (
-                <Badge variant="destructive" className="font-bold px-3 py-1 shadow-sm">SALE</Badge>
+                <Badge variant="destructive" className="font-bold px-3 py-1 shadow-md">SALE</Badge>
               )}
               {product.tags?.map(tag => (
-                <Badge key={tag} className="bg-primary text-primary-foreground border-none px-3 py-1 shadow-sm">
+                <Badge key={tag} className="bg-primary text-primary-foreground border-none px-3 py-1 shadow-md">
                   {tag}
                 </Badge>
               ))}
             </div>
           </div>
 
-          {/* Details Section - Scrollable content area */}
-          <div className="p-6 md:p-12 flex flex-col bg-background border-l border-border/50">
-            <div className="flex-grow">
+          {/* Details Section - Independently Scrollable */}
+          <div className="flex flex-col flex-grow overflow-hidden h-full">
+            <div className="flex-grow overflow-y-auto p-6 md:p-12 scrollbar-hide">
               <div className="mb-6">
                 <p className="text-xs font-bold text-primary uppercase tracking-widest mb-2">{product.brand}</p>
                 <h2 className="text-3xl md:text-5xl font-headline leading-tight">{product.name}</h2>
@@ -135,7 +136,8 @@ export function ProductQuickView({ product, isOpen, onClose }: ProductQuickViewP
               )}
             </div>
 
-            <div className="space-y-4 pt-8 border-t border-border/50 sticky bottom-0 bg-background/95 backdrop-blur-sm -mx-6 px-6 md:-mx-12 md:px-12 pb-4">
+            {/* Fixed Action Area */}
+            <div className="space-y-4 p-6 md:px-12 border-t border-border/50 bg-background/95 backdrop-blur-sm">
               <Button size="lg" className="w-full h-14 text-lg font-headline tracking-wide rounded-none" asChild>
                 <Link href={product.affiliateUrl} target="_blank" onClick={() => onClose()}>
                   Shop on Partner Site <ExternalLink className="ml-2 h-5 w-5" />
