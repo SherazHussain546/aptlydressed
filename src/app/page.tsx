@@ -1,6 +1,6 @@
-
 "use client";
 
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
@@ -11,6 +11,7 @@ import { blogPosts, placeholderImages } from '@/lib/data';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Product } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ProductQuickView } from '@/components/products/ProductQuickView';
 
 const heroImage = placeholderImages.find(p => p.id === 'hero-1');
 
@@ -30,6 +31,7 @@ function ProductSectionSkeleton() {
 
 export default function Home() {
   const firestore = useFirestore();
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const productsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -91,7 +93,7 @@ export default function Home() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {newArrivals.map(product => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product.id} product={product} onClick={setSelectedProduct} />
             ))}
           </div>
         )}
@@ -185,11 +187,18 @@ export default function Home() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {featuredProducts.map(product => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product.id} product={product} onClick={setSelectedProduct} />
             ))}
           </div>
         )}
       </section>
+
+      {/* Quick View Modal */}
+      <ProductQuickView 
+        product={selectedProduct} 
+        isOpen={!!selectedProduct} 
+        onClose={() => setSelectedProduct(null)} 
+      />
     </div>
   );
 }

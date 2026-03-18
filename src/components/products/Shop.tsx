@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useMemo, useEffect } from 'react';
@@ -16,6 +15,7 @@ import {
 } from "@/components/ui/pagination"
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ProductQuickView } from './ProductQuickView';
 
 const PRODUCTS_PER_PAGE = 12;
 
@@ -56,6 +56,7 @@ export function Shop({ allProducts, initialCategory, initialTags }: ShopProps) {
   
   const [currentPage, setCurrentPage] = useState(1);
   const [mounted, setMounted] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -90,7 +91,7 @@ export function Shop({ allProducts, initialCategory, initialTags }: ShopProps) {
       filtered.sort((a, b) => (b.salePrice || b.price) - (a.salePrice || a.price));
     } else if (filters.sortBy === 'newest') {
       // In a real app, we'd sort by createdAt timestamp
-      filtered.sort((a, b) => (b.id > a.id ? 1 : -1));
+      filtered.sort((a, b) => (a.id > b.id ? 1 : -1));
     }
 
     return filtered;
@@ -169,7 +170,7 @@ export function Shop({ allProducts, initialCategory, initialTags }: ShopProps) {
             {paginatedProducts.length > 0 ? (
                 <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8">
                     {paginatedProducts.map(product => (
-                    <ProductCard key={product.id} product={product} />
+                    <ProductCard key={product.id} product={product} onClick={setSelectedProduct} />
                     ))}
                 </div>
             ) : (
@@ -218,6 +219,12 @@ export function Shop({ allProducts, initialCategory, initialTags }: ShopProps) {
             </Pagination>
           )}
         </main>
+
+        <ProductQuickView 
+          product={selectedProduct} 
+          isOpen={!!selectedProduct} 
+          onClose={() => setSelectedProduct(null)} 
+        />
     </div>
   );
 }

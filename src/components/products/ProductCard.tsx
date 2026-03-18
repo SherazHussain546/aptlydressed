@@ -1,4 +1,3 @@
-
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -9,9 +8,10 @@ import { placeholderImages } from '@/lib/data';
 
 interface ProductCardProps {
   product: Product;
+  onClick?: (product: Product) => void;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, onClick }: ProductCardProps) {
   // Support both direct URLs and placeholder IDs
   const directImageUrl = product.images && product.images.length > 0 ? product.images[0] : null;
   const placeholderImage = product.imageIds && product.imageIds.length > 0
@@ -27,8 +27,19 @@ export function ProductCard({ product }: ProductCardProps) {
   // Use slug if available, otherwise fallback to ID
   const productPath = `/products/${product.slug || product.id}`;
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    if (onClick) {
+      e.preventDefault();
+      onClick(product);
+    }
+  };
+
   return (
-    <Link href={productPath} className="group">
+    <Link 
+      href={productPath} 
+      className="group"
+      onClick={handleCardClick}
+    >
       <div className="overflow-hidden rounded-lg border bg-card shadow-sm transition-shadow hover:shadow-md">
         <div className="relative aspect-[4/5] bg-muted">
           {imageUrl ? (
