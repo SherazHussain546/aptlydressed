@@ -1,8 +1,8 @@
 
 "use client";
 
-import { useFirestore, useCollection, useMemoFirebase } from "@/firebase";
-import { collection, query, where, limit } from "firebase/firestore";
+import { useFirestore, useCollection, useDoc, useMemoFirebase } from "@/firebase";
+import { collection, query, where, limit, doc } from "firebase/firestore";
 import Image from 'next/image';
 import { useParams, notFound } from 'next/navigation';
 import { Star, ExternalLink, Loader2 } from 'lucide-react';
@@ -70,12 +70,20 @@ function CompleteTheLook({ product, allProducts }: { product: Product, allProduc
 }
 
 export default function ProductPage() {
-  const { slug } = useParams();
+  const params = useParams();
+  const slug = params?.slug as string;
   const firestore = useFirestore();
 
+  // Try fetching by slug field
   const productQuery = useMemoFirebase(() => {
     if (!firestore || !slug) return null;
     return query(collection(firestore, "products"), where("slug", "==", slug), limit(1));
+  }, [firestore, slug]);
+
+  // Fallback: Try fetching by Document ID
+  const productDocRef = useMemoFirebase(() => {
+    if (!firestore || !slug) return null;
+    return doc(firestore, "products", slug);
   }, [firestore, slug]);
 
   const allProductsQuery = useMemoFirebase(() => {
@@ -83,10 +91,11 @@ export default function ProductPage() {
     return collection(firestore, "products");
   }, [firestore]);
 
-  const { data: productData, isLoading: productLoading } = useCollection<Product>(productQuery);
+  const { data: productBySlug, isLoading: loadingSlug } = useCollection<Product>(productQuery);
+  const { data: productById, isLoading: loadingId } = useDoc<Product>(productDocRef);
   const { data: allProducts } = useCollection<Product>(allProductsQuery);
 
-  if (productLoading) {
+  if (loadingSlug && loadingId) {
     return (
       <div className="container mx-auto px-4 py-20 flex justify-center">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -94,7 +103,8 @@ export default function ProductPage() {
     );
   }
 
-  const product = productData?.[0];
+  // Determine the product (either by slug query result or direct ID lookup)
+  const product = (productBySlug && productBySlug.length > 0) ? productBySlug[0] : productById;
 
   if (!product) {
     notFound();

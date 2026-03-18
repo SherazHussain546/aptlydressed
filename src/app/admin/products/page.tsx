@@ -103,6 +103,9 @@ export default function AdminProductsPage() {
               <TableBody>
                 {products.map(product => {
                   const imageUrl = product.images?.[0] || "";
+                  // Robust link using slug or ID
+                  const productPath = `/products/${product.slug || product.id}`;
+                  
                   return (
                     <TableRow key={product.id}>
                       <TableCell>
@@ -129,7 +132,7 @@ export default function AdminProductsPage() {
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
                           <Button variant="ghost" size="icon" asChild>
-                            <Link href={`/products/${product.slug}`} target="_blank">
+                            <Link href={productPath} target="_blank">
                               <ExternalLink className="h-4 w-4" />
                             </Link>
                           </Button>

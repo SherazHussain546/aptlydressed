@@ -55,16 +55,19 @@ export default function AddProductPage() {
     setLoading(true);
 
     try {
+      const finalSlug = formData.slug || formData.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+      
       const productData = {
         ...formData,
+        slug: finalSlug,
         price: parseFloat(formData.price),
         salePrice: formData.salePrice ? parseFloat(formData.salePrice) : null,
-        tags: formData.tags.split(",").map(t => t.trim()),
-        sizes: formData.sizes.split(",").map(s => s.trim()),
-        details: formData.details.split(",").map(d => d.trim()),
+        tags: formData.tags.split(",").map(t => t.trim()).filter(Boolean),
+        sizes: formData.sizes.split(",").map(s => s.trim()).filter(Boolean),
+        details: formData.details.split(",").map(d => d.trim()).filter(Boolean),
         colors: formData.colors.split(",").map(c => {
           const [name, hex] = c.split(":");
-          return { name: name?.trim(), hex: hex?.trim() || "#000000" };
+          return { name: name?.trim() || "Color", hex: hex?.trim() || "#000000" };
         }),
         images: formData.imageUrl.split(",").map(url => url.trim()).filter(Boolean),
         rating: 5,
@@ -94,12 +97,16 @@ export default function AddProductPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-      // Auto-generate slug from name
-      slug: name === "name" ? value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") : prev.slug
-    }));
+    setFormData(prev => {
+      const updates: any = { [name]: value };
+      
+      // Auto-generate slug from name only if name changed and slug was empty or matched previous name
+      if (name === "name") {
+        updates.slug = value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+      }
+      
+      return { ...prev, ...updates };
+    });
   };
 
   return (
@@ -124,6 +131,11 @@ export default function AddProductPage() {
                 <Label htmlFor="brand">Brand</Label>
                 <Input id="brand" name="brand" value={formData.brand} onChange={handleChange} required placeholder="Everlane" />
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="slug">URL Slug (Generated automatically)</Label>
+              <Input id="slug" name="slug" value={formData.slug} onChange={handleChange} placeholder="the-elegant-midi" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

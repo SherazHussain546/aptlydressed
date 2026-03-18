@@ -24,8 +24,11 @@ export function ProductCard({ product }: ProductCardProps) {
 
   const onSale = product.salePrice && product.salePrice < product.price;
 
+  // Use slug if available, otherwise fallback to ID
+  const productPath = `/products/${product.slug || product.id}`;
+
   return (
-    <Link href={`/products/${product.slug}`} className="group">
+    <Link href={productPath} className="group">
       <div className="overflow-hidden rounded-lg border bg-card shadow-sm transition-shadow hover:shadow-md">
         <div className="relative aspect-[4/5] bg-muted">
           {imageUrl ? (

@@ -11,6 +11,10 @@
           "type": "string",
           "description": "Unique identifier for the product."
         },
+        "slug": {
+          "type": "string",
+          "description": "URL-friendly version of the product name."
+        },
         "name": {
           "type": "string",
           "description": "Name of the product."
@@ -297,5 +301,3 @@
     }
   }
 }
-
-    
