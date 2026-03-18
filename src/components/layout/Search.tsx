@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -119,11 +120,11 @@ export function Search() {
                         <div className="mt-1 flex items-baseline gap-2">
                           {onSale ? (
                               <>
-                                  <p className="text-sm text-destructive font-semibold">${product.salePrice?.toFixed(2)}</p>
-                                  <p className="text-xs text-muted-foreground line-through">${product.price.toFixed(2)}</p>
+                                  <p className="text-sm text-destructive font-semibold">€{product.salePrice?.toFixed(2)}</p>
+                                  <p className="text-xs text-muted-foreground line-through">€{product.price.toFixed(2)}</p>
                               </>
                           ) : (
-                              <p className="text-sm text-muted-foreground">${product.price.toFixed(2)}</p>
+                              <p className="text-sm text-muted-foreground">€{product.price.toFixed(2)}</p>
                           )}
                         </div>
                       </div>

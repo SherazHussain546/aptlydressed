@@ -140,11 +140,11 @@ export default function AddProductPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="price">Regular Price ($)</Label>
+                <Label htmlFor="price">Regular Price (€)</Label>
                 <Input id="price" name="price" type="number" step="0.01" value={formData.price} onChange={handleChange} required />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="salePrice">Sale Price ($) - Optional</Label>
+                <Label htmlFor="salePrice">Sale Price (€) - Optional</Label>
                 <Input id="salePrice" name="salePrice" type="number" step="0.01" value={formData.salePrice} onChange={handleChange} />
               </div>
             </div>

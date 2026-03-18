@@ -119,8 +119,8 @@ export default function AdminProductsPage() {
                       </TableCell>
                       <TableCell><Badge variant="secondary">{product.category}</Badge></TableCell>
                       <TableCell>
-                        <div className="font-semibold">${product.salePrice || product.price}</div>
-                        {product.salePrice && <div className="text-xs text-muted-foreground line-through">${product.price}</div>}
+                        <div className="font-semibold">€{product.salePrice || product.price}</div>
+                        {product.salePrice && <div className="text-xs text-muted-foreground line-through">€{product.price}</div>}
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-1 flex-wrap">

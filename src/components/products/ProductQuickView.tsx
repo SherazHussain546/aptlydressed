@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from 'react';
@@ -97,11 +98,11 @@ export function ProductQuickView({ product, isOpen, onClose }: ProductQuickViewP
             <div className="flex items-baseline gap-3 mb-6">
               {onSale ? (
                 <>
-                  <p className="text-3xl text-destructive font-bold">${product.salePrice?.toFixed(2)}</p>
-                  <p className="text-xl text-muted-foreground line-through decoration-primary/30">${product.price.toFixed(2)}</p>
+                  <p className="text-3xl text-destructive font-bold">€{product.salePrice?.toFixed(2)}</p>
+                  <p className="text-xl text-muted-foreground line-through decoration-primary/30">€{product.price.toFixed(2)}</p>
                 </>
               ) : (
-                <p className="text-3xl text-foreground font-medium">${product.price.toFixed(2)}</p>
+                <p className="text-3xl text-foreground font-medium">€{product.price.toFixed(2)}</p>
               )}
             </div>
 

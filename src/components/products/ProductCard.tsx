@@ -1,3 +1,4 @@
+
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -83,11 +84,11 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
         <div className="mt-1 flex items-baseline gap-2">
             {onSale ? (
                 <>
-                    <p className="text-destructive font-bold">${product.salePrice?.toFixed(2)}</p>
-                    <p className="text-sm text-muted-foreground line-through">${product.price.toFixed(2)}</p>
+                    <p className="text-destructive font-bold">€{product.salePrice?.toFixed(2)}</p>
+                    <p className="text-sm text-muted-foreground line-through">€{product.price.toFixed(2)}</p>
                 </>
             ) : (
-                <p className="text-muted-foreground font-medium">${product.price.toFixed(2)}</p>
+                <p className="text-muted-foreground font-medium">€{product.price.toFixed(2)}</p>
             )}
         </div>
       </div>

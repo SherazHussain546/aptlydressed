@@ -62,7 +62,7 @@ function OrderHistory({ userId }: { userId: string }) {
                                       <Badge variant="secondary" className="font-mono text-xs">#{order.id.substring(0, 7)}</Badge>
                                     </TableCell>
                                     <TableCell>{new Date(order.orderDate).toLocaleDateString()}</TableCell>
-                                    <TableCell className="text-right">${order.totalAmount.toFixed(2)}</TableCell>
+                                    <TableCell className="text-right">€{order.totalAmount.toFixed(2)}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
