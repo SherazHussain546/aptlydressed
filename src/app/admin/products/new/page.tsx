@@ -66,7 +66,7 @@ export default function AddProductPage() {
           const [name, hex] = c.split(":");
           return { name: name?.trim(), hex: hex?.trim() || "#000000" };
         }),
-        images: [formData.imageUrl],
+        images: formData.imageUrl.split(",").map(url => url.trim()).filter(Boolean),
         rating: 5,
         reviewCount: 0,
         stock: 100,
@@ -159,8 +159,8 @@ export default function AddProductPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="imageUrl">Main Image URL</Label>
-              <Input id="imageUrl" name="imageUrl" value={formData.imageUrl} onChange={handleChange} required placeholder="https://images.unsplash.com/..." />
+              <Label htmlFor="imageUrl">Image URLs (comma separated)</Label>
+              <Input id="imageUrl" name="imageUrl" value={formData.imageUrl} onChange={handleChange} required placeholder="https://image1.com, https://image2.com" />
             </div>
 
             <div className="space-y-2">
