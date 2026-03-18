@@ -113,7 +113,7 @@ export default function Home() {
                 {collectionImage && (
                   <Image
                     src={collectionImage.imageUrl}
-                    alt={collectionImage.title}
+                    alt={collection.title}
                     fill
                     className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
                     data-ai-hint="fashion collection"
